@@ -1,0 +1,38 @@
+CC= %CC%
+PREFIX= %PREFIX%
+CFLAGS= %CFLAGS%
+LDFLAGS= %LDFLAGS%
+LIBS= %LIBS%
+VER= %VER%
+
+PROG= vimol
+RM= rm -f
+INSTALL_EXEC= install -m 0755
+INSTALL_DATA= install -m 0644
+
+ALL_C= alias.c atoms.c camera.c cmd.c color.c edit.c error.c exec.c graph.c \
+       history.c log.c main.c pair.c rec.c sel.c settings.c spi.c state.c \
+       status.c sys.c tok.c undo.c util.c vec.c view.c wins.c xstr.c yank.c
+ALL_O= alias.o atoms.o camera.o cmd.o color.o edit.o error.o exec.o graph.o \
+       history.o log.o main.o pair.o rec.o sel.o settings.o spi.o state.o \
+       status.o sys.o tok.o undo.o util.o vec.o view.o wins.o xstr.o yank.o
+
+$(PROG): $(ALL_O)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(PROG) $(ALL_O) $(LIBS)
+
+install:
+	$(INSTALL_EXEC) $(PROG) $(PREFIX)/bin
+
+uninstall:
+	$(RM) $(PREFIX)/bin/$(PROG)
+
+dist:
+	git archive --format=tar.gz --prefix=$(PROG)-$(VER)/ -o $(PROG)-$(VER).tar.gz HEAD
+
+clean:
+	$(RM) $(PROG) $(PROG).core $(PROG).gmon $(ALL_O)
+
+distclean: clean
+	$(RM) Makefile
+
+.PHONY: install uninstall dist clean distclean

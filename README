@@ -1,0 +1,41 @@
+Vimol is a powerful vi-inspired molecular viewer and editor.
+For information and tutorials on using vimol consult online documentation at
+http://www.vimol.org/.
+
+To compile vimol from source you will need an ANSI C complaint compiler and a
+make utility. You will also need the following dependencies installed along
+with their corresponding development packages:
+
+ * Cairo graphics library (cairographics.org). Version 1.12.0 or
+   newer is recommended.
+
+	Ubuntu:   apt-get install libcairo-dev
+
+	Fedora:   yum install cairo-devel
+
+	OpenBSD:  pkg_add cairo
+
+	FreeBSD:  install graphics/cairo port
+
+ * Simple direct-media layer (libsdl.org). Version 2.0.1 or newer is
+   recommended. Make sure that the video support is turned on if building SDL
+   from source.
+
+	Ubuntu:   apt-get install libsdl2-dev
+
+	Fedora:   yum install SDL2-devel
+
+	OpenBSD:  pkg_add sdl2
+
+	FreeBSD:  install devel/sdl20 port
+
+After installing all dependencies, compile vimol by typing:
+
+	./configure && make
+
+To install the vimol binary issue:
+
+	make install
+
+Installation is now complete. For documentation and tutorials go to
+the http://www.vimol.org/ web site.

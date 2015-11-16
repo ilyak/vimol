@@ -1,0 +1,101 @@
+#!/bin/sh
+
+VER=`cat version.h | sed -e "s/#define VIMOL_VERSION \([0-9]*\)/\1/"`
+
+CC=${CC:-"cc"}
+PREFIX="/usr/local"
+CFLAGS=${CFLAGS:-""}
+LDFLAGS=${LDFLAGS:-""}
+LIBS="-lcairo -lSDL2 -lm"
+
+HELP=NO
+WITH_DEBUG=NO
+WITH_DEVEL=NO
+
+CAIRO_INCLUDE=
+SDL_INCLUDE=
+
+opt=
+for option
+do
+    opt="$opt `echo $option | sed -e \"s/\(--[^=]*=\)\(.* .*\)/\1'\2'/\"`"
+
+    case "$option" in
+        -*=* ) value=`echo "$option" | sed -e 's/[-_a-zA-Z0-9]*=//'` ;;
+           * ) value="" ;;
+    esac
+
+    case "$option" in
+        --help )          HELP=YES        ;;
+        --prefix=* )      PREFIX="$value" ;;
+        --with-debug )    WITH_DEBUG=YES  ;;
+        --without-debug ) WITH_DEBUG=NO   ;;
+        --with-devel )    WITH_DEVEL=YES  ;;
+        --without-devel ) WITH_DEVEL=NO   ;;
+        * )               HELP=YES        ;;
+    esac
+done
+
+if [ $HELP = YES ]
+then
+cat << END
+  --prefix=PATH    set installation prefix
+  --help           print this message
+  --with-debug     compile with debugging symbols
+  --with-devel     enable developer mode
+END
+    exit 1
+fi
+
+if [ $WITH_DEBUG = YES -o $WITH_DEVEL = YES ]
+then
+    CFLAGS="-g $CFLAGS"
+fi
+
+if [ $WITH_DEVEL = YES ]
+then
+    CC=clang
+    CFLAGS="-O0 -std=c89 -Weverything -Wno-sign-conversion -Wno-format-nonliteral -Wno-padded -Wno-documentation $CFLAGS"
+fi
+
+for value in "$PREFIX/include/cairo" "/usr/include/cairo" "/usr/local/include/cairo"
+do
+    if [ -e "$value/cairo.h" ]
+    then
+        CAIRO_INCLUDE="$value"
+        break
+    fi
+done
+
+if [ "x$CAIRO_INCLUDE" = "x" ]
+then
+    echo "Unable to find Cairo Graphics library header files"
+    exit 1
+fi
+
+for value in "$PREFIX/include/SDL2" "/usr/include/SDL2" "/usr/local/include/SDL2"
+do
+    if [ -e "$value/SDL.h" ]
+    then
+        SDL_INCLUDE="$value"
+        break
+    fi
+done
+
+if [ "x$SDL_INCLUDE" = "x" ]
+then
+    echo "Unable to find SDL2 library header files"
+    exit 1
+fi
+
+CFLAGS="-I$CAIRO_INCLUDE -I$SDL_INCLUDE $CFLAGS"
+LDFLAGS="-L/usr/local/lib -L/usr/lib -L$PREFIX/lib $LDFLAGS"
+
+cat Makefile.in | sed -e "s|%CC%|$CC|g" \
+                      -e "s|%PREFIX%|$PREFIX|g" \
+                      -e "s|%CFLAGS%|$CFLAGS|g" \
+                      -e "s|%LDFLAGS%|$LDFLAGS|g" \
+                      -e "s|%LIBS%|$LIBS|g" \
+                      -e "s|%VER%|$VER|g" > Makefile
+
+echo "Configuration complete; prefix is $PREFIX"

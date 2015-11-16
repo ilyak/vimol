@@ -1,0 +1,1 @@
+#define VIMOL_VERSION 5
