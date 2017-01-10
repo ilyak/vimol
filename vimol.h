@@ -23,9 +23,9 @@
 #define __unused
 #endif /* __unused */
 
-#ifndef __dead2
-#define __dead2
-#endif /* __dead2 */
+#ifndef __dead
+#define __dead
+#endif /* __dead */
 
 #include "color.h"
 #include "vec.h"
