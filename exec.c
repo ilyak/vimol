@@ -154,7 +154,7 @@ parse_register(tok_t tok)
 static int
 fn_about(const char *self __unused, struct tokq *args __unused, struct state *state __unused)
 {
-	error_set("vimol-%d (c) 2013-2014 Ilya Kaliman", VIMOL_VERSION);
+	error_set("vimol (c) 2013-2017 Ilya Kaliman");
 
 	return (TRUE);
 }

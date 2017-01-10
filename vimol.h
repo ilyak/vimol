@@ -54,7 +54,6 @@
 #include "status.h"
 #include "undo.h"
 #include "util.h"
-#include "version.h"
 #include "view.h"
 #include "wins.h"
 #include "yank.h"
