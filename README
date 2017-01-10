@@ -31,11 +31,10 @@ with their corresponding development packages:
 
 After installing all dependencies, compile vimol by typing:
 
-	./configure && make
+	make
 
 To install the vimol binary issue:
 
 	make install
 
-Installation is now complete. For documentation and tutorials go to
-the http://www.vimol.org/ web site.
+For documentation and tutorials visit http://www.vimol.org/ web site.
