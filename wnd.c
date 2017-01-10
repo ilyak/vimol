@@ -22,7 +22,7 @@ struct node {
 	struct node *prev;
 };
 
-struct wins {
+struct wnd {
 	struct node *iter;
 };
 
@@ -53,60 +53,60 @@ insert_after(struct node *iter, struct node *node)
 	iter->next = node;
 }
 
-struct wins *
-wins_create(void)
+struct wnd *
+wnd_create(void)
 {
-	struct wins *wins;
+	struct wnd *wnd;
 
-	wins = xcalloc(1, sizeof(*wins));
-	wins->iter = create_node("");
+	wnd = xcalloc(1, sizeof(*wnd));
+	wnd->iter = create_node("");
 
-	return (wins);
+	return (wnd);
 }
 
 void
-wins_free(struct wins *wins)
+wnd_free(struct wnd *wnd)
 {
 	struct node *node;
 
-	wins_first(wins);
+	wnd_first(wnd);
 
-	while (wins->iter) {
-		node = wins->iter;
-		wins->iter = wins->iter->next;
+	while (wnd->iter) {
+		node = wnd->iter;
+		wnd->iter = wnd->iter->next;
 		view_free(node->view);
 		free(node);
 	}
 
-	free(wins);
+	free(wnd);
 }
 
 struct view *
-wins_get_view(struct wins *wins)
+wnd_get_view(struct wnd *wnd)
 {
-	return (wins->iter->view);
+	return (wnd->iter->view);
 }
 
 int
-wins_open(struct wins *wins, const char *path)
+wnd_open(struct wnd *wnd, const char *path)
 {
 	struct node *node;
 
 	if ((node = create_node(path)) == NULL)
 		return (0);
 
-	insert_after(wins->iter, node);
-	wins->iter = node;
+	insert_after(wnd->iter, node);
+	wnd->iter = node;
 
 	return (1);
 }
 
 int
-wins_close(struct wins *wins)
+wnd_close(struct wnd *wnd)
 {
 	struct node *node;
 
-	node = wins->iter;
+	node = wnd->iter;
 
 	if (node->next == NULL && node->prev == NULL) {
 		error_set("cannot close last window");
@@ -119,10 +119,10 @@ wins_close(struct wins *wins)
 		if (node->prev)
 			node->prev->next = node->next;
 
-		wins->iter = node->next;
+		wnd->iter = node->next;
 	} else {
 		node->prev->next = NULL;
-		wins->iter = node->prev;
+		wnd->iter = node->prev;
 	}
 
 	view_free(node->view);
@@ -132,59 +132,59 @@ wins_close(struct wins *wins)
 }
 
 int
-wins_is_modified(struct wins *wins)
+wnd_is_modified(struct wnd *wnd)
 {
-	return (view_is_modified(wins_get_view(wins)));
+	return (view_is_modified(wnd_get_view(wnd)));
 }
 
 int
-wins_any_modified(struct wins *wins)
+wnd_any_modified(struct wnd *wnd)
 {
 	struct node *node;
 
-	for (node = wins->iter->next; node; node = node->next)
+	for (node = wnd->iter->next; node; node = node->next)
 		if (view_is_modified(node->view))
 			return (1);
 
-	for (node = wins->iter->prev; node; node = node->prev)
+	for (node = wnd->iter->prev; node; node = node->prev)
 		if (view_is_modified(node->view))
 			return (1);
 
-	return (wins_is_modified(wins));
+	return (wnd_is_modified(wnd));
 }
 
 int
-wins_next(struct wins *wins)
+wnd_next(struct wnd *wnd)
 {
-	if (wins->iter->next == NULL)
+	if (wnd->iter->next == NULL)
 		return (0);
 
-	wins->iter = wins->iter->next;
+	wnd->iter = wnd->iter->next;
 
 	return (1);
 }
 
 int
-wins_prev(struct wins *wins)
+wnd_prev(struct wnd *wnd)
 {
-	if (wins->iter->prev == NULL)
+	if (wnd->iter->prev == NULL)
 		return (0);
 
-	wins->iter = wins->iter->prev;
+	wnd->iter = wnd->iter->prev;
 
 	return (1);
 }
 
 void
-wins_first(struct wins *wins)
+wnd_first(struct wnd *wnd)
 {
-	while (wins->iter->prev)
-		wins->iter = wins->iter->prev;
+	while (wnd->iter->prev)
+		wnd->iter = wnd->iter->prev;
 }
 
 void
-wins_last(struct wins *wins)
+wnd_last(struct wnd *wnd)
 {
-	while (wins->iter->next)
-		wins->iter = wins->iter->next;
+	while (wnd->iter->next)
+		wnd->iter = wnd->iter->next;
 }

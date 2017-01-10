@@ -10,7 +10,7 @@ struct alias *state_get_alias(struct state *);
 struct alias *state_get_bind(struct state *);
 struct rec *state_get_rec(struct state *);
 struct view *state_get_view(struct state *);
-struct wins *state_get_wins(struct state *);
+struct wnd *state_get_wnd(struct state *);
 struct yank *state_get_yank(struct state *);
 void state_start_edit(struct state *);
 int state_source(struct state *, const char *);

@@ -27,7 +27,7 @@ struct state {
 	struct history *history;
 	struct rec *rec;
 	struct status *status;
-	struct wins *wins;
+	struct wnd *wnd;
 	struct yank *yank;
 	SDL_Window *window;
 	cairo_t *cairo;
@@ -400,7 +400,7 @@ process_event(struct state *state, SDL_Event *event)
 {
 	switch (event->type) {
 	case SDL_QUIT:
-		if (state->force_quit || !wins_any_modified(state->wins))
+		if (state->force_quit || !wnd_any_modified(state->wnd))
 			return (0);
 		status_set_error(state->status,
 		    "save changes or add ! to override");
@@ -445,7 +445,7 @@ state_create(void)
 	state->history = history_create();
 	state->rec = rec_create();
 	state->status = status_create();
-	state->wins = wins_create();
+	state->wnd = wnd_create();
 	state->yank = yank_create();
 
 	create_window(state);
@@ -475,7 +475,7 @@ state_free(struct state *state)
 	history_free(state->history);
 	rec_free(state->rec);
 	status_free(state->status);
-	wins_free(state->wins);
+	wnd_free(state->wnd);
 	yank_free(state->yank);
 	cairo_destroy(state->cairo);
 	SDL_DestroyWindow(state->window);
@@ -503,13 +503,13 @@ state_get_rec(struct state *state)
 struct view *
 state_get_view(struct state *state)
 {
-	return (wins_get_view(state->wins));
+	return (wnd_get_view(state->wnd));
 }
 
-struct wins *
-state_get_wins(struct state *state)
+struct wnd *
+state_get_wnd(struct state *state)
 {
-	return (state->wins);
+	return (state->wnd);
 }
 
 struct yank *

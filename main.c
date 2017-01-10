@@ -20,7 +20,7 @@ int
 main(int argc, char **argv)
 {
 	struct state *state;
-	struct wins *wins;
+	struct wnd *wnd;
 	int idx;
 
 	srand((unsigned)(time(NULL)));
@@ -38,15 +38,15 @@ main(int argc, char **argv)
 	if ((state = state_create()) == NULL)
 		log_fatal("unable to create a program state");
 
-	wins = state_get_wins(state);
+	wnd = state_get_wnd(state);
 
 	for (idx = 1; idx < argc; idx++)
-		if (!wins_open(wins, argv[idx]))
+		if (!wnd_open(wnd, argv[idx]))
 			log_warn("error opening \"%s\" (%s)", argv[idx],
 			    error_get());
 
-	wins_first(wins);
-	wins_close(wins);
+	wnd_first(wnd);
+	wnd_close(wnd);
 
 	if (!state_source(state, settings_get_string("rc.path")))
 		log_warn("%s", error_get());

@@ -476,18 +476,18 @@ fn_clear(const char *self __unused, struct tokq *args, struct state *state)
 static int
 fn_close(const char *self, struct tokq *args __unused, struct state *state)
 {
-	struct wins *wins;
+	struct wnd *wnd;
 	int force;
 
-	wins = state_get_wins(state);
+	wnd = state_get_wnd(state);
 	force = ends_with(self, '!');
 
-	if (wins_is_modified(wins) && !force) {
+	if (wnd_is_modified(wnd) && !force) {
 		error_set("save changes or add ! to override");
 		return (0);
 	}
 
-	return (wins_close(wins));
+	return (wnd_close(wnd));
 }
 
 static int
@@ -916,23 +916,23 @@ fn_name_get(const char *self __unused, struct tokq *args, struct state *state)
 static int
 fn_new(const char *self __unused, struct tokq *args, struct state *state)
 {
-	struct wins *wins;
+	struct wnd *wnd;
 	const char *path;
 
-	wins = state_get_wins(state);
+	wnd = state_get_wnd(state);
 	path = tokq_count(args) > 0 ? tok_string(tokq_tok(args, 0)) : "";
 
-	return (wins_open(wins, path));
+	return (wnd_open(wnd, path));
 }
 
 static int
 fn_first(const char *self __unused, struct tokq *args __unused,
     struct state *state)
 {
-	struct wins *wins;
+	struct wnd *wnd;
 
-	wins = state_get_wins(state);
-	wins_first(wins);
+	wnd = state_get_wnd(state);
+	wnd_first(wnd);
 
 	return (1);
 }
@@ -941,10 +941,10 @@ static int
 fn_last(const char *self __unused, struct tokq *args __unused,
     struct state *state)
 {
-	struct wins *wins;
+	struct wnd *wnd;
 
-	wins = state_get_wins(state);
-	wins_last(wins);
+	wnd = state_get_wnd(state);
+	wnd_last(wnd);
 
 	return (1);
 }
@@ -953,11 +953,11 @@ static int
 fn_prev(const char *self __unused, struct tokq *args __unused,
     struct state *state)
 {
-	struct wins *wins;
+	struct wnd *wnd;
 
-	wins = state_get_wins(state);
+	wnd = state_get_wnd(state);
 
-	if (!wins_prev(wins)) {
+	if (!wnd_prev(wnd)) {
 		error_set("no previous window");
 		return (0);
 	}
@@ -969,11 +969,11 @@ static int
 fn_next(const char *self __unused, struct tokq *args __unused,
     struct state *state)
 {
-	struct wins *wins;
+	struct wnd *wnd;
 
-	wins = state_get_wins(state);
+	wnd = state_get_wnd(state);
 
-	if (!wins_next(wins)) {
+	if (!wnd_next(wnd)) {
 		error_set("no next window");
 		return (0);
 	}
@@ -993,11 +993,11 @@ fn_nop(const char *self __unused, struct tokq *args __unused,
 static int
 fn_open(const char *self __unused, struct tokq *args, struct state *state)
 {
-	struct wins *wins;
+	struct wnd *wnd;
 	int is_empty, is_modified;
 	const char *path;
 
-	wins = state_get_wins(state);
+	wnd = state_get_wnd(state);
 
 	if (tokq_count(args) < 1) {
 		error_set("specify a file");
@@ -1011,15 +1011,15 @@ fn_open(const char *self __unused, struct tokq *args, struct state *state)
 		return (0);
 	}
 
-	is_empty = view_is_empty(wins_get_view(wins));
-	is_modified = view_is_modified(wins_get_view(wins));
+	is_empty = view_is_empty(wnd_get_view(wnd));
+	is_modified = view_is_modified(wnd_get_view(wnd));
 
-	if (!wins_open(wins, path))
+	if (!wnd_open(wnd, path))
 		return (0);
 
 	if (is_empty && !is_modified) {
-		wins_prev(wins);
-		wins_close(wins);
+		wnd_prev(wnd);
+		wnd_close(wnd);
 	}
 
 	return (1);
@@ -1257,30 +1257,30 @@ fn_redo(const char *self __unused, struct tokq *args __unused,
 static int
 fn_reload(const char *self, struct tokq *args __unused, struct state *state)
 {
-	struct wins *wins;
+	struct wnd *wnd;
 	const char *path;
 	int force;
 
-	wins = state_get_wins(state);
+	wnd = state_get_wnd(state);
 	force = ends_with(self, '!');
 
-	if (wins_is_modified(wins) && !force) {
+	if (wnd_is_modified(wnd) && !force) {
 		error_set("save changes or add ! to override");
 		return (0);
 	}
 
-	path = view_get_path(wins_get_view(wins));
+	path = view_get_path(wnd_get_view(wnd));
 
 	if (path[0] == '\0') {
 		error_set("no file name");
 		return (0);
 	}
 
-	if (!wins_open(wins, path))
+	if (!wnd_open(wnd, path))
 		return (0);
 
-	wins_prev(wins);
-	wins_close(wins);
+	wnd_prev(wnd);
+	wnd_close(wnd);
 
 	return (1);
 }

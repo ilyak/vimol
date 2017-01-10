@@ -51,7 +51,7 @@
 #include "undo.h"
 #include "util.h"
 #include "view.h"
-#include "wins.h"
+#include "wnd.h"
 #include "yank.h"
 #include "xmalloc.h"
 
