@@ -14,6 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <err.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -26,41 +27,27 @@ xstrcpy(char *s, const char *p)
 }
 
 char *
-xstrncpy(char *s, const char *p, size_t n)
-{
-	size_t k = strlen(p);
-	n = k < n ? k : n;
-	s = realloc(s, n + 1);
-	s[n] = '\0';
-	return (memcpy(s, p, n));
-}
-
-char *
 xstrcat(char *s, const char *p)
 {
 	return (strcat(realloc(s, strlen(s) + strlen(p) + 1), p));
 }
 
 char *
-xstrncat(char *s, const char *p, size_t n)
+xstrdup(const char *s)
 {
-	size_t l = strlen(s);
-	size_t k = strlen(p);
-	n = k < n ? k : n;
-	s = realloc(s, l + n + 1);
-	s[l + n] = '\0';
-	memcpy(s + l, p, n);
-	return (s);
+	char *p;
+
+	if ((p = strdup(s)) == NULL)
+		err(1, NULL);
+	return (p);
 }
 
 char *
-xstrdup(const char *p)
+xstrndup(const char *s, size_t n)
 {
-	return (xstrcpy(NULL, p));
-}
+	char *p;
 
-char *
-xstrndup(const char *p, size_t n)
-{
-	return (xstrncpy(NULL, p, n));
+	if ((p = strndup(s, n)) == NULL)
+		err(1, NULL);
+	return (p);
 }

@@ -123,7 +123,6 @@ const char *
 atoms_get_name(struct atoms *atoms, int idx)
 {
 	assert(idx >= 0 && idx < atoms_get_count(atoms));
-
 	return (atoms->data[idx].name);
 }
 
@@ -131,15 +130,14 @@ void
 atoms_set_name(struct atoms *atoms, int idx, const char *name)
 {
 	assert(idx >= 0 && idx < atoms_get_count(atoms));
-
-	atoms->data[idx].name = xstrcpy(atoms->data[idx].name, name);
+	free(atoms->data[idx].name);
+	atoms->data[idx].name = xstrdup(name);
 }
 
 vec_t
 atoms_get_xyz(struct atoms *atoms, int idx)
 {
 	assert(idx >= 0 && idx < atoms_get_count(atoms));
-
 	return (atoms->data[idx].xyz);
 }
 
@@ -147,6 +145,5 @@ void
 atoms_set_xyz(struct atoms *atoms, int idx, vec_t xyz)
 {
 	assert(idx >= 0 && idx < atoms_get_count(atoms));
-
 	atoms->data[idx].xyz = xyz;
 }

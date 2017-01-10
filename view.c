@@ -27,8 +27,7 @@ get_atom_color(const char *name)
 {
 	char tag[BUFSIZ], *ptr;
 
-	strcpy(tag, "color.");
-	strcpy(tag + 6, name);
+	snprintf(tag, sizeof tag, "color.%s", name);
 
 	for (ptr = tag + 6; *ptr; ptr++)
 		*ptr = (char)tolower(*ptr);

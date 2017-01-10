@@ -91,7 +91,8 @@ rec_load(struct rec *rec, const char *path)
 
 	for (i = 0; i < REC_SIZE; i++) {
 		buffer = util_next_line(buffer, fp);
-		rec->data[i] = xstrcpy(rec->data[i], buffer ? buffer : "");
+		free(rec->data[i]);
+		rec->data[i] = xstrdup(buffer ? buffer : "");
 	}
 
 	free(buffer);
