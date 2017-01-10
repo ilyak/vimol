@@ -146,7 +146,7 @@ parse_string(struct tokq *tokq, const char *str)
 
 	while (*str) {
 		if ((tok = next_token(&str)) == NULL)
-			return (FALSE);
+			return (0);
 
 		tokq_push_back(tokq, tok);
 
@@ -154,7 +154,7 @@ parse_string(struct tokq *tokq, const char *str)
 			str++;
 	}
 
-	return (TRUE);
+	return (1);
 }
 
 static struct tokq *

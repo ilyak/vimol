@@ -72,10 +72,10 @@ parse_tokq(struct cmdq *cmdq, struct tokq *tokq, struct alias *alias,
 
 		if (expand && (astr = alias_get(alias, tok))) {
 			if ((atokq = tokq_create(astr)) == NULL)
-				return (FALSE);
-			if (!parse_tokq(cmdq, atokq, alias, FALSE)) {
+				return (0);
+			if (!parse_tokq(cmdq, atokq, alias, 0)) {
 				tokq_free(atokq);
-				return (FALSE);
+				return (0);
 			}
 			tokq_free(atokq);
 			continue;
@@ -83,7 +83,7 @@ parse_tokq(struct cmdq *cmdq, struct tokq *tokq, struct alias *alias,
 
 		if (!exec_valid(tok)) {
 			error_set("invalid command \"%s\"", tok);
-			return (FALSE);
+			return (0);
 		}
 
 		cmd.name = xstrdup(tok);
@@ -101,7 +101,7 @@ parse_tokq(struct cmdq *cmdq, struct tokq *tokq, struct alias *alias,
 		i = i + argc + 1;
 	}
 
-	return (TRUE);
+	return (1);
 }
 
 struct cmdq *
@@ -117,7 +117,7 @@ cmdq_from_string(const char *str, struct alias *alias)
 	cmdq->nalloc = 8;
 	cmdq->data = calloc(cmdq->nalloc, sizeof(struct cmd));
 
-	if (!parse_tokq(cmdq, tokq, alias, TRUE)) {
+	if (!parse_tokq(cmdq, tokq, alias, 1)) {
 		cmdq_free(cmdq);
 		tokq_free(tokq);
 		return (NULL);
@@ -162,7 +162,7 @@ cmdq_exec(struct cmdq *cmdq, struct state *state)
 
 	for (i = 0; i < cmdq_count(cmdq); i++)
 		if (!cmd_exec(cmdq_cmd(cmdq, i), state))
-			return (FALSE);
+			return (0);
 
-	return (TRUE);
+	return (1);
 }

@@ -146,7 +146,7 @@ fn_about(const char *self __unused, struct tokq *args __unused, struct state *st
 {
 	error_set("vimol (c) 2013-2017 Ilya Kaliman");
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -160,7 +160,7 @@ fn_atom(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (sys_get_frame_count(view_get_sys(view)) > 1) {
 		error_set("cannot add atoms to multi-frame files");
-		return (FALSE);
+		return (0);
 	}
 
 	if (tokq_count(args) < 1)
@@ -176,7 +176,7 @@ fn_atom(const char *self __unused, struct tokq *args, struct state *state)
 	view_snapshot(view);
 	sys_add_atom(view_get_sys(view), name, xyz);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -190,7 +190,7 @@ fn_alias(const char *self, struct tokq *args, struct state *state)
 
 	if (tokq_count(args) < 2) {
 		error_set("specify name and value");
-		return (FALSE);
+		return (0);
 	}
 
 	name = tok_string(tokq_tok(args, 0));
@@ -199,7 +199,7 @@ fn_alias(const char *self, struct tokq *args, struct state *state)
 	alias_set(alias, name, value);
 	free(value);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -212,7 +212,7 @@ fn_alias_get(const char *self, struct tokq *args, struct state *state)
 
 	if (tokq_count(args) < 1) {
 		error_set("specify a name");
-		return (FALSE);
+		return (0);
 	}
 
 	name = tok_string(tokq_tok(args, 0));
@@ -222,7 +222,7 @@ fn_alias_get(const char *self, struct tokq *args, struct state *state)
 	else
 		error_set("\"%s\" is not assigned", name);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -239,9 +239,9 @@ fn_all(const char *self __unused, struct tokq *args, struct state *state)
 	str = tokq_strcat(args, 0, tokq_count(args));
 
 	if ((cmdq = cmdq_from_string(str, alias)) == NULL)
-		return (FALSE);
+		return (0);
 
-	ret = TRUE;
+	ret = 1;
 	save = sys_get_frame(view_get_sys(view));
 
 	for (i = 0; i < sys_get_frame_count(view_get_sys(view)); i++) {
@@ -276,7 +276,7 @@ fn_angle_get(const char *self __unused, struct tokq *args, struct state *state)
 	if (sel_get_count(sel) < 3) {
 		sel_free(sel);
 		error_set("specify at least 3 atoms");
-		return (FALSE);
+		return (0);
 	}
 
 	sel_iter_start(sel);
@@ -293,7 +293,7 @@ fn_angle_get(const char *self __unused, struct tokq *args, struct state *state)
 	error_set("angle %d-%d-sel: %.3lf", a + 1, b + 1, value);
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -309,7 +309,7 @@ fn_coord(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (tokq_count(args) < 1) {
 		error_set("specify units");
-		return (FALSE);
+		return (0);
 	}
 
 	if (strcasecmp(tok_string(tokq_tok(args, 0)), "bohr") == 0) {
@@ -318,7 +318,7 @@ fn_coord(const char *self __unused, struct tokq *args, struct state *state)
 		factor = 10.0;
 	} else {
 		error_set("specify 'bohr' or 'nm'");
-		return (FALSE);
+		return (0);
 	}
 
 	view_snapshot(view);
@@ -330,7 +330,7 @@ fn_coord(const char *self __unused, struct tokq *args, struct state *state)
 		sys_set_atom_xyz(sys, i, xyz);
 	}
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -347,7 +347,7 @@ fn_bond(const char *self, struct tokq *args, struct state *state)
 
 	if (pairs_get_count(pairs) == 0) {
 		pairs_free(pairs);
-		return (TRUE);
+		return (1);
 	}
 
 	view_snapshot(view);
@@ -368,7 +368,7 @@ fn_bond(const char *self, struct tokq *args, struct state *state)
 	}
 
 	pairs_free(pairs);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -383,7 +383,7 @@ fn_view_center(const char *self __unused, struct tokq *args, struct state *state
 	view_center_sel(view, sel);
 	sel_free(sel);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -403,7 +403,7 @@ fn_chain(const char *self __unused, struct tokq *args, struct state *state)
 	if (sel_get_count(sel) < 2) {
 		sel_free(sel);
 		error_set("select at least two atoms");
-		return (FALSE);
+		return (0);
 	}
 
 	view_snapshot(view);
@@ -439,7 +439,7 @@ fn_chain(const char *self __unused, struct tokq *args, struct state *state)
 	}
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -455,7 +455,7 @@ fn_clear(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
-		return (FALSE);
+		return (0);
 	}
 
 	view_snapshot(view);
@@ -466,7 +466,7 @@ fn_clear(const char *self __unused, struct tokq *args, struct state *state)
 		graph_remove_vertex_edges(graph, i);
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -480,7 +480,7 @@ fn_close(const char *self, struct tokq *args __unused, struct state *state)
 
 	if (wins_is_modified(wins) && !force) {
 		error_set("save changes or add ! to override");
-		return (FALSE);
+		return (0);
 	}
 
 	return (wins_close(wins));
@@ -497,11 +497,11 @@ fn_copy(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (tokq_count(args) < 1) {
 		error_set("specify copy register");
-		return (FALSE);
+		return (0);
 	}
 
 	if ((reg = parse_register(tokq_tok(args, 0))) == -1)
-		return (FALSE);
+		return (0);
 
 	yank = state_get_yank(state);
 	view = state_get_view(state);
@@ -510,7 +510,7 @@ fn_copy(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
-		return (TRUE);
+		return (1);
 	}
 
 	yank_set_register(yank, reg);
@@ -519,7 +519,7 @@ fn_copy(const char *self __unused, struct tokq *args, struct state *state)
 	error_set("copied %d atoms to register '%c'", sel_get_count(sel), 'a' + reg);
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -534,7 +534,7 @@ fn_count(const char *self __unused, struct tokq *args, struct state *state)
 	error_set("count is %d", sel_get_count(sel));
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -549,14 +549,14 @@ fn_delete(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (sys_get_frame_count(view_get_sys(view)) > 1) {
 		error_set("cannot delete atoms from multi-frame files");
-		return (FALSE);
+		return (0);
 	}
 
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
-		return (TRUE);
+		return (1);
 	}
 
 	view_snapshot(view);
@@ -572,7 +572,7 @@ fn_delete(const char *self __unused, struct tokq *args, struct state *state)
 	error_set("deleted %d atoms", sel_get_count(sel));
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -590,7 +590,7 @@ fn_dist(const char *self, struct tokq *args, struct state *state)
 
 	if (tokq_count(args) < 1) {
 		error_set("specify distance");
-		return (FALSE);
+		return (0);
 	}
 
 	val = tok_double(tokq_tok(args, 0));
@@ -599,7 +599,7 @@ fn_dist(const char *self, struct tokq *args, struct state *state)
 	if (sel_get_count(sel) < 2) {
 		sel_free(sel);
 		error_set("specify at least 2 atoms");
-		return (FALSE);
+		return (0);
 	}
 
 	view_snapshot(view);
@@ -613,7 +613,7 @@ fn_dist(const char *self, struct tokq *args, struct state *state)
 	pb = sys_get_sel_center(sys, sel);
 
 	if ((rab = vec_dist(&pa, &pb)) < 1.0e-8)
-		return (TRUE);
+		return (1);
 
 	if (plus) {
 		dr.x = (pb.x - pa.x) * val / rab;
@@ -634,7 +634,7 @@ fn_dist(const char *self, struct tokq *args, struct state *state)
 	}
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -654,7 +654,7 @@ fn_dist_get(const char *self __unused, struct tokq *args, struct state *state)
 	if (sel_get_count(sel) < 2) {
 		sel_free(sel);
 		error_set("specify at least 2 atoms");
-		return (FALSE);
+		return (0);
 	}
 
 	sel_iter_start(sel);
@@ -668,7 +668,7 @@ fn_dist_get(const char *self __unused, struct tokq *args, struct state *state)
 	error_set("dist %d-sel: %.3lf", a + 1, rab);
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -683,7 +683,7 @@ fn_view_fit(const char *self __unused, struct tokq *args, struct state *state)
 	view_fit_sel(view, sel);
 	sel_free(sel);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -698,10 +698,10 @@ fn_frame(const char *self, struct tokq *args, struct state *state)
 	plus = ends_with(self, '+');
 
 	if (tokq_count(args) < 1)
-		return (FALSE);
+		return (0);
 
 	if ((n = tok_int(tokq_tok(args, 0))) == 0)
-		return (FALSE);
+		return (0);
 
 	if (plus)
 		n = sys_get_frame(sys) + n;
@@ -710,7 +710,7 @@ fn_frame(const char *self, struct tokq *args, struct state *state)
 
 	sys_set_frame(sys, n);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -718,7 +718,7 @@ fn_fs(const char *self __unused, struct tokq *args __unused, struct state *state
 {
 	state_toggle_fullscreen(state);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -729,20 +729,20 @@ fn_get(const char *self __unused, struct tokq *args, struct state *state __unuse
 
 	if (tokq_count(args) < 1) {
 		error_set("specify setting name");
-		return (FALSE);
+		return (0);
 	}
 
 	name = tok_string(tokq_tok(args, 0));
 
 	if (!settings_has_node(name)) {
 		error_set("unknown setting \"%s\"", name);
-		return (FALSE);
+		return (0);
 	}
 
 	settings_printf(buffer, sizeof(buffer), name);
 	error_set("%s = %s", name, buffer);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -764,7 +764,7 @@ fn_hide(const char *self __unused, struct tokq *args, struct state *state)
 
 	sel_free(sel);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -777,14 +777,14 @@ fn_hyd(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (sys_get_frame_count(view_get_sys(view)) > 1) {
 		error_set("cannot add atoms to multi-frame files");
-		return (FALSE);
+		return (0);
 	}
 
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
-		return (TRUE);
+		return (1);
 	}
 
 	view_snapshot(view);
@@ -792,7 +792,7 @@ fn_hyd(const char *self __unused, struct tokq *args, struct state *state)
 
 	sel_free(sel);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -818,7 +818,7 @@ fn_invert(const char *self __unused, struct tokq *args, struct state *state)
 
 	sel_free(sel);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -830,7 +830,7 @@ fn_view_pos(const char *self, struct tokq *args, struct state *state)
 	int plus;
 
 	if (tokq_count(args) < 1)
-		return (FALSE);
+		return (0);
 
 	plus = ends_with(self, '+');
 	view = state_get_view(state);
@@ -842,7 +842,7 @@ fn_view_pos(const char *self, struct tokq *args, struct state *state)
 	else
 		camera_move_to(camera, xyz);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -858,7 +858,7 @@ fn_name(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (tokq_count(args) < 1) {
 		error_set("specify a name");
-		return (FALSE);
+		return (0);
 	}
 
 	name = tok_string(tokq_tok(args, 0));
@@ -873,7 +873,7 @@ fn_name(const char *self __unused, struct tokq *args, struct state *state)
 		sys_set_atom_name(sys, idx, name);
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -892,7 +892,7 @@ fn_name_get(const char *self __unused, struct tokq *args, struct state *state)
 	if (sel_get_count(sel) != 1) {
 		sel_free(sel);
 		error_set("specify 1 atom");
-		return (FALSE);
+		return (0);
 	}
 
 	sel_iter_start(sel);
@@ -903,7 +903,7 @@ fn_name_get(const char *self __unused, struct tokq *args, struct state *state)
 
 	sel_free(sel);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -926,7 +926,7 @@ fn_first(const char *self __unused, struct tokq *args __unused, struct state *st
 	wins = state_get_wins(state);
 	wins_first(wins);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -937,7 +937,7 @@ fn_last(const char *self __unused, struct tokq *args __unused, struct state *sta
 	wins = state_get_wins(state);
 	wins_last(wins);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -949,10 +949,10 @@ fn_prev(const char *self __unused, struct tokq *args __unused, struct state *sta
 
 	if (!wins_prev(wins)) {
 		error_set("no previous window");
-		return (FALSE);
+		return (0);
 	}
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -964,10 +964,10 @@ fn_next(const char *self __unused, struct tokq *args __unused, struct state *sta
 
 	if (!wins_next(wins)) {
 		error_set("no next window");
-		return (FALSE);
+		return (0);
 	}
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -975,7 +975,7 @@ fn_nop(const char *self __unused, struct tokq *args __unused, struct state *stat
 {
 	/* no op */
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -989,28 +989,28 @@ fn_open(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (tokq_count(args) < 1) {
 		error_set("specify a file");
-		return (FALSE);
+		return (0);
 	}
 
 	path = tok_string(tokq_tok(args, 0));
 
 	if (!util_file_exists(path)) {
 		error_set("unable to find file \"%s\"", path);
-		return (FALSE);
+		return (0);
 	}
 
 	is_empty = view_is_empty(wins_get_view(wins));
 	is_modified = view_is_modified(wins_get_view(wins));
 
 	if (!wins_open(wins, path))
-		return (FALSE);
+		return (0);
 
 	if (is_empty && !is_modified) {
 		wins_prev(wins);
 		wins_close(wins);
 	}
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1025,12 +1025,12 @@ fn_paste(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (sys_get_frame_count(view_get_sys(view)) > 1) {
 		error_set("cannot add atoms to multi-frame files");
-		return (FALSE);
+		return (0);
 	}
 
 	if (tokq_count(args) > 0) {
 		if ((reg = parse_register(tokq_tok(args, 0))) == -1)
-			return (FALSE);
+			return (0);
 
 		yank_set_register(yank, reg);
 	}
@@ -1045,7 +1045,7 @@ fn_paste(const char *self __unused, struct tokq *args, struct state *state)
 	while (count < sys_get_atom_count(view_get_sys(view)))
 		sel_add(view_get_sel(view), count++);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1062,7 +1062,7 @@ fn_path_get(const char *self __unused, struct tokq *args __unused, struct state 
 	else
 		error_set("\"%s\"", path);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1074,16 +1074,16 @@ fn_play(const char *self __unused, struct tokq *args, struct state *state)
 	rec = state_get_rec(state);
 
 	if (rec_is_playing(rec))
-		return (TRUE);
+		return (1);
 
 	if (rec_is_recording(rec)) {
 		error_set("cannot play during recording");
-		return (FALSE);
+		return (0);
 	}
 
 	if (tokq_count(args) > 0) {
 		if ((reg = parse_register(tokq_tok(args, 0))) == -1)
-			return (FALSE);
+			return (0);
 
 		rec_set_register(rec, reg);
 	}
@@ -1106,7 +1106,7 @@ fn_pos(const char *self, struct tokq *args, struct state *state)
 
 	if (tokq_count(args) < 1) {
 		error_set("specify a vector [x y z]");
-		return (FALSE);
+		return (0);
 	}
 
 	dr = tok_vec(tokq_tok(args, 0));
@@ -1114,7 +1114,7 @@ fn_pos(const char *self, struct tokq *args, struct state *state)
 
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
-		return (TRUE);
+		return (1);
 	}
 
 	view_snapshot(view);
@@ -1138,7 +1138,7 @@ fn_pos(const char *self, struct tokq *args, struct state *state)
 	}
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1157,7 +1157,7 @@ fn_pos_get(const char *self __unused, struct tokq *args, struct state *state)
 	error_set("pos: %s", buffer);
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1168,7 +1168,7 @@ fn_quit(const char *self, struct tokq *args __unused, struct state *state)
 	force = ends_with(self, '!');
 	state_quit(state, force);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1180,7 +1180,7 @@ fn_read(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (tokq_count(args) < 1) {
 		error_set("specify file path");
-		return (FALSE);
+		return (0);
 	}
 
 	view = state_get_view(state);
@@ -1191,10 +1191,10 @@ fn_read(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (!sys_read(sys, path)) {
 		view_undo(view);
-		return (FALSE);
+		return (0);
 	}
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1206,23 +1206,23 @@ fn_rec(const char *self __unused, struct tokq *args, struct state *state)
 	rec = state_get_rec(state);
 
 	if (rec_is_playing(rec))
-		return (TRUE);
+		return (1);
 
 	if (rec_is_recording(rec)) {
 		rec_stop(rec);
-		return (TRUE);
+		return (1);
 	}
 
 	if (tokq_count(args) > 0) {
 		if ((reg = parse_register(tokq_tok(args, 0))) == -1)
-			return (FALSE);
+			return (0);
 
 		rec_set_register(rec, reg);
 	}
 
 	rec_start(rec);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1234,10 +1234,10 @@ fn_redo(const char *self __unused, struct tokq *args __unused, struct state *sta
 
 	if (!view_redo(view)) {
 		error_set("already at newest change");
-		return (FALSE);
+		return (0);
 	}
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1252,23 +1252,23 @@ fn_reload(const char *self, struct tokq *args __unused, struct state *state)
 
 	if (wins_is_modified(wins) && !force) {
 		error_set("save changes or add ! to override");
-		return (FALSE);
+		return (0);
 	}
 
 	path = view_get_path(wins_get_view(wins));
 
 	if (path[0] == '\0') {
 		error_set("no file name");
-		return (FALSE);
+		return (0);
 	}
 
 	if (!wins_open(wins, path))
-		return (FALSE);
+		return (0);
 
 	wins_prev(wins);
 	wins_close(wins);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1282,17 +1282,17 @@ fn_repeat(const char *self __unused, struct tokq *args, struct state *state)
 	alias = state_get_alias(state);
 
 	if (tokq_count(args) < 2)
-		return (FALSE);
+		return (0);
 
 	n = tok_int(tokq_tok(args, 0));
 	str = tokq_strcat(args, 1, tokq_count(args) - 1);
 
 	if ((cmdq = cmdq_from_string(str, alias)) == NULL) {
 		free(str);
-		return (FALSE);
+		return (0);
 	}
 
-	ret = TRUE;
+	ret = 1;
 
 	for (i = 0; i < n; i++)
 		if (!(ret = cmdq_exec(cmdq, state)))
@@ -1316,7 +1316,7 @@ fn_autobond(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
-		return (TRUE);
+		return (1);
 	}
 
 	view_snapshot(view);
@@ -1325,7 +1325,7 @@ fn_autobond(const char *self __unused, struct tokq *args, struct state *state)
 	sys_reset_bonds(sys, sel);
 	sel_free(sel);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1333,7 +1333,7 @@ fn_view_reset(const char *self __unused, struct tokq *args __unused, struct stat
 {
 	view_reset(state_get_view(state));
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1354,7 +1354,7 @@ fn_ring(const char *self __unused, struct tokq *args, struct state *state)
 	if (sel_get_count(sel) < 2) {
 		sel_free(sel);
 		error_set("select at least two atoms");
-		return (FALSE);
+		return (0);
 	}
 
 	view_snapshot(view);
@@ -1391,7 +1391,7 @@ fn_ring(const char *self __unused, struct tokq *args, struct state *state)
 
 	sel_free(sel);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1408,7 +1408,7 @@ fn_rotate(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (tokq_count(args) < 1) {
 		error_set("specify rotation angles [a b c]");
-		return (FALSE);
+		return (0);
 	}
 
 	abc = tok_vec(tokq_tok(args, 0));
@@ -1416,7 +1416,7 @@ fn_rotate(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
-		return (TRUE);
+		return (1);
 	}
 
 	view_snapshot(view);
@@ -1447,7 +1447,7 @@ fn_rotate(const char *self __unused, struct tokq *args, struct state *state)
 	}
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1458,7 +1458,7 @@ fn_view_rotate(const char *self __unused, struct tokq *args, struct state *state
 	vec_t xyz;
 
 	if (tokq_count(args) < 1)
-		return (FALSE);
+		return (0);
 
 	view = state_get_view(state);
 	camera = view_get_camera(view);
@@ -1467,7 +1467,7 @@ fn_view_rotate(const char *self __unused, struct tokq *args, struct state *state
 	vec_scale(&xyz, PI / 180.0);
 	camera_rotate(camera, xyz);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1477,7 +1477,7 @@ fn_run(const char *self __unused, struct tokq *args, struct state *state __unuse
 
 	error_set("finished with exit code '%d'", ret);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1497,7 +1497,7 @@ fn_save(const char *self, struct tokq *args, struct state *state)
 
 		if (path[0] == '\0') {
 			error_set("no file name");
-			return (FALSE);
+			return (0);
 		}
 	} else
 		path = tok_string(tokq_tok(args, 0));
@@ -1505,16 +1505,16 @@ fn_save(const char *self, struct tokq *args, struct state *state)
 	if (tokq_count(args) == 0 && !force)
 		if (!util_has_suffix(path, ".xyz")) {
 			error_set("file will be written in xyz format; add ! to override");
-			return (FALSE);
+			return (0);
 		}
 
 	if (!sys_save_to_file(sys, path))
-		return (FALSE);
+		return (0);
 
 	view_set_path(view, path);
 	error_set("saved to \"%s\"", path);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1536,7 +1536,7 @@ fn_png(const char *self __unused, struct tokq *args, struct state *state)
 	state_save_png(state, path);
 	error_set("saved to \"%s\"", path);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1558,7 +1558,7 @@ fn_select(const char *self __unused, struct tokq *args, struct state *state)
 			sel_add(view_get_sel(view), idx);
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1585,7 +1585,7 @@ fn_select_bonded(const char *self __unused, struct tokq *args, struct state *sta
 	}
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1599,7 +1599,7 @@ fn_select_box(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (tokq_count(args) < 1) {
 		error_set("specify box dimensions");
-		return (FALSE);
+		return (0);
 	}
 
 	if (tokq_count(args) < 2) {
@@ -1625,7 +1625,7 @@ fn_select_box(const char *self __unused, struct tokq *args, struct state *state)
 			sel_add(view_get_sel(view), idx);
 	}
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1660,7 +1660,7 @@ fn_select_molecule(const char *self __unused, struct tokq *args, struct state *s
 	sel_free(selected);
 	sel_free(connected);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1685,7 +1685,7 @@ fn_select_name(const char *self __unused, struct tokq *args, struct state *state
 				sel_add(view_get_sel(view), i);
 	}
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1717,7 +1717,7 @@ fn_select_next(const char *self __unused, struct tokq *args, struct state *state
 		}
 	}
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1757,7 +1757,7 @@ fn_select_water(const char *self __unused, struct tokq *args __unused, struct st
 		sel_add(view_get_sel(view), k);
 	}
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1773,10 +1773,10 @@ fn_select_within(const char *self __unused, struct tokq *args, struct state *sta
 	int idx, n_pairs;
 
 	if (tokq_count(args) < 1)
-		return (FALSE);
+		return (0);
 
 	if ((radius = tok_double(tokq_tok(args, 0))) <= 0.0)
-		return (FALSE);
+		return (0);
 
 	view = state_get_view(state);
 	sys = view_get_sys(view);
@@ -1812,7 +1812,7 @@ fn_select_within(const char *self __unused, struct tokq *args, struct state *sta
 
 	sel_free(sel);
 	spi_free(spi);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1822,7 +1822,7 @@ fn_set(const char *self __unused, struct tokq *args, struct state *state __unuse
 
 	if (tokq_count(args) < 2) {
 		error_set("specify setting name and value");
-		return (FALSE);
+		return (0);
 	}
 
 	name = tok_string(tokq_tok(args, 0));
@@ -1849,7 +1849,7 @@ fn_show(const char *self __unused, struct tokq *args, struct state *state)
 		sel_add(visible, idx);
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1865,7 +1865,7 @@ fn_group(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
-		return (TRUE);
+		return (1);
 	}
 
 	view_snapshot(view);
@@ -1885,7 +1885,7 @@ fn_group(const char *self __unused, struct tokq *args, struct state *state)
 	}
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1895,7 +1895,7 @@ fn_source(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (tokq_count(args) < 1) {
 		error_set("specify a file");
-		return (FALSE);
+		return (0);
 	}
 
 	path = tok_string(tokq_tok(args, 0));
@@ -1907,11 +1907,11 @@ static int
 fn_edit(const char *self __unused, struct tokq *args __unused, struct state *state)
 {
 	if (rec_is_playing(state_get_rec(state)))
-		return (TRUE);
+		return (1);
 
 	state_start_edit(state);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1928,7 +1928,7 @@ fn_swap(const char *self __unused, struct tokq *args, struct state *state)
 	if (sel_get_count(sel) != 2) {
 		sel_free(sel);
 		error_set("specify 2 indices");
-		return (FALSE);
+		return (0);
 	}
 
 	view_snapshot(view);
@@ -1942,7 +1942,7 @@ fn_swap(const char *self __unused, struct tokq *args, struct state *state)
 
 	sel_free(sel);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1952,17 +1952,17 @@ fn_toggle(const char *self __unused, struct tokq *args, struct state *state __un
 	int value;
 
 	if (tokq_count(args) == 0)
-		return (FALSE);
+		return (0);
 
 	name = tok_string(tokq_tok(args, 0));
 
 	if (!settings_has_bool(name))
-		return (FALSE);
+		return (0);
 
 	value = settings_get_bool(name);
 	settings_set_bool(name, !value);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -1982,7 +1982,7 @@ fn_tors_get(const char *self __unused, struct tokq *args, struct state *state)
 	if (sel_get_count(sel) < 4) {
 		sel_free(sel);
 		error_set("specify at least 4 atoms");
-		return (FALSE);
+		return (0);
 	}
 
 	sel_iter_start(sel);
@@ -2002,7 +2002,7 @@ fn_tors_get(const char *self __unused, struct tokq *args, struct state *state)
 	error_set("torsion %d-%d-%d-sel: %.3lf", a + 1, b + 1, c + 1, value);
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -2014,10 +2014,10 @@ fn_undo(const char *self __unused, struct tokq *args __unused, struct state *sta
 
 	if (!view_undo(view)) {
 		error_set("already at oldest change");
-		return (FALSE);
+		return (0);
 	}
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -2036,7 +2036,7 @@ fn_unselect(const char *self __unused, struct tokq *args, struct state *state)
 		sel_remove(view_get_sel(view), idx);
 
 	sel_free(sel);
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -2068,7 +2068,7 @@ fn_unselect_next(const char *self __unused, struct tokq *args, struct state *sta
 		}
 	}
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -2082,17 +2082,17 @@ fn_view_zoom(const char *self __unused, struct tokq *args, struct state *state)
 	camera = view_get_camera(view);
 
 	if (tokq_count(args) < 1)
-		return (FALSE);
+		return (0);
 
 	if ((factor = tok_double(tokq_tok(args, 0))) <= 0.0) {
 		error_set("zoom factor must be positive");
-		return (FALSE);
+		return (0);
 	}
 
 	radius = camera_get_radius(camera);
 	camera_set_radius(camera, radius / factor);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -2109,7 +2109,7 @@ fn_wrap(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (tokq_count(args) < 1) {
 		error_set("specify cell dimensions");
-		return (FALSE);
+		return (0);
 	}
 
 	if (tokq_count(args) < 2) {
@@ -2124,7 +2124,7 @@ fn_wrap(const char *self __unused, struct tokq *args, struct state *state)
 
 	if (cell.x <= 0 || cell.y <= 0 || cell.z <= 0) {
 		error_set("cell dimensions must be positive");
-		return (FALSE);
+		return (0);
 	}
 
 	view_snapshot(view);
@@ -2162,7 +2162,7 @@ fn_wrap(const char *self __unused, struct tokq *args, struct state *state)
 	sel_free(current);
 	sel_free(wrapped);
 
-	return (TRUE);
+	return (1);
 }
 
 

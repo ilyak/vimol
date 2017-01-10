@@ -41,10 +41,10 @@ util_file_exists(const char *path)
 
 	if ((fp = fopen(path, "r"))) {
 		fclose(fp);
-		return (TRUE);
+		return (1);
 	}
 
-	return (FALSE);
+	return (0);
 }
 
 int

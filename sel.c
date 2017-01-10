@@ -211,10 +211,10 @@ int
 sel_iter_next(struct sel *sel, int *idx)
 {
 	if (sel->iter == -1)
-		return (FALSE);
+		return (0);
 
 	*idx = sel->iter;
 	sel->iter = sel->data[sel->iter].next;
 
-	return (TRUE);
+	return (1);
 }

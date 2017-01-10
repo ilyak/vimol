@@ -73,7 +73,7 @@ set_data(struct node *node, union data data)
 
 	node->data = data;
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -473,7 +473,7 @@ settings_set(const char *name, const char *value)
 
 	if ((node = find_node(name)) == NULL) {
 		error_set("unknown setting %s", name);
-		return (FALSE);
+		return (0);
 	}
 
 	return (set_from_string(node, value));

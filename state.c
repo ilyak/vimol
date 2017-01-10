@@ -181,7 +181,7 @@ stop_input(struct state *state)
 {
 	SDL_StopTextInput();
 	status_clear_text(state->status);
-	state->is_input = FALSE;
+	state->is_input = 0;
 }
 
 static void
@@ -241,28 +241,28 @@ key_down_status(struct state *state, SDL_Keysym keysym)
 	case SDLK_RETURN:
 		stop_input(state);
 		run_input(state);
-		state->is_search = FALSE;
+		state->is_search = 0;
 		break;
 	case SDLK_UP:
-		state->is_search = FALSE;
+		state->is_search = 0;
 		history_prev(state->history);
 		edit_set_text(state->edit, "%s", history_get(state->history));
 		break;
 	case SDLK_DOWN:
-		state->is_search = FALSE;
+		state->is_search = 0;
 		history_next(state->history);
 		edit_set_text(state->edit, "%s", history_get(state->history));
 		break;
 	case SDLK_c:
 		if (keysym.mod & KMOD_CTRL) {
-			state->is_search = FALSE;
+			state->is_search = 0;
 			history_reset_current(state->history);
 			edit_clear(state->edit);
 		}
 		break;
 	case SDLK_r:
 		if (keysym.mod & KMOD_CTRL) {
-			state->is_search = TRUE;
+			state->is_search = 1;
 			text = edit_get_text(state->edit);
 
 			if (!util_is_empty(text)) {
@@ -283,7 +283,7 @@ key_down_status(struct state *state, SDL_Keysym keysym)
 		break;
 	case SDLK_LEFT:
 		if (state->is_search) {
-			state->is_search = FALSE;
+			state->is_search = 0;
 			text = history_get(state->history);
 			edit_set_text(state->edit, "%s", text);
 		}
@@ -291,7 +291,7 @@ key_down_status(struct state *state, SDL_Keysym keysym)
 		break;
 	case SDLK_RIGHT:
 		if (state->is_search) {
-			state->is_search = FALSE;
+			state->is_search = 0;
 			text = history_get(state->history);
 			edit_set_text(state->edit, "%s", text);
 		}
@@ -299,7 +299,7 @@ key_down_status(struct state *state, SDL_Keysym keysym)
 		break;
 	case SDLK_HOME:
 		if (state->is_search) {
-			state->is_search = FALSE;
+			state->is_search = 0;
 			text = history_get(state->history);
 			edit_set_text(state->edit, "%s", text);
 		}
@@ -307,7 +307,7 @@ key_down_status(struct state *state, SDL_Keysym keysym)
 		break;
 	case SDLK_END:
 		if (state->is_search) {
-			state->is_search = FALSE;
+			state->is_search = 0;
 			text = history_get(state->history);
 			edit_set_text(state->edit, "%s", text);
 		}
@@ -321,7 +321,7 @@ key_down_status(struct state *state, SDL_Keysym keysym)
 		break;
 	case SDLK_ESCAPE:
 		stop_input(state);
-		state->is_search = FALSE;
+		state->is_search = 0;
 		break;
 	}
 }
@@ -401,7 +401,7 @@ process_event(struct state *state, SDL_Event *event)
 	switch (event->type) {
 	case SDL_QUIT:
 		if (state->force_quit || !wins_any_modified(state->wins))
-			return (FALSE);
+			return (0);
 		status_set_error(state->status,
 		    "save changes or add ! to override");
 		break;
@@ -427,7 +427,7 @@ process_event(struct state *state, SDL_Event *event)
 		}
 		break;
 	}
-	return (TRUE);
+	return (1);
 }
 
 struct state *
@@ -521,7 +521,7 @@ state_get_yank(struct state *state)
 void
 state_start_edit(struct state *state)
 {
-	state->is_input = TRUE;
+	state->is_input = 1;
 
 	edit_clear(state->edit);
 	history_reset_current(state->history);
@@ -538,7 +538,7 @@ state_source(struct state *state, const char *path)
 
 	if ((fp = fopen(path, "r")) == NULL) {
 		error_set("unable to open file %s", path);
-		return (FALSE);
+		return (0);
 	}
 
 	buffer = NULL;
@@ -554,7 +554,7 @@ state_source(struct state *state, const char *path)
 	}
 
 	fclose(fp);
-	return (TRUE);
+	return (1);
 }
 
 void

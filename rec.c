@@ -121,7 +121,7 @@ rec_start(struct rec *rec)
 	assert(!rec->is_recording);
 
 	rec->data[rec->reg][0] = '\0';
-	rec->is_recording = TRUE;
+	rec->is_recording = 1;
 }
 
 void
@@ -144,7 +144,7 @@ rec_stop(struct rec *rec)
 {
 	assert(rec->is_recording);
 
-	rec->is_recording = FALSE;
+	rec->is_recording = 0;
 }
 
 int
@@ -158,12 +158,12 @@ rec_play(struct rec *rec, struct state *state)
 	alias = state_get_alias(state);
 
 	if ((cmdq = cmdq_from_string(rec->data[rec->reg], alias)) == NULL)
-		return (FALSE);
+		return (0);
 
-	rec->is_playing = TRUE;
+	rec->is_playing = 1;
 	cmdq_exec(cmdq, state);
-	rec->is_playing = FALSE;
+	rec->is_playing = 0;
 	cmdq_free(cmdq);
 
-	return (TRUE);
+	return (1);
 }

@@ -50,7 +50,7 @@ status_set_text(struct status *status, const char *fmt, ...)
 {
 	va_list ap;
 
-	status->is_error = FALSE;
+	status->is_error = 0;
 
 	va_start(ap, fmt);
 	vsnprintf(status->text, sizeof(status->text), fmt, ap);
@@ -62,7 +62,7 @@ status_set_error(struct status *status, const char *fmt, ...)
 {
 	va_list ap;
 
-	status->is_error = TRUE;
+	status->is_error = 1;
 
 	va_start(ap, fmt);
 	vsnprintf(status->text, sizeof(status->text), fmt, ap);

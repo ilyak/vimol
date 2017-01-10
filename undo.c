@@ -90,20 +90,20 @@ int
 undo_undo(struct undo *undo)
 {
 	if (undo->iter->prev == NULL)
-		return (FALSE);
+		return (0);
 
 	undo->iter = undo->iter->prev;
 
-	return (TRUE);
+	return (1);
 }
 
 int
 undo_redo(struct undo *undo)
 {
 	if (undo->iter->next == NULL)
-		return (FALSE);
+		return (0);
 
 	undo->iter = undo->iter->next;
 
-	return (TRUE);
+	return (1);
 }

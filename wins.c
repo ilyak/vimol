@@ -93,12 +93,12 @@ wins_open(struct wins *wins, const char *path)
 	struct node *node;
 
 	if ((node = create_node(path)) == NULL)
-		return (FALSE);
+		return (0);
 
 	insert_after(wins->iter, node);
 	wins->iter = node;
 
-	return (TRUE);
+	return (1);
 }
 
 int
@@ -110,7 +110,7 @@ wins_close(struct wins *wins)
 
 	if (node->next == NULL && node->prev == NULL) {
 		error_set("cannot close last window");
-		return (FALSE);
+		return (0);
 	}
 
 	if (node->next) {
@@ -128,7 +128,7 @@ wins_close(struct wins *wins)
 	view_free(node->view);
 	free(node);
 
-	return (TRUE);
+	return (1);
 }
 
 int
@@ -144,11 +144,11 @@ wins_any_modified(struct wins *wins)
 
 	for (node = wins->iter->next; node; node = node->next)
 		if (view_is_modified(node->view))
-			return (TRUE);
+			return (1);
 
 	for (node = wins->iter->prev; node; node = node->prev)
 		if (view_is_modified(node->view))
-			return (TRUE);
+			return (1);
 
 	return (wins_is_modified(wins));
 }
@@ -157,22 +157,22 @@ int
 wins_next(struct wins *wins)
 {
 	if (wins->iter->next == NULL)
-		return (FALSE);
+		return (0);
 
 	wins->iter = wins->iter->next;
 
-	return (TRUE);
+	return (1);
 }
 
 int
 wins_prev(struct wins *wins)
 {
 	if (wins->iter->prev == NULL)
-		return (FALSE);
+		return (0);
 
 	wins->iter = wins->iter->prev;
 
-	return (TRUE);
+	return (1);
 }
 
 void

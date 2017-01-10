@@ -111,11 +111,11 @@ int
 history_next(struct history *history)
 {
 	if (history->current == history->top)
-		return (FALSE);
+		return (0);
 
 	history->current = (history->current + 1) % HIST_SIZE;
 
-	return (TRUE);
+	return (1);
 }
 
 int
@@ -127,11 +127,11 @@ history_prev(struct history *history)
 		prev = HIST_SIZE - 1;
 
 	if (!history->list[prev])
-		return (FALSE);
+		return (0);
 
 	history->current = prev;
 
-	return (TRUE);
+	return (1);
 }
 
 const char *
@@ -148,12 +148,12 @@ history_search(struct history *history, const char *str)
 
 	for (;;) {
 		if (strstr(history_get(history), str))
-			return (TRUE);
+			return (1);
 
 		if (!history_prev(history))
 			break;
 	}
 
 	history->current = save;
-	return (FALSE);
+	return (0);
 }

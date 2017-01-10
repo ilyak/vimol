@@ -19,9 +19,6 @@
 #define snprintf SDL_snprintf
 #define vsnprintf SDL_vsnprintf
 
-#define TRUE 1
-#define FALSE 0
-
 #ifndef __unused
 #define __unused
 #endif /* __unused */

@@ -137,7 +137,7 @@ parse_atom_pdb(const char *buffer, struct atom *atom)
 
 	if ((buflen = strlen(buffer)) < 54) {
 		error_set("incorrect pdb atom record format");
-		return (FALSE);
+		return (0);
 	}
 
 	memset(atom, 0, sizeof(struct atom));
@@ -157,7 +157,7 @@ parse_atom_pdb(const char *buffer, struct atom *atom)
 
 	sscanf(&buffer[30], "%lf%lf%lf", &atom->xyz.x, &atom->xyz.y, &atom->xyz.z);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -169,7 +169,7 @@ load_from_pdb(struct sys *sys, const char *path)
 
 	if ((fp = fopen(path, "r")) == NULL) {
 		error_set("unable to open %s", path);
-		return (FALSE);
+		return (0);
 	}
 
 	buffer = NULL;
@@ -185,11 +185,11 @@ load_from_pdb(struct sys *sys, const char *path)
 	}
 
 	fclose(fp);
-	return (TRUE);
+	return (1);
 error:
 	free(buffer);
 	fclose(fp);
-	return (FALSE);
+	return (0);
 }
 
 static int
@@ -199,7 +199,7 @@ parse_atom_xyz(const char *buffer, struct atom *atom)
 
 	sscanf(buffer, "%32s%lf%lf%lf", atom->name, &atom->xyz.x, &atom->xyz.y, &atom->xyz.z);
 
-	return (TRUE);
+	return (1);
 }
 
 static int
@@ -213,7 +213,7 @@ load_from_xyz(struct sys *sys, const char *path, int is_new)
 
 	if ((fp = fopen(path, "r")) == NULL) {
 		error_set("unable to open %s", path);
-		return (FALSE);
+		return (0);
 	}
 
 	if ((buffer = util_next_line(NULL, fp)) == NULL) {
@@ -243,7 +243,7 @@ load_from_xyz(struct sys *sys, const char *path, int is_new)
 	if (!is_new) {
 		free(buffer);
 		fclose(fp);
-		return (TRUE);
+		return (1);
 	}
 
 	while ((buffer = util_next_line(buffer, fp)) != NULL) {
@@ -276,11 +276,11 @@ load_from_xyz(struct sys *sys, const char *path, int is_new)
 
 	sys_set_frame(sys, 0);
 	fclose(fp);
-	return (TRUE);
+	return (1);
 error:
 	free(buffer);
 	fclose(fp);
-	return (FALSE);
+	return (0);
 }
 
 static int
@@ -294,7 +294,7 @@ load_file(struct sys *sys, const char *path, int is_new)
 
 	error_set("unknown file type");
 
-	return (FALSE);
+	return (0);
 }
 
 static int
@@ -308,7 +308,7 @@ read_file(struct sys *sys, const char *path, int is_new)
 	n = sys_get_atom_count(sys);
 
 	if (!load_file(sys, path, is_new))
-		return (FALSE);
+		return (0);
 
 	sel = sel_create(sys_get_atom_count(sys));
 
@@ -317,7 +317,7 @@ read_file(struct sys *sys, const char *path, int is_new)
 
 	sys_reset_bonds(sys, sel);
 
-	return (TRUE);
+	return (1);
 }
 
 static struct sys *
@@ -346,10 +346,10 @@ sys_create(const char *path)
 	if (path == NULL || !util_file_exists(path))
 		return (sys);
 
-	if (!read_file(sys, path, TRUE))
+	if (!read_file(sys, path, 1))
 		return (NULL);
 
-	sys->is_modified = FALSE;
+	sys->is_modified = 0;
 
 	return (sys);
 }
@@ -409,7 +409,7 @@ sys_get_visible(struct sys *sys)
 int
 sys_read(struct sys *sys, const char *path)
 {
-	return (read_file(sys, path, FALSE));
+	return (read_file(sys, path, 0));
 }
 
 int
@@ -459,7 +459,7 @@ sys_add_atom(struct sys *sys, const char *name, vec_t xyz)
 	sel_expand(sys->visible);
 	sel_add(sys->visible, sel_get_size(sys->visible) - 1);
 
-	sys->is_modified = TRUE;
+	sys->is_modified = 1;
 }
 
 void
@@ -474,7 +474,7 @@ sys_remove_atom(struct sys *sys, int idx)
 	sel_contract(sys->sel, idx);
 	sel_contract(sys->visible, idx);
 
-	sys->is_modified = TRUE;
+	sys->is_modified = 1;
 }
 
 void
@@ -511,7 +511,7 @@ sys_set_atom_name(struct sys *sys, int idx, const char *name)
 
 	atoms_set_name(atoms, idx, name);
 
-	sys->is_modified = TRUE;
+	sys->is_modified = 1;
 }
 
 vec_t
@@ -529,7 +529,7 @@ sys_set_atom_xyz(struct sys *sys, int idx, vec_t xyz)
 
 	atoms_set_xyz(atoms, idx, xyz);
 
-	sys->is_modified = TRUE;
+	sys->is_modified = 1;
 }
 
 void
@@ -743,7 +743,7 @@ sys_save_to_file(struct sys *sys, const char *path)
 
 	if ((fp = fopen(path, "w")) == NULL) {
 		error_set("unable to write to file %s", path);
-		return (FALSE);
+		return (0);
 	}
 
 	frame = sys_get_frame(sys);
@@ -768,7 +768,7 @@ sys_save_to_file(struct sys *sys, const char *path)
 
 	sys_set_frame(sys, frame);
 	fclose(fp);
-	sys->is_modified = FALSE;
+	sys->is_modified = 0;
 
-	return (TRUE);
+	return (1);
 }
