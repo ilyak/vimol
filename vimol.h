@@ -54,6 +54,6 @@
 #include "view.h"
 #include "wins.h"
 #include "yank.h"
-#include "xstr.h"
+#include "xmalloc.h"
 
 #endif /* VIMOL_VIMOL_H */

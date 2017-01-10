@@ -18,7 +18,7 @@
 #include <string.h>
 
 #include "log.h"
-#include "xstr.h"
+#include "xmalloc.h"
 
 char *
 xstrcpy(char *s, const char *p)
