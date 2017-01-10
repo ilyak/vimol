@@ -21,7 +21,7 @@ static FILE *log_file = NULL;
 static void
 log_vwrite(const char *fmt, va_list ap)
 {
-	assert(log_file != NULL);
+	log_assert(log_file != NULL);
 
 	vfprintf(log_file, fmt, ap);
 }
@@ -39,7 +39,7 @@ log_write(const char *fmt, ...)
 void
 log_open(const char *path)
 {
-	assert(log_file == NULL);
+	log_assert(log_file == NULL);
 
 	log_file = fopen(path, "a");
 }
@@ -68,6 +68,13 @@ log_warn(const char *fmt, ...)
 	va_end(ap);
 
 	log_write("\n");
+}
+
+void
+log_assert(int cond)
+{
+	if (!cond)
+		log_fatal("assertion failure");
 }
 
 void

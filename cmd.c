@@ -150,7 +150,7 @@ cmdq_count(struct cmdq *cmdq)
 struct cmd *
 cmdq_cmd(struct cmdq *cmdq, int idx)
 {
-	assert(idx >= 0 && idx < cmdq_count(cmdq));
+	log_assert(idx >= 0 && idx < cmdq_count(cmdq));
 
 	return (&cmdq->data[idx]);
 }

@@ -14,10 +14,10 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "log.h"
 #include "pair.h"
 #include "xmalloc.h"
 
@@ -73,7 +73,7 @@ pairs_get_count(struct pairs *pairs)
 struct pair
 pairs_get(struct pairs *pairs, int idx)
 {
-	assert(idx >= 0 && idx < pairs_get_count(pairs));
+	log_assert(idx >= 0 && idx < pairs_get_count(pairs));
 
 	return (pairs->data[idx]);
 }

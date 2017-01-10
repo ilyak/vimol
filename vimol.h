@@ -1,7 +1,6 @@
 #ifndef VIMOL_VIMOL_H
 #define VIMOL_VIMOL_H
 
-#include <assert.h>
 #include <ctype.h>
 #include <math.h>
 #include <stdarg.h>

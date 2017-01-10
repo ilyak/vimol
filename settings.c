@@ -321,7 +321,7 @@ settings_printf(char *buf, size_t size, const char *name)
 	int ret = 0;
 
 	node = find_node(name);
-	assert(node);
+	log_assert(node != NULL);
 
 	switch (node->type) {
 	case NODE_TYPE_INT:
@@ -408,8 +408,8 @@ settings_get_int(const char *name)
 
 	node = find_node(name);
 
-	assert(node != NULL);
-	assert(node->type == NODE_TYPE_INT);
+	log_assert(node != NULL);
+	log_assert(node->type == NODE_TYPE_INT);
 
 	return (node->data.xint);
 }
@@ -421,8 +421,8 @@ settings_get_double(const char *name)
 
 	node = find_node(name);
 
-	assert(node != NULL);
-	assert(node->type == NODE_TYPE_DOUBLE);
+	log_assert(node != NULL);
+	log_assert(node->type == NODE_TYPE_DOUBLE);
 
 	return (node->data.xdouble);
 }
@@ -434,8 +434,8 @@ settings_get_bool(const char *name)
 
 	node = find_node(name);
 
-	assert(node != NULL);
-	assert(node->type == NODE_TYPE_BOOL);
+	log_assert(node != NULL);
+	log_assert(node->type == NODE_TYPE_BOOL);
 
 	return (node->data.xbool);
 }
@@ -447,8 +447,8 @@ settings_get_string(const char *name)
 
 	node = find_node(name);
 
-	assert(node != NULL);
-	assert(node->type == NODE_TYPE_STRING);
+	log_assert(node != NULL);
+	log_assert(node->type == NODE_TYPE_STRING);
 
 	return (node->data.xstring);
 }
@@ -460,8 +460,8 @@ settings_get_color(const char *name)
 
 	node = find_node(name);
 
-	assert(node != NULL);
-	assert(node->type == NODE_TYPE_COLOR);
+	log_assert(node != NULL);
+	log_assert(node->type == NODE_TYPE_COLOR);
 
 	return (node->data.xcolor);
 }
@@ -487,8 +487,8 @@ settings_set_int(const char *name, int val)
 
 	node = find_node(name);
 
-	assert(node != NULL);
-	assert(node->type == NODE_TYPE_INT);
+	log_assert(node != NULL);
+	log_assert(node->type == NODE_TYPE_INT);
 
 	data.xint = val;
 
@@ -503,8 +503,8 @@ settings_set_double(const char *name, double val)
 
 	node = find_node(name);
 
-	assert(node != NULL);
-	assert(node->type == NODE_TYPE_DOUBLE);
+	log_assert(node != NULL);
+	log_assert(node->type == NODE_TYPE_DOUBLE);
 
 	data.xdouble = val;
 
@@ -519,8 +519,8 @@ settings_set_bool(const char *name, int val)
 
 	node = find_node(name);
 
-	assert(node != NULL);
-	assert(node->type == NODE_TYPE_BOOL);
+	log_assert(node != NULL);
+	log_assert(node->type == NODE_TYPE_BOOL);
 
 	data.xbool = val;
 
@@ -535,8 +535,8 @@ settings_set_string(const char *name, const char *val)
 
 	node = find_node(name);
 
-	assert(node != NULL);
-	assert(node->type == NODE_TYPE_STRING);
+	log_assert(node != NULL);
+	log_assert(node->type == NODE_TYPE_STRING);
 
 	data.xstring = xstrdup(val);
 
@@ -551,8 +551,8 @@ settings_set_color(const char *name, color_t val)
 
 	node = find_node(name);
 
-	assert(node != NULL);
-	assert(node->type == NODE_TYPE_COLOR);
+	log_assert(node != NULL);
+	log_assert(node->type == NODE_TYPE_COLOR);
 
 	data.xcolor = val;
 

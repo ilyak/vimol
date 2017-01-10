@@ -164,7 +164,7 @@ spi_get_point_count(struct spi *spi)
 vec_t
 spi_get_point(struct spi *spi, int idx)
 {
-	assert(idx >= 0 && idx < spi_get_point_count(spi));
+	log_assert(idx >= 0 && idx < spi_get_point_count(spi));
 
 	return (spi->points[idx]);
 }

@@ -132,9 +132,9 @@ graph_vertex_swap(struct graph *graph, int i, int j)
 {
 	struct edge *edge;
 
-	assert(i >= 0 && i < graph_get_vertex_count(graph));
-	assert(j >= 0 && j < graph_get_vertex_count(graph));
-	assert(i != j);
+	log_assert(i >= 0 && i < graph_get_vertex_count(graph));
+	log_assert(j >= 0 && j < graph_get_vertex_count(graph));
+	log_assert(i != j);
 
 	for (edge = graph->edges[i]; edge; edge = edge->next) {
 		edge->i = j;
@@ -163,7 +163,7 @@ graph_get_edge_count(struct graph *graph, int idx)
 	struct edge *edge;
 	int count;
 
-	assert(idx >= 0 && idx < graph_get_vertex_count(graph));
+	log_assert(idx >= 0 && idx < graph_get_vertex_count(graph));
 
 	count = 0;
 
@@ -176,7 +176,7 @@ graph_get_edge_count(struct graph *graph, int idx)
 void
 graph_remove_vertex_edges(struct graph *graph, int idx)
 {
-	assert(idx >= 0 && idx < graph_get_vertex_count(graph));
+	log_assert(idx >= 0 && idx < graph_get_vertex_count(graph));
 
 	while (graph->edges[idx]) {
 		remove_edge(graph, graph->edges[idx]->rev);
@@ -189,9 +189,9 @@ graph_edge_create(struct graph *graph, int i, int j, int type)
 {
 	struct edge *edge_i, *edge_j;
 
-	assert(i >= 0 && i < graph_get_vertex_count(graph));
-	assert(j >= 0 && j < graph_get_vertex_count(graph));
-	assert(i != j);
+	log_assert(i >= 0 && i < graph_get_vertex_count(graph));
+	log_assert(j >= 0 && j < graph_get_vertex_count(graph));
+	log_assert(i != j);
 
 	if ((edge_i = graph_edge_find(graph, i, j))) {
 		graph_edge_set_type(edge_i, type);
@@ -227,9 +227,9 @@ graph_edge_remove(struct graph *graph, int i, int j)
 {
 	struct edge *edge;
 
-	assert(i >= 0 && i < graph_get_vertex_count(graph));
-	assert(j >= 0 && j < graph_get_vertex_count(graph));
-	assert(i != j);
+	log_assert(i >= 0 && i < graph_get_vertex_count(graph));
+	log_assert(j >= 0 && j < graph_get_vertex_count(graph));
+	log_assert(i != j);
 
 	edge = graph_edge_find(graph, i, j);
 
@@ -242,7 +242,7 @@ graph_edge_remove(struct graph *graph, int i, int j)
 struct edge *
 graph_edges(struct graph *graph, int idx)
 {
-	assert(idx >= 0 && idx < graph_get_vertex_count(graph));
+	log_assert(idx >= 0 && idx < graph_get_vertex_count(graph));
 
 	return (graph->edges[idx]);
 }
@@ -252,9 +252,9 @@ graph_edge_find(struct graph *graph, int i, int j)
 {
 	struct edge *edge;
 
-	assert(i >= 0 && i < graph_get_vertex_count(graph));
-	assert(j >= 0 && j < graph_get_vertex_count(graph));
-	assert(i != j);
+	log_assert(i >= 0 && i < graph_get_vertex_count(graph));
+	log_assert(j >= 0 && j < graph_get_vertex_count(graph));
+	log_assert(i != j);
 
 	for (edge = graph->edges[i]; edge; edge = edge->next)
 		if (edge->j == j)

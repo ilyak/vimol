@@ -304,7 +304,7 @@ read_file(struct sys *sys, const char *path, int is_new)
 	struct sel *sel;
 	int i, n;
 
-	assert(path);
+	log_assert(path != NULL);
 
 	n = sys_get_atom_count(sys);
 
@@ -452,7 +452,7 @@ sys_add_atom(struct sys *sys, const char *name, vec_t xyz)
 {
 	struct atoms *atoms = sys_get_atoms(sys, sys->current_frame);
 
-	assert(sys_single_frame(sys));
+	log_assert(sys_single_frame(sys));
 
 	atoms_add(atoms, name, xyz);
 	graph_vertex_add(sys->graph);
@@ -468,7 +468,7 @@ sys_remove_atom(struct sys *sys, int idx)
 {
 	struct atoms *atoms = sys_get_atoms(sys, sys->current_frame);
 
-	assert(sys_single_frame(sys));
+	log_assert(sys_single_frame(sys));
 
 	atoms_remove(atoms, idx);
 	graph_vertex_remove(sys->graph, idx);
