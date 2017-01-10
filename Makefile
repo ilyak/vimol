@@ -1,14 +1,9 @@
-CC= %CC%
-PREFIX= %PREFIX%
-CFLAGS= %CFLAGS%
-LDFLAGS= %LDFLAGS%
-LIBS= %LIBS%
-VER= %VER%
-
+CC= cc
+PREFIX= /usr/local
+CFLAGS= -I/usr/include -I/usr/local/include -I/usr/include/cairo -I/usr/local/include/cairo -I/usr/include/SDL2 -I/usr/local/include/SDL2
+LDFLAGS= -L/usr/lib -L/usr/local/lib -L/usr/X11R6/lib
+LIBS= -lcairo -lSDL2
 PROG= vimol
-RM= rm -f
-INSTALL_EXEC= install -m 0755
-INSTALL_DATA= install -m 0644
 
 ALL_C= alias.c atoms.c camera.c cmd.c color.c edit.c error.c exec.c graph.c \
        history.c log.c main.c pair.c rec.c sel.c settings.c spi.c state.c \
@@ -21,18 +16,12 @@ $(PROG): $(ALL_O)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(PROG) $(ALL_O) $(LIBS)
 
 install:
-	$(INSTALL_EXEC) $(PROG) $(PREFIX)/bin
+	install -m 0755 $(PROG) $(PREFIX)/bin
 
 uninstall:
-	$(RM) $(PREFIX)/bin/$(PROG)
-
-dist:
-	git archive --format=tar.gz --prefix=$(PROG)-$(VER)/ -o $(PROG)-$(VER).tar.gz HEAD
+	rm -f $(PREFIX)/bin/$(PROG)
 
 clean:
-	$(RM) $(PROG) $(PROG).core $(PROG).gmon $(ALL_O)
+	rm -f $(PROG) $(PROG).core $(PROG).gmon $(ALL_O)
 
-distclean: clean
-	$(RM) Makefile
-
-.PHONY: install uninstall dist clean distclean
+.PHONY: install uninstall clean
