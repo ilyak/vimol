@@ -142,7 +142,8 @@ parse_register(tok_t tok)
 }
 
 static int
-fn_about(const char *self __unused, struct tokq *args __unused, struct state *state __unused)
+fn_about(const char *self __unused, struct tokq *args __unused,
+    struct state *state __unused)
 {
 	error_set("vimol (c) 2013-2017 Ilya Kaliman");
 
@@ -186,7 +187,8 @@ fn_alias(const char *self, struct tokq *args, struct state *state)
 	const char *name;
 	char *value;
 
-	alias = strcmp(self, "alias") == 0 ? state_get_alias(state) : state_get_bind(state);
+	alias = strcmp(self, "alias") == 0 ? state_get_alias(state) :
+	    state_get_bind(state);
 
 	if (tokq_count(args) < 2) {
 		error_set("specify name and value");
@@ -208,7 +210,8 @@ fn_alias_get(const char *self, struct tokq *args, struct state *state)
 	struct alias *alias;
 	const char *name, *value;
 
-	alias = strcmp(self, "alias?") == 0 ? state_get_alias(state) : state_get_bind(state);
+	alias = strcmp(self, "alias?") == 0 ? state_get_alias(state) :
+	    state_get_bind(state);
 
 	if (tokq_count(args) < 1) {
 		error_set("specify a name");
@@ -372,7 +375,8 @@ fn_bond(const char *self, struct tokq *args, struct state *state)
 }
 
 static int
-fn_view_center(const char *self __unused, struct tokq *args, struct state *state)
+fn_view_center(const char *self __unused, struct tokq *args,
+    struct state *state)
 {
 	struct view *view;
 	struct sel *sel;
@@ -516,7 +520,8 @@ fn_copy(const char *self __unused, struct tokq *args, struct state *state)
 	yank_set_register(yank, reg);
 	yank_copy(yank, sys, sel);
 
-	error_set("copied %d atoms to register '%c'", sel_get_count(sel), 'a' + reg);
+	error_set("copied %d atoms to register '%c'", sel_get_count(sel),
+	    'a' + reg);
 
 	sel_free(sel);
 	return (1);
@@ -714,7 +719,8 @@ fn_frame(const char *self, struct tokq *args, struct state *state)
 }
 
 static int
-fn_fs(const char *self __unused, struct tokq *args __unused, struct state *state)
+fn_fs(const char *self __unused, struct tokq *args __unused,
+    struct state *state)
 {
 	state_toggle_fullscreen(state);
 
@@ -722,7 +728,8 @@ fn_fs(const char *self __unused, struct tokq *args __unused, struct state *state
 }
 
 static int
-fn_get(const char *self __unused, struct tokq *args, struct state *state __unused)
+fn_get(const char *self __unused, struct tokq *args,
+    struct state *state __unused)
 {
 	char buffer[1024];
 	const char *name;
@@ -919,7 +926,8 @@ fn_new(const char *self __unused, struct tokq *args, struct state *state)
 }
 
 static int
-fn_first(const char *self __unused, struct tokq *args __unused, struct state *state)
+fn_first(const char *self __unused, struct tokq *args __unused,
+    struct state *state)
 {
 	struct wins *wins;
 
@@ -930,7 +938,8 @@ fn_first(const char *self __unused, struct tokq *args __unused, struct state *st
 }
 
 static int
-fn_last(const char *self __unused, struct tokq *args __unused, struct state *state)
+fn_last(const char *self __unused, struct tokq *args __unused,
+    struct state *state)
 {
 	struct wins *wins;
 
@@ -941,7 +950,8 @@ fn_last(const char *self __unused, struct tokq *args __unused, struct state *sta
 }
 
 static int
-fn_prev(const char *self __unused, struct tokq *args __unused, struct state *state)
+fn_prev(const char *self __unused, struct tokq *args __unused,
+    struct state *state)
 {
 	struct wins *wins;
 
@@ -956,7 +966,8 @@ fn_prev(const char *self __unused, struct tokq *args __unused, struct state *sta
 }
 
 static int
-fn_next(const char *self __unused, struct tokq *args __unused, struct state *state)
+fn_next(const char *self __unused, struct tokq *args __unused,
+    struct state *state)
 {
 	struct wins *wins;
 
@@ -971,7 +982,8 @@ fn_next(const char *self __unused, struct tokq *args __unused, struct state *sta
 }
 
 static int
-fn_nop(const char *self __unused, struct tokq *args __unused, struct state *state __unused)
+fn_nop(const char *self __unused, struct tokq *args __unused,
+    struct state *state __unused)
 {
 	/* no op */
 
@@ -1049,7 +1061,8 @@ fn_paste(const char *self __unused, struct tokq *args, struct state *state)
 }
 
 static int
-fn_path_get(const char *self __unused, struct tokq *args __unused, struct state *state)
+fn_path_get(const char *self __unused, struct tokq *args __unused,
+    struct state *state)
 {
 	struct view *view;
 	const char *path;
@@ -1226,7 +1239,8 @@ fn_rec(const char *self __unused, struct tokq *args, struct state *state)
 }
 
 static int
-fn_redo(const char *self __unused, struct tokq *args __unused, struct state *state)
+fn_redo(const char *self __unused, struct tokq *args __unused,
+    struct state *state)
 {
 	struct view *view;
 
@@ -1329,7 +1343,8 @@ fn_autobond(const char *self __unused, struct tokq *args, struct state *state)
 }
 
 static int
-fn_view_reset(const char *self __unused, struct tokq *args __unused, struct state *state)
+fn_view_reset(const char *self __unused, struct tokq *args __unused,
+    struct state *state)
 {
 	view_reset(state_get_view(state));
 
@@ -1451,7 +1466,8 @@ fn_rotate(const char *self __unused, struct tokq *args, struct state *state)
 }
 
 static int
-fn_view_rotate(const char *self __unused, struct tokq *args, struct state *state)
+fn_view_rotate(const char *self __unused, struct tokq *args,
+    struct state *state)
 {
 	struct view *view;
 	struct camera *camera;
@@ -1471,7 +1487,8 @@ fn_view_rotate(const char *self __unused, struct tokq *args, struct state *state
 }
 
 static int
-fn_run(const char *self __unused, struct tokq *args, struct state *state __unused)
+fn_run(const char *self __unused, struct tokq *args,
+    struct state *state __unused)
 {
 	int ret = system(tokq_strcat(args, 0, tokq_count(args)));
 
@@ -1502,11 +1519,13 @@ fn_save(const char *self, struct tokq *args, struct state *state)
 	} else
 		path = tok_string(tokq_tok(args, 0));
 
-	if (tokq_count(args) == 0 && !force)
+	if (tokq_count(args) == 0 && !force) {
 		if (!util_has_suffix(path, ".xyz")) {
-			error_set("file will be written in xyz format; add ! to override");
+			error_set(
+		"file will be written in xyz format; add ! to override");
 			return (0);
 		}
+	}
 
 	if (!sys_save_to_file(sys, path))
 		return (0);
@@ -1530,8 +1549,10 @@ fn_png(const char *self __unused, struct tokq *args, struct state *state)
 			if (!util_file_exists(path))
 				break;
 		}
-	} else
-		snprintf(path, sizeof(path), "%s", tok_string(tokq_tok(args, 0)));
+	} else {
+		snprintf(path, sizeof(path), "%s",
+		    tok_string(tokq_tok(args, 0)));
+	}
 
 	state_save_png(state, path);
 	error_set("saved to \"%s\"", path);
@@ -1562,7 +1583,8 @@ fn_select(const char *self __unused, struct tokq *args, struct state *state)
 }
 
 static int
-fn_select_bonded(const char *self __unused, struct tokq *args, struct state *state)
+fn_select_bonded(const char *self __unused, struct tokq *args,
+    struct state *state)
 {
 	struct view *view;
 	struct graph *graph;
@@ -1579,7 +1601,8 @@ fn_select_bonded(const char *self __unused, struct tokq *args, struct state *sta
 	sel_iter_start(sel);
 
 	while (sel_iter_next(sel, &i)) {
-		for (edge = graph_edges(graph, i); edge; edge = graph_edge_next(edge))
+		for (edge = graph_edges(graph, i); edge;
+		    edge = graph_edge_next(edge))
 			if (sel_selected(visible, graph_edge_j(edge)))
 				sel_add(view_get_sel(view), graph_edge_j(edge));
 	}
@@ -1629,7 +1652,8 @@ fn_select_box(const char *self __unused, struct tokq *args, struct state *state)
 }
 
 static int
-fn_select_molecule(const char *self __unused, struct tokq *args, struct state *state)
+fn_select_molecule(const char *self __unused, struct tokq *args,
+    struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -1664,7 +1688,8 @@ fn_select_molecule(const char *self __unused, struct tokq *args, struct state *s
 }
 
 static int
-fn_select_name(const char *self __unused, struct tokq *args, struct state *state)
+fn_select_name(const char *self __unused, struct tokq *args,
+    struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -1689,7 +1714,8 @@ fn_select_name(const char *self __unused, struct tokq *args, struct state *state
 }
 
 static int
-fn_select_next(const char *self __unused, struct tokq *args, struct state *state)
+fn_select_next(const char *self __unused, struct tokq *args,
+    struct state *state)
 {
 	struct view *view;
 	struct sel *visible;
@@ -1721,7 +1747,8 @@ fn_select_next(const char *self __unused, struct tokq *args, struct state *state
 }
 
 static int
-fn_select_water(const char *self __unused, struct tokq *args __unused, struct state *state)
+fn_select_water(const char *self __unused, struct tokq *args __unused,
+    struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -1761,7 +1788,8 @@ fn_select_water(const char *self __unused, struct tokq *args __unused, struct st
 }
 
 static int
-fn_select_within(const char *self __unused, struct tokq *args, struct state *state)
+fn_select_within(const char *self __unused, struct tokq *args,
+    struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -1816,7 +1844,8 @@ fn_select_within(const char *self __unused, struct tokq *args, struct state *sta
 }
 
 static int
-fn_set(const char *self __unused, struct tokq *args, struct state *state __unused)
+fn_set(const char *self __unused, struct tokq *args,
+    struct state *state __unused)
 {
 	const char *name, *value;
 
@@ -1904,7 +1933,8 @@ fn_source(const char *self __unused, struct tokq *args, struct state *state)
 }
 
 static int
-fn_edit(const char *self __unused, struct tokq *args __unused, struct state *state)
+fn_edit(const char *self __unused, struct tokq *args __unused,
+    struct state *state)
 {
 	if (rec_is_playing(state_get_rec(state)))
 		return (1);
@@ -1946,7 +1976,8 @@ fn_swap(const char *self __unused, struct tokq *args, struct state *state)
 }
 
 static int
-fn_toggle(const char *self __unused, struct tokq *args, struct state *state __unused)
+fn_toggle(const char *self __unused, struct tokq *args,
+    struct state *state __unused)
 {
 	const char *name;
 	int value;
@@ -2006,7 +2037,8 @@ fn_tors_get(const char *self __unused, struct tokq *args, struct state *state)
 }
 
 static int
-fn_undo(const char *self __unused, struct tokq *args __unused, struct state *state)
+fn_undo(const char *self __unused, struct tokq *args __unused,
+    struct state *state)
 {
 	struct view *view;
 
@@ -2040,7 +2072,8 @@ fn_unselect(const char *self __unused, struct tokq *args, struct state *state)
 }
 
 static int
-fn_unselect_next(const char *self __unused, struct tokq *args, struct state *state)
+fn_unselect_next(const char *self __unused, struct tokq *args,
+    struct state *state)
 {
 	struct view *view;
 	struct sel *visible;
@@ -2276,7 +2309,8 @@ exec_find(const char *name)
 
 	node.name = name;
 
-	return (bsearch(&node, exec->data, exec->nelts, sizeof(struct node), compare));
+	return (bsearch(&node, exec->data, exec->nelts,
+	    sizeof(struct node), compare));
 }
 
 static void
@@ -2284,7 +2318,8 @@ exec_add(const char *name, exec_fn_t fn)
 {
 	if (exec->nelts == exec->nalloc) {
 		exec->nalloc *= 2;
-		exec->data = realloc(exec->data, exec->nalloc * sizeof(struct node));
+		exec->data = realloc(exec->data,
+		    exec->nalloc * sizeof(struct node));
 	}
 	exec->data[exec->nelts].name = name;
 	exec->data[exec->nelts].fn = fn;

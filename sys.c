@@ -155,8 +155,8 @@ parse_atom_pdb(const char *buffer, struct atom *atom)
 	if (atom->name[0] == '\0')
 		atom->name[0] = 'X';
 
-	sscanf(&buffer[30], "%lf%lf%lf", &atom->xyz.x, &atom->xyz.y, &atom->xyz.z);
-
+	sscanf(&buffer[30], "%lf%lf%lf", &atom->xyz.x, &atom->xyz.y,
+	    &atom->xyz.z);
 	return (1);
 }
 
@@ -197,8 +197,8 @@ parse_atom_xyz(const char *buffer, struct atom *atom)
 {
 	memset(atom, 0, sizeof(struct atom));
 
-	sscanf(buffer, "%32s%lf%lf%lf", atom->name, &atom->xyz.x, &atom->xyz.y, &atom->xyz.z);
-
+	sscanf(buffer, "%32s%lf%lf%lf", atom->name, &atom->xyz.x,
+	    &atom->xyz.y, &atom->xyz.z);
 	return (1);
 }
 
@@ -250,7 +250,8 @@ load_from_xyz(struct sys *sys, const char *path, int is_new)
 		if (util_is_empty(buffer))
 			continue;
 
-		if (sscanf(buffer, "%d", &n) != 1 || n != sys_get_atom_count(sys)) {
+		if (sscanf(buffer, "%d", &n) != 1 ||
+		    n != sys_get_atom_count(sys)) {
 			error_set("unexpected number of atoms");
 			goto error;
 		}
