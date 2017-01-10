@@ -32,7 +32,7 @@ yank_create(void)
 	struct yank *yank;
 	int i;
 
-	yank = calloc(1, sizeof(*yank));
+	yank = xcalloc(1, sizeof(*yank));
 
 	for (i = 0; i < YANK_SIZE; i++) {
 		yank->tuple[i].atoms = atoms_create();
@@ -82,7 +82,7 @@ yank_copy(struct yank *yank, struct sys *sys, struct sel *sel)
 	atoms = yank->tuple[yank->reg].atoms;
 	graph = yank->tuple[yank->reg].graph;
 
-	map = calloc(sys_get_atom_count(sys), sizeof(int));
+	map = xcalloc(sys_get_atom_count(sys), sizeof(int));
 
 	atoms_clear(atoms);
 	graph_clear(graph);

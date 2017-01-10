@@ -28,7 +28,7 @@ status_create(void)
 {
 	struct status *status;
 
-	status = calloc(1, sizeof(*status));
+	status = xcalloc(1, sizeof(*status));
 
 	return (status);
 }

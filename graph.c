@@ -45,9 +45,9 @@ graph_create(void)
 {
 	struct graph *graph;
 
-	graph = calloc(1, sizeof(*graph));
+	graph = xcalloc(1, sizeof(*graph));
 	graph->nalloc = 8;
-	graph->edges = calloc(graph->nalloc, sizeof(struct edge *));
+	graph->edges = xcalloc(graph->nalloc, sizeof(struct edge *));
 
 	return (graph);
 }
@@ -198,8 +198,8 @@ graph_edge_create(struct graph *graph, int i, int j, int type)
 		return;
 	}
 
-	edge_i = calloc(1, sizeof(struct edge));
-	edge_j = calloc(1, sizeof(struct edge));
+	edge_i = xcalloc(1, sizeof(struct edge));
+	edge_j = xcalloc(1, sizeof(struct edge));
 
 	edge_i->i = i;
 	edge_i->j = j;

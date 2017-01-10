@@ -29,7 +29,7 @@ rec_create(void)
 	struct rec *rec;
 	int i;
 
-	rec = calloc(1, sizeof(*rec));
+	rec = xcalloc(1, sizeof(*rec));
 
 	for (i = 0; i < REC_SIZE; i++)
 		rec->data[i] = xstrdup("");

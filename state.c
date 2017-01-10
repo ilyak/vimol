@@ -436,7 +436,7 @@ state_create(void)
 	struct state *state;
 	const char *path;
 
-	if ((state = calloc(1, sizeof(*state))) == NULL)
+	if ((state = xcalloc(1, sizeof(*state))) == NULL)
 		return (NULL);
 
 	state->alias = alias_create();

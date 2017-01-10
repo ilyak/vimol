@@ -288,9 +288,9 @@ settings_init(void)
 {
 	unsigned i;
 
-	settings = calloc(1, sizeof(struct settings));
+	settings = xcalloc(1, sizeof(struct settings));
 	settings->nalloc = 8;
-	settings->data = calloc(settings->nalloc, sizeof(struct node));
+	settings->data = xcalloc(settings->nalloc, sizeof(struct node));
 
 	add_data_path();
 

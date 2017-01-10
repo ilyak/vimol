@@ -127,9 +127,9 @@ spi_create(void)
 {
 	struct spi *spi;
 
-	spi = calloc(1, sizeof(*spi));
+	spi = xcalloc(1, sizeof(*spi));
 	spi->npointsalloc = 8;
-	spi->points = calloc(spi->npointsalloc, sizeof(vec_t));
+	spi->points = xcalloc(spi->npointsalloc, sizeof(vec_t));
 	spi->pairs = pairs_create();
 
 	return (spi);
@@ -191,11 +191,11 @@ spi_compute(struct spi *spi, double dist)
 	nz = get_cell_count(pmax.z - pmin.z, dist);
 
 	ncells = nx * ny * nz;
-	cells = calloc(ncells, sizeof(struct cell));
+	cells = xcalloc(ncells, sizeof(struct cell));
 
 	for (i = 0; i < ncells; i++) {
 		cells[i].nalloc = 8;
-		cells[i].data = calloc(cells[i].nalloc, sizeof(int));
+		cells[i].data = xcalloc(cells[i].nalloc, sizeof(int));
 	}
 
 	for (i = 0; i < spi_get_point_count(spi); i++) {

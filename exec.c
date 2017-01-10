@@ -2331,9 +2331,9 @@ exec_init(void)
 {
 	unsigned i, j;
 
-	exec = calloc(1, sizeof(struct exec));
+	exec = xcalloc(1, sizeof(struct exec));
 	exec->nalloc = 8;
-	exec->data = calloc(exec->nalloc, sizeof(struct node));
+	exec->data = xcalloc(exec->nalloc, sizeof(struct node));
 
 	for (i = 0; i < sizeof(exec_list) / sizeof(*exec_list); i++)
 		for (j = 0; exec_list[i].name[j]; j++)

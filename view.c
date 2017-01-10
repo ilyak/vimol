@@ -301,7 +301,7 @@ view_create(const char *path)
 	if ((sys = sys_create(path)) == NULL)
 		return (NULL);
 
-	view = calloc(1, sizeof(*view));
+	view = xcalloc(1, sizeof(*view));
 	view->camera = camera_create();
 	view->undo = undo_create(sys, (void *(*)(void *))sys_copy,
 	    (void (*)(void *))sys_free);

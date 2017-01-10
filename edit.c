@@ -26,7 +26,7 @@ edit_create(void)
 {
 	struct edit *edit;
 
-	edit = calloc(1, sizeof(*edit));
+	edit = xcalloc(1, sizeof(*edit));
 
 	return (edit);
 }

@@ -46,10 +46,10 @@ undo_create(void *data, void *(*copy)(void *), void (*free)(void *))
 {
 	struct undo *undo;
 
-	undo = calloc(1, sizeof(*undo));
+	undo = xcalloc(1, sizeof(*undo));
 	undo->copy = copy;
 	undo->free = free;
-	undo->iter = calloc(1, sizeof(struct node));
+	undo->iter = xcalloc(1, sizeof(struct node));
 	undo->iter->data = data;
 
 	return (undo);
@@ -78,7 +78,7 @@ undo_snapshot(struct undo *undo)
 
 	free_all(undo, undo->iter->next);
 
-	node = calloc(1, sizeof(*node));
+	node = xcalloc(1, sizeof(*node));
 	node->data = (undo->copy)(undo->iter->data);
 
 	undo->iter->next = node;

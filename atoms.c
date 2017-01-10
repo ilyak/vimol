@@ -31,9 +31,9 @@ atoms_create(void)
 {
 	struct atoms *atoms;
 
-	atoms = calloc(1, sizeof(struct atoms));
+	atoms = xcalloc(1, sizeof(struct atoms));
 	atoms->nalloc = 8;
-	atoms->data = calloc(atoms->nalloc, sizeof(struct atom));
+	atoms->data = xcalloc(atoms->nalloc, sizeof(struct atom));
 
 	return (atoms);
 }

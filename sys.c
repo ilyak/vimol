@@ -326,12 +326,12 @@ sys_create_empty(void)
 {
 	struct sys *sys;
 
-	sys = calloc(1, sizeof(*sys));
+	sys = xcalloc(1, sizeof(*sys));
 	sys->graph = graph_create();
 	sys->sel = sel_create(0);
 	sys->visible = sel_create(0);
 	sys->nframesalloc = 8;
-	sys->frames = calloc(sys->nframesalloc, sizeof(struct frame));
+	sys->frames = xcalloc(sys->nframesalloc, sizeof(struct frame));
 
 	return (sys);
 }
@@ -361,12 +361,12 @@ sys_copy(struct sys *sys)
 	struct sys *copy;
 	int i;
 
-	copy = malloc(sizeof(struct sys));
+	copy = xcalloc(1, sizeof(struct sys));
 	memcpy(copy, sys, sizeof(struct sys));
 	copy->graph = graph_copy(sys->graph);
 	copy->sel = sel_copy(sys->sel);
 	copy->visible = sel_copy(sys->visible);
-	copy->frames = malloc(copy->nframesalloc * sizeof(struct frame));
+	copy->frames = xcalloc(copy->nframesalloc, sizeof(struct frame));
 
 	for (i = 0; i < sys_get_frame_count(sys); i++)
 		copy->frames[i].atoms = atoms_copy(sys->frames[i].atoms);
@@ -703,7 +703,7 @@ sys_reset_bonds(struct sys *sys, struct sel *sel)
 
 	spi = spi_create();
 	n = sel_get_count(sel);
-	map = calloc(n, sizeof(int));
+	map = xcalloc(n, sizeof(int));
 
 	sel_iter_start(sel);
 

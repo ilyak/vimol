@@ -20,6 +20,16 @@
 #include "log.h"
 #include "xmalloc.h"
 
+void *
+xcalloc(size_t nmemb, size_t size)
+{
+	void *p;
+
+	if ((p = calloc(nmemb, size)) == NULL)
+		log_fatal("calloc");
+	return (p);
+}
+
 char *
 xstrcpy(char *s, const char *p)
 {

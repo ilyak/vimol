@@ -28,7 +28,7 @@ camera_create(void)
 {
 	struct camera *camera;
 
-	camera = calloc(1, sizeof(*camera));
+	camera = xcalloc(1, sizeof(*camera));
 	camera_reset(camera);
 
 	return (camera);

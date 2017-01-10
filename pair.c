@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include "pair.h"
+#include "xmalloc.h"
 
 struct pairs {
 	int nelts, nalloc;
@@ -30,9 +31,9 @@ pairs_create(void)
 {
 	struct pairs *pairs;
 
-	pairs = calloc(1, sizeof(*pairs));
+	pairs = xcalloc(1, sizeof(*pairs));
 	pairs->nalloc = 8;
-	pairs->data = calloc(pairs->nalloc, sizeof(struct pair));
+	pairs->data = xcalloc(pairs->nalloc, sizeof(struct pair));
 
 	return (pairs);
 }

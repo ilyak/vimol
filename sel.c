@@ -32,9 +32,9 @@ sel_create(int size)
 {
 	struct sel *sel;
 
-	sel = calloc(1, sizeof(*sel));
+	sel = xcalloc(1, sizeof(*sel));
 	sel->nalloc = 8;
-	sel->data = calloc(sel->nalloc, sizeof(struct node));
+	sel->data = xcalloc(sel->nalloc, sizeof(struct node));
 	sel->head = sel->tail = sel->iter = -1;
 
 	while (size > 0) {

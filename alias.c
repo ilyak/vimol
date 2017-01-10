@@ -51,9 +51,9 @@ alias_create(void)
 {
 	struct alias *alias;
 
-	alias = calloc(1, sizeof(*alias));
+	alias = xcalloc(1, sizeof(*alias));
 	alias->nalloc = 8;
-	alias->data = calloc(alias->nalloc, sizeof(struct node));
+	alias->data = xcalloc(alias->nalloc, sizeof(struct node));
 
 	return (alias);
 }

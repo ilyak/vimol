@@ -113,9 +113,9 @@ cmdq_from_string(const char *str, struct alias *alias)
 	if ((tokq = tokq_create(str)) == NULL)
 		return (NULL);
 
-	cmdq = calloc(1, sizeof(*cmdq));
+	cmdq = xcalloc(1, sizeof(*cmdq));
 	cmdq->nalloc = 8;
-	cmdq->data = calloc(cmdq->nalloc, sizeof(struct cmd));
+	cmdq->data = xcalloc(cmdq->nalloc, sizeof(struct cmd));
 
 	if (!parse_tokq(cmdq, tokq, alias, 1)) {
 		cmdq_free(cmdq);

@@ -162,9 +162,9 @@ tokq_create_empty(void)
 {
 	struct tokq *tokq;
 
-	tokq = calloc(1, sizeof(*tokq));
+	tokq = xcalloc(1, sizeof(*tokq));
 	tokq->nalloc = 8;
-	tokq->data = calloc(tokq->nalloc, sizeof(char *));
+	tokq->data = xcalloc(tokq->nalloc, sizeof(char *));
 
 	return (tokq);
 }
