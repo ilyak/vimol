@@ -61,8 +61,8 @@ util_has_suffix(const char *str, const char *suf)
 char *
 util_next_line(char *buffer, FILE *fp)
 {
-	int ch;
 	size_t len, size;
+	int ch;
 
 	if (feof(fp)) {
 		free(buffer);
@@ -72,12 +72,12 @@ util_next_line(char *buffer, FILE *fp)
 	len = 0;
 	size = 256;
 
-	buffer = (char *)realloc(buffer, size);
+	buffer = realloc(buffer, size);
 
 	while ((ch = fgetc(fp)) != EOF) {
 		if (len == size) {
 			size *= 2;
-			buffer = (char *)realloc(buffer, size);
+			buffer = realloc(buffer, size);
 		}
 
 		if (ch == '\n' || ch == '\r') {
@@ -89,7 +89,7 @@ util_next_line(char *buffer, FILE *fp)
 	}
 
 	if (len == size)
-		buffer = (char *)realloc(buffer, size + 1);
+		buffer = realloc(buffer, size + 1);
 
 	buffer[len] = '\0';
 
