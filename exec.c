@@ -2318,7 +2318,7 @@ exec_add(const char *name, exec_fn_t fn)
 {
 	if (exec->nelts == exec->nalloc) {
 		exec->nalloc *= 2;
-		exec->data = realloc(exec->data,
+		exec->data = xrealloc(exec->data,
 		    exec->nalloc * sizeof(struct node));
 	}
 	exec->data[exec->nelts].name = name;

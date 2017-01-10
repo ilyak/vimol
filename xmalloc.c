@@ -30,16 +30,26 @@ xcalloc(size_t nmemb, size_t size)
 	return (p);
 }
 
+void *
+xrealloc(void *ptr, size_t size)
+{
+	void *p;
+
+	if ((p = realloc(ptr, size)) == NULL)
+		log_fatal("realloc");
+	return (p);
+}
+
 char *
 xstrcpy(char *s, const char *p)
 {
-	return (strcpy(realloc(s, strlen(p) + 1), p));
+	return (strcpy(xrealloc(s, strlen(p) + 1), p));
 }
 
 char *
 xstrcat(char *s, const char *p)
 {
-	return (strcat(realloc(s, strlen(s) + strlen(p) + 1), p));
+	return (strcat(xrealloc(s, strlen(s) + strlen(p) + 1), p));
 }
 
 char *

@@ -99,7 +99,7 @@ graph_vertex_add(struct graph *graph)
 {
 	if (graph->nelts == graph->nalloc) {
 		graph->nalloc *= 2;
-		graph->edges = realloc(graph->edges,
+		graph->edges = xrealloc(graph->edges,
 		    graph->nalloc * sizeof(struct edge *));
 	}
 	graph->edges[graph->nelts] = NULL;

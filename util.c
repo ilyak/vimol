@@ -72,12 +72,12 @@ util_next_line(char *buffer, FILE *fp)
 	len = 0;
 	size = 256;
 
-	buffer = realloc(buffer, size);
+	buffer = xrealloc(buffer, size);
 
 	while ((ch = fgetc(fp)) != EOF) {
 		if (len == size) {
 			size *= 2;
-			buffer = realloc(buffer, size);
+			buffer = xrealloc(buffer, size);
 		}
 
 		if (ch == '\n' || ch == '\r') {
@@ -89,7 +89,7 @@ util_next_line(char *buffer, FILE *fp)
 	}
 
 	if (len == size)
-		buffer = realloc(buffer, size + 1);
+		buffer = xrealloc(buffer, size + 1);
 
 	buffer[len] = '\0';
 

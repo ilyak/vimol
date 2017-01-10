@@ -49,7 +49,7 @@ cmdq_push_back(struct cmdq *cmdq, struct cmd cmd)
 {
 	if (cmdq->nelts == cmdq->nalloc) {
 		cmdq->nalloc *= 2;
-		cmdq->data = realloc(cmdq->data,
+		cmdq->data = xrealloc(cmdq->data,
 		    cmdq->nalloc * sizeof(struct cmd));
 	}
 	cmdq->data[cmdq->nelts++] = cmd;

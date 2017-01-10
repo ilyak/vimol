@@ -84,7 +84,7 @@ sel_expand(struct sel *sel)
 {
 	if (sel->nelts == sel->nalloc) {
 		sel->nalloc *= 2;
-		sel->data = realloc(sel->data,
+		sel->data = xrealloc(sel->data,
 		    sel->nalloc * sizeof(struct node));
 	}
 	sel->data[sel->nelts].prev = -1;

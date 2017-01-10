@@ -66,7 +66,8 @@ sys_add_frame(struct sys *sys, struct atoms *atoms)
 {
 	if (sys->nframes == sys->nframesalloc) {
 		sys->nframesalloc *= 2;
-		sys->frames = realloc(sys->frames, sys->nframesalloc * sizeof(struct frame));
+		sys->frames = xrealloc(sys->frames,
+		    sys->nframesalloc * sizeof(struct frame));
 	}
 	sys->frames[sys->nframes].atoms = atoms;
 	sys->nframes++;

@@ -92,7 +92,7 @@ alias_set(struct alias *alias, const char *name, const char *value)
 	} else {
 		if (alias->nelts == alias->nalloc) {
 			alias->nalloc *= 2;
-			alias->data = realloc(alias->data,
+			alias->data = xrealloc(alias->data,
 			    alias->nalloc * sizeof(struct node));
 		}
 		memmove(alias->data + i + 1, alias->data + i,

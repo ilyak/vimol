@@ -56,7 +56,7 @@ pairs_add(struct pairs *pairs, int i, int j)
 {
 	if (pairs->nelts == pairs->nalloc) {
 		pairs->nalloc *= 2;
-		pairs->data = realloc(pairs->data,
+		pairs->data = xrealloc(pairs->data,
 		    pairs->nalloc * sizeof(struct pair));
 	}
 	pairs->data[pairs->nelts].i = i;

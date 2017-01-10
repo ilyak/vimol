@@ -71,7 +71,7 @@ atoms_add(struct atoms *atoms, const char *name, vec_t xyz)
 
 	if (atoms->nelts == atoms->nalloc) {
 		atoms->nalloc *= 2;
-		atoms->data = realloc(atoms->data,
+		atoms->data = xrealloc(atoms->data,
 		    atoms->nalloc * sizeof(struct atom));
 	}
 

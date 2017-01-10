@@ -2,6 +2,7 @@
 #define VIMOL_XMALLOC_H
 
 void *xcalloc(size_t, size_t);
+void *xrealloc(void *, size_t);
 char *xstrcpy(char *, const char *);
 char *xstrcat(char *, const char *);
 char *xstrdup(const char *);

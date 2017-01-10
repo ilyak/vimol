@@ -34,7 +34,7 @@ cell_add_idx(struct cell *cell, int idx)
 {
 	if (cell->nelts == cell->nalloc) {
 		cell->nalloc *= 2;
-		cell->data = realloc(cell->data, cell->nalloc * sizeof(int));
+		cell->data = xrealloc(cell->data, cell->nalloc * sizeof(int));
 	}
 	cell->data[cell->nelts] = idx;
 	cell->nelts++;
@@ -148,7 +148,7 @@ spi_add_point(struct spi *spi, vec_t xyz)
 {
 	if (spi->npoints == spi->npointsalloc) {
 		spi->npointsalloc *= 2;
-		spi->points = realloc(spi->points,
+		spi->points = xrealloc(spi->points,
 		    spi->npointsalloc * sizeof(vec_t));
 	}
 	spi->points[spi->npoints] = xyz;

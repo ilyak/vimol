@@ -107,7 +107,7 @@ add_node(const char *name, enum node_type type, const char *default_value)
 {
 	if (settings->nalloc == settings->nelts) {
 		settings->nalloc *= 2;
-		settings->data = realloc(settings->data,
+		settings->data = xrealloc(settings->data,
 		    settings->nalloc * sizeof(struct node));
 	}
 	memset(&settings->data[settings->nelts], 0, sizeof(struct node));

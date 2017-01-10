@@ -84,7 +84,7 @@ tokq_push_back(struct tokq *tokq, char *str)
 {
 	if (tokq->nelts == tokq->nalloc) {
 		tokq->nalloc *= 2;
-		tokq->data = realloc(tokq->data, tokq->nalloc * sizeof(char *));
+		tokq->data = xrealloc(tokq->data, tokq->nalloc * sizeof(char *));
 	}
 	tokq->data[tokq->nelts++] = str;
 }
