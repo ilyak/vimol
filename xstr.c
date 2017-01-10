@@ -14,10 +14,10 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <err.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "log.h"
 #include "xstr.h"
 
 char *
@@ -38,7 +38,7 @@ xstrdup(const char *s)
 	char *p;
 
 	if ((p = strdup(s)) == NULL)
-		err(1, NULL);
+		log_fatal("strdup");
 	return (p);
 }
 
@@ -48,6 +48,6 @@ xstrndup(const char *s, size_t n)
 	char *p;
 
 	if ((p = strndup(s, n)) == NULL)
-		err(1, NULL);
+		log_fatal("strndup");
 	return (p);
 }
