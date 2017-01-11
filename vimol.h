@@ -49,7 +49,6 @@ struct yank;        /* copy-paste buffer */
 #include "vec.h"
 #include "tok.h"
 #include "sel.h"
-#include "log.h"
 #include "pair.h"
 #include "platform.h"
 #include "rec.h"
@@ -57,7 +56,6 @@ struct yank;        /* copy-paste buffer */
 #include "spi.h"
 #include "util.h"
 #include "view.h"
-#include "xmalloc.h"
 
 /* alias.c */
 struct alias *alias_create(void);
@@ -164,6 +162,13 @@ int history_prev(struct history *);
 const char *history_get(struct history *);
 int history_search(struct history *, const char *);
 
+/* log.c */
+void log_open(const char *);
+void log_warn(const char *, ...);
+void log_fatal(const char *, ...) __dead;
+void log_assert(int);
+void log_close(void);
+
 /* state.c */
 struct state *state_create(void);
 void state_free(struct state *);
@@ -240,6 +245,14 @@ int wnd_next(struct wnd *);
 int wnd_prev(struct wnd *);
 void wnd_first(struct wnd *);
 void wnd_last(struct wnd *);
+
+/* xmalloc.c */
+void *xcalloc(size_t, size_t);
+void *xrealloc(void *, size_t);
+char *xstrcpy(char *, const char *);
+char *xstrcat(char *, const char *);
+char *xstrdup(const char *);
+char *xstrndup(const char *, size_t);
 
 /* yank.c */
 struct yank *yank_create(void);

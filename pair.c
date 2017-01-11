@@ -14,12 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <stdlib.h>
-#include <string.h>
-
-#include "log.h"
-#include "pair.h"
-#include "xmalloc.h"
+#include "vimol.h"
 
 struct pairs {
 	int nelts, nalloc;

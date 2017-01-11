@@ -14,11 +14,7 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <stdlib.h>
-#include <string.h>
-
-#include "log.h"
-#include "xmalloc.h"
+#include "vimol.h"
 
 void *
 xcalloc(size_t nmemb, size_t size)
