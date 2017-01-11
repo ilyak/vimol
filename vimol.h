@@ -125,10 +125,6 @@ int cmdq_count(struct cmdq *);
 struct cmd *cmdq_cmd(struct cmdq *, int);
 int cmdq_exec(struct cmdq *, struct state *);
 
-/* color.c */
-color_t color_rgb(int, int, int);
-int color_to_string(char *, size_t, color_t);
-
 /* edit.c */
 struct edit *edit_create(void);
 void edit_free(struct edit *);
@@ -347,10 +343,12 @@ int undo_undo(struct undo *);
 int undo_redo(struct undo *);
 
 /* util.c */
-int util_is_empty(const char *);
-int util_is_comment(const char *);
+color_t color_rgb(int, int, int);
+int color_to_string(char *, size_t, color_t);
+int string_is_whitespace(const char *);
+int string_is_comment(const char *);
+int string_has_suffix(const char *, const char *);
 int util_file_exists(const char *);
-int util_has_suffix(const char *, const char *);
 char *util_next_line(char *, FILE *);
 
 /* view.c */

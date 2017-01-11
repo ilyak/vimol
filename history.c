@@ -59,7 +59,7 @@ history_load(struct history *history, const char *path)
 	buffer = NULL;
 
 	while ((buffer = util_next_line(buffer, fp)) != NULL)
-		if (!util_is_empty(buffer))
+		if (!string_is_whitespace(buffer))
 			history_push(history, buffer);
 
 	fclose(fp);

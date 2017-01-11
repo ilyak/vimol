@@ -1520,7 +1520,7 @@ fn_save(const char *self, struct tokq *args, struct state *state)
 		path = tok_string(tokq_tok(args, 0));
 
 	if (tokq_count(args) == 0 && !force) {
-		if (!util_has_suffix(path, ".xyz")) {
+		if (!string_has_suffix(path, ".xyz")) {
 			error_set(
 		"file will be written in xyz format; add ! to override");
 			return (0);

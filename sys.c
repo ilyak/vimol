@@ -248,7 +248,7 @@ load_from_xyz(struct sys *sys, const char *path, int is_new)
 	}
 
 	while ((buffer = util_next_line(buffer, fp)) != NULL) {
-		if (util_is_empty(buffer))
+		if (string_is_whitespace(buffer))
 			continue;
 
 		if (sscanf(buffer, "%d", &n) != 1 ||
@@ -288,10 +288,10 @@ error:
 static int
 load_file(struct sys *sys, const char *path, int is_new)
 {
-	if (util_has_suffix(path, ".pdb"))
+	if (string_has_suffix(path, ".pdb"))
 		return (load_from_pdb(sys, path));
 
-	if (util_has_suffix(path, ".xyz"))
+	if (string_has_suffix(path, ".xyz"))
 		return (load_from_xyz(sys, path, is_new));
 
 	error_set("unknown file type");

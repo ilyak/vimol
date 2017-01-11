@@ -45,7 +45,7 @@ color_to_string(char *buf, size_t size, color_t color)
 }
 
 int
-util_is_empty(const char *str)
+string_is_whitespace(const char *str)
 {
 	while (*str && isspace(*str))
 		str++;
@@ -54,12 +54,23 @@ util_is_empty(const char *str)
 }
 
 int
-util_is_comment(const char *str)
+string_is_comment(const char *str)
 {
 	while (*str && isspace(*str))
 		str++;
 
 	return (*str == '#' || *str == '\0');
+}
+
+int
+string_has_suffix(const char *str, const char *suf)
+{
+	size_t strl, sufl;
+
+	strl = strlen(str);
+	sufl = strlen(suf);
+
+	return (strl >= sufl && strcasecmp(str + strl - sufl, suf) == 0);
 }
 
 int
@@ -73,17 +84,6 @@ util_file_exists(const char *path)
 	}
 
 	return (0);
-}
-
-int
-util_has_suffix(const char *str, const char *suf)
-{
-	size_t strl, sufl;
-
-	strl = strlen(str);
-	sufl = strlen(suf);
-
-	return (strl >= sufl && strcasecmp(str + strl - sufl, suf) == 0);
 }
 
 char *

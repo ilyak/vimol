@@ -206,7 +206,7 @@ run_input(struct state *state)
 	text = state->is_search ? history_get(state->history) :
 	    edit_get_text(state->edit);
 
-	if (util_is_empty(text))
+	if (string_is_whitespace(text))
 		return;
 
 	history_push(state->history, text);
@@ -256,7 +256,7 @@ key_down_statusbar(struct state *state, SDL_Keysym keysym)
 			state->is_search = 1;
 			text = edit_get_text(state->edit);
 
-			if (!util_is_empty(text)) {
+			if (!string_is_whitespace(text)) {
 				history_prev(state->history);
 
 				if (!history_search(state->history, text))
@@ -535,7 +535,7 @@ state_source(struct state *state, const char *path)
 	buffer = NULL;
 
 	while ((buffer = util_next_line(buffer, fp)) != NULL) {
-		if (util_is_comment(buffer))
+		if (string_is_comment(buffer))
 			continue;
 
 		if ((cmdq = cmdq_from_string(buffer, state->alias))) {
