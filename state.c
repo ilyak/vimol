@@ -309,7 +309,11 @@ key_down_statusbar(struct state *state, SDL_Keysym keysym)
 		edit_set_pos(state->edit, edit_get_text_length(state->edit));
 		break;
 	case SDLK_BACKSPACE:
-		edit_backspace_char(state->edit);
+		if (edit_get_text_length(state->edit) == 0) {
+			stop_input(state);
+			state->is_search = 0;
+		} else
+			edit_backspace_char(state->edit);
 		break;
 	case SDLK_DELETE:
 		edit_delete_char(state->edit);
