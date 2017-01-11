@@ -16,18 +16,18 @@
 
 #include "vimol.h"
 
-struct edge {
+struct graphedge {
 	int type, i, j;
-	struct edge *prev, *next, *rev;
+	struct graphedge *prev, *next, *rev;
 };
 
 struct graph {
 	int nalloc, nelts;
-	struct edge **edges;
+	struct graphedge **edges;
 };
 
 static void
-remove_edge(struct graph *graph, struct edge *edge)
+remove_edge(struct graph *graph, struct graphedge *edge)
 {
 	if (edge->next)
 		edge->next->prev = edge->prev;
@@ -47,7 +47,7 @@ graph_create(void)
 
 	graph = xcalloc(1, sizeof(*graph));
 	graph->nalloc = 8;
-	graph->edges = xcalloc(graph->nalloc, sizeof(struct edge *));
+	graph->edges = xcalloc(graph->nalloc, sizeof(struct graphedge *));
 
 	return (graph);
 }
@@ -56,7 +56,7 @@ struct graph *
 graph_copy(struct graph *graph)
 {
 	struct graph *copy;
-	struct edge *edge;
+	struct graphedge *edge;
 	int i;
 
 	copy = graph_create();
@@ -100,7 +100,7 @@ graph_vertex_add(struct graph *graph)
 	if (graph->nelts == graph->nalloc) {
 		graph->nalloc *= 2;
 		graph->edges = xrealloc(graph->edges,
-		    graph->nalloc * sizeof(struct edge *));
+		    graph->nalloc * sizeof(struct graphedge *));
 	}
 	graph->edges[graph->nelts] = NULL;
 	graph->nelts++;
@@ -109,7 +109,7 @@ graph_vertex_add(struct graph *graph)
 void
 graph_vertex_remove(struct graph *graph, int idx)
 {
-	struct edge *edge;
+	struct graphedge *edge;
 	int i;
 
 	graph_remove_vertex_edges(graph, idx);
@@ -117,7 +117,7 @@ graph_vertex_remove(struct graph *graph, int idx)
 	graph->nelts--;
 
 	memmove(graph->edges + idx, graph->edges + idx + 1,
-	    (graph->nelts - idx) * sizeof(struct edge *));
+	    (graph->nelts - idx) * sizeof(struct graphedge *));
 
 	for (i = 0; i < graph_get_vertex_count(graph); i++) {
 		for (edge = graph->edges[i]; edge; edge = edge->next) {
@@ -130,7 +130,7 @@ graph_vertex_remove(struct graph *graph, int idx)
 void
 graph_vertex_swap(struct graph *graph, int i, int j)
 {
-	struct edge *edge;
+	struct graphedge *edge;
 
 	log_assert(i >= 0 && i < graph_get_vertex_count(graph));
 	log_assert(j >= 0 && j < graph_get_vertex_count(graph));
@@ -160,7 +160,7 @@ graph_get_vertex_count(struct graph *graph)
 int
 graph_get_edge_count(struct graph *graph, int idx)
 {
-	struct edge *edge;
+	struct graphedge *edge;
 	int count;
 
 	log_assert(idx >= 0 && idx < graph_get_vertex_count(graph));
@@ -187,7 +187,7 @@ graph_remove_vertex_edges(struct graph *graph, int idx)
 void
 graph_edge_create(struct graph *graph, int i, int j, int type)
 {
-	struct edge *edge_i, *edge_j;
+	struct graphedge *edge_i, *edge_j;
 
 	log_assert(i >= 0 && i < graph_get_vertex_count(graph));
 	log_assert(j >= 0 && j < graph_get_vertex_count(graph));
@@ -198,8 +198,8 @@ graph_edge_create(struct graph *graph, int i, int j, int type)
 		return;
 	}
 
-	edge_i = xcalloc(1, sizeof(struct edge));
-	edge_j = xcalloc(1, sizeof(struct edge));
+	edge_i = xcalloc(1, sizeof(struct graphedge));
+	edge_j = xcalloc(1, sizeof(struct graphedge));
 
 	edge_i->i = i;
 	edge_i->j = j;
@@ -225,7 +225,7 @@ graph_edge_create(struct graph *graph, int i, int j, int type)
 void
 graph_edge_remove(struct graph *graph, int i, int j)
 {
-	struct edge *edge;
+	struct graphedge *edge;
 
 	log_assert(i >= 0 && i < graph_get_vertex_count(graph));
 	log_assert(j >= 0 && j < graph_get_vertex_count(graph));
@@ -239,7 +239,7 @@ graph_edge_remove(struct graph *graph, int i, int j)
 	}
 }
 
-struct edge *
+struct graphedge *
 graph_edges(struct graph *graph, int idx)
 {
 	log_assert(idx >= 0 && idx < graph_get_vertex_count(graph));
@@ -247,10 +247,10 @@ graph_edges(struct graph *graph, int idx)
 	return (graph->edges[idx]);
 }
 
-struct edge *
+struct graphedge *
 graph_edge_find(struct graph *graph, int i, int j)
 {
-	struct edge *edge;
+	struct graphedge *edge;
 
 	log_assert(i >= 0 && i < graph_get_vertex_count(graph));
 	log_assert(j >= 0 && j < graph_get_vertex_count(graph));
@@ -263,39 +263,39 @@ graph_edge_find(struct graph *graph, int i, int j)
 	return (NULL);
 }
 
-struct edge *
-graph_edge_prev(struct edge *edge)
+struct graphedge *
+graph_edge_prev(struct graphedge *edge)
 {
 	return (edge->prev);
 }
 
-struct edge *
-graph_edge_next(struct edge *edge)
+struct graphedge *
+graph_edge_next(struct graphedge *edge)
 {
 	return (edge->next);
 }
 
 int
-graph_edge_get_type(struct edge *edge)
+graph_edge_get_type(struct graphedge *edge)
 {
 	return (edge->type);
 }
 
 void
-graph_edge_set_type(struct edge *edge, int type)
+graph_edge_set_type(struct graphedge *edge, int type)
 {
 	edge->type = type;
 	edge->rev->type = type;
 }
 
 int
-graph_edge_i(struct edge *edge)
+graph_edge_i(struct graphedge *edge)
 {
 	return (edge->i);
 }
 
 int
-graph_edge_j(struct edge *edge)
+graph_edge_j(struct graphedge *edge)
 {
 	return (edge->j);
 }

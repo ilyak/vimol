@@ -74,7 +74,7 @@ yank_copy(struct yank *yank, struct sys *sys, struct sel *sel)
 {
 	struct atoms *atoms;
 	struct graph *graph;
-	struct edge *edge;
+	struct graphedge *edge;
 	const char *name;
 	vec_t xyz;
 	int i, j, type, *map;
@@ -124,7 +124,7 @@ yank_paste(struct yank *yank, struct sys *sys)
 {
 	struct atoms *atoms;
 	struct graph *graph;
-	struct edge *edge;
+	struct graphedge *edge;
 	const char *name;
 	vec_t xyz;
 	int i, j, n, type;

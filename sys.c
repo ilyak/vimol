@@ -122,7 +122,7 @@ is_hydrogen(const char *name)
 static int
 get_bond_count(struct graph *graph, int idx)
 {
-	struct edge *edge;
+	struct graphedge *edge;
 	int count = 0;
 
 	for (edge = graph_edges(graph, idx); edge; edge = graph_edge_next(edge))

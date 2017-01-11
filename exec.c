@@ -25,7 +25,7 @@ ends_with(const char *str, char c)
 static void
 select_connected(struct graph *graph, int idx, struct sel *sel)
 {
-	struct edge *edge;
+	struct graphedge *edge;
 
 	if (sel_selected(sel, idx))
 		return;
@@ -1588,7 +1588,7 @@ fn_select_bonded(const char *self __unused, struct tokq *args,
 {
 	struct view *view;
 	struct graph *graph;
-	struct edge *edge;
+	struct graphedge *edge;
 	struct sel *visible;
 	struct sel *sel;
 	int i;

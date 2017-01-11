@@ -42,8 +42,8 @@ struct camera;      /* an eye of a user */
 struct cmd;         /* vimol command */
 struct cmdq;        /* command list */
 struct edit;        /* string edit control */
-struct edge;        /* edge of a graph */
 struct graph;       /* vertices connected with edges */
+struct graphedge;   /* edge of a graph */
 struct history;     /* command-line history management */
 struct rec;         /* command recording */
 struct sel;         /* selection of objects */
@@ -145,14 +145,14 @@ int graph_get_edge_count(struct graph *, int);
 void graph_remove_vertex_edges(struct graph *, int);
 void graph_edge_create(struct graph *, int, int, int);
 void graph_edge_remove(struct graph *, int, int);
-struct edge *graph_edges(struct graph *, int);
-struct edge *graph_edge_find(struct graph *, int, int);
-struct edge *graph_edge_prev(struct edge *);
-struct edge *graph_edge_next(struct edge *);
-int graph_edge_get_type(struct edge *);
-void graph_edge_set_type(struct edge *, int);
-int graph_edge_i(struct edge *);
-int graph_edge_j(struct edge *);
+struct graphedge *graph_edges(struct graph *, int);
+struct graphedge *graph_edge_find(struct graph *, int, int);
+struct graphedge *graph_edge_prev(struct graphedge *);
+struct graphedge *graph_edge_next(struct graphedge *);
+int graph_edge_get_type(struct graphedge *);
+void graph_edge_set_type(struct graphedge *, int);
+int graph_edge_i(struct graphedge *);
+int graph_edge_j(struct graphedge *);
 
 /* history.c */
 struct history *history_create(void);

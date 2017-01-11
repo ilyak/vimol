@@ -73,7 +73,7 @@ render_bonds(struct view *view, cairo_t *cairo)
 {
 	struct sys *sys;
 	struct graph *graph;
-	struct edge *edge;
+	struct graphedge *edge;
 	struct sel *visible;
 	color_t color;
 	point_t p1, p2, p3, dp;
