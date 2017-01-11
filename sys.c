@@ -318,6 +318,7 @@ read_file(struct sys *sys, const char *path, int is_new)
 		sel_add(sel, i);
 
 	sys_reset_bonds(sys, sel);
+	sel_free(sel);
 
 	return (1);
 }
