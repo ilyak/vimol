@@ -51,8 +51,8 @@ static void
 create_window(struct state *state)
 {
 	state->window = SDL_CreateWindow("vimol",
-		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		800, 600, SDL_WINDOW_RESIZABLE);
+	    SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+	    800, 600, SDL_WINDOW_RESIZABLE);
 
 	if (state->window == NULL)
 		log_fatal("cannot create SDL window");
