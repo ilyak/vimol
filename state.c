@@ -26,7 +26,7 @@ struct state {
 	struct edit *edit;
 	struct history *history;
 	struct rec *rec;
-	struct status *status;
+	struct statusbar *statusbar;
 	struct wnd *wnd;
 	struct yank *yank;
 	SDL_Window *window;
@@ -131,7 +131,7 @@ assign_default_bindings(struct state *state)
 }
 
 static void
-set_status_text(struct state *state)
+set_statusbar_text(struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -146,10 +146,10 @@ set_status_text(struct state *state)
 	text = edit_get_text(state->edit);
 
 	if (state->is_search)
-		status_set_text(state->status, "(search %s ):%s", text,
+		statusbar_set_text(state->statusbar, "(search %s ):%s", text,
 		    history_get(state->history));
 	else if (state->is_input)
-		status_set_text(state->status, ":%s", text);
+		statusbar_set_text(state->statusbar, ":%s", text);
 
 	buffer = xstrdup("");
 
@@ -172,7 +172,7 @@ set_status_text(struct state *state)
 	snprintf(tmp, sizeof(tmp), "[%d/%d]", frame, nframes);
 	buffer = xstrcat(buffer, tmp);
 
-	status_set_info_text(state->status, "%s", buffer);
+	statusbar_set_info_text(state->statusbar, "%s", buffer);
 	free(buffer);
 }
 
@@ -180,7 +180,7 @@ static void
 stop_input(struct state *state)
 {
 	SDL_StopTextInput();
-	status_clear_text(state->status);
+	statusbar_clear_text(state->statusbar);
 	state->is_input = 0;
 }
 
@@ -192,7 +192,7 @@ run_cmd(struct state *state, const char *command)
 	error_clear();
 
 	if ((cmdq = cmdq_from_string(command, state->alias)) == NULL) {
-		status_set_error(state->status, error_get());
+		statusbar_set_error(state->statusbar, error_get());
 		return;
 	}
 
@@ -200,9 +200,9 @@ run_cmd(struct state *state, const char *command)
 		rec_add(state->rec, command);
 
 	if (cmdq_exec(cmdq, state))
-		status_set_text(state->status, error_get());
+		statusbar_set_text(state->statusbar, error_get());
 	else
-		status_set_error(state->status, error_get());
+		statusbar_set_error(state->statusbar, error_get());
 
 	cmdq_free(cmdq);
 }
@@ -233,7 +233,7 @@ insert_clipboard_text(struct edit *edit)
 }
 
 static void
-key_down_status(struct state *state, SDL_Keysym keysym)
+key_down_statusbar(struct state *state, SDL_Keysym keysym)
 {
 	const char *text;
 
@@ -402,12 +402,12 @@ process_event(struct state *state, SDL_Event *event)
 	case SDL_QUIT:
 		if (state->force_quit || !wnd_any_modified(state->wnd))
 			return (0);
-		status_set_error(state->status,
+		statusbar_set_error(state->statusbar,
 		    "save changes or add ! to override");
 		break;
 	case SDL_KEYDOWN:
 		if (state->is_input)
-			key_down_status(state, event->key.keysym);
+			key_down_statusbar(state, event->key.keysym);
 		else
 			key_down_view(state, event->key.keysym);
 		break;
@@ -444,7 +444,7 @@ state_create(void)
 	state->edit = edit_create();
 	state->history = history_create();
 	state->rec = rec_create();
-	state->status = status_create();
+	state->statusbar = statusbar_create();
 	state->wnd = wnd_create();
 	state->yank = yank_create();
 
@@ -474,7 +474,7 @@ state_free(struct state *state)
 	edit_free(state->edit);
 	history_free(state->history);
 	rec_free(state->rec);
-	status_free(state->status);
+	statusbar_free(state->statusbar);
 	wnd_free(state->wnd);
 	yank_free(state->yank);
 	cairo_destroy(state->cairo);
@@ -564,18 +564,18 @@ state_render(struct state *state)
 
 	view_render(state_get_view(state), state->cairo);
 
-	if (settings_get_bool("status.visible")) {
-		set_status_text(state);
+	if (settings_get_bool("statusbar.visible")) {
+		set_statusbar_text(state);
 		pos = edit_get_pos(state->edit);
 
 		if (state->is_search)
-			status_set_cursor_pos(state->status, pos + 8);
+			statusbar_set_cursor_pos(state->statusbar, pos + 8);
 		else if (state->is_input)
-			status_set_cursor_pos(state->status, pos + 1);
+			statusbar_set_cursor_pos(state->statusbar, pos + 1);
 		else
-			status_set_cursor_pos(state->status, -1);
+			statusbar_set_cursor_pos(state->statusbar, -1);
 
-		status_render(state->status, state->cairo);
+		statusbar_render(state->statusbar, state->cairo);
 	}
 
 	SDL_UpdateWindowSurface(state->window);

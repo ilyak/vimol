@@ -16,95 +16,95 @@
 
 #include "vimol.h"
 
-struct status {
+struct statusbar {
 	int is_error;
 	int cursor_pos;
 	char text[1024];
 	char info[1024];
 };
 
-struct status *
-status_create(void)
+struct statusbar *
+statusbar_create(void)
 {
-	struct status *status;
+	struct statusbar *statusbar;
 
-	status = xcalloc(1, sizeof(*status));
+	statusbar = xcalloc(1, sizeof(*statusbar));
 
-	return (status);
+	return (statusbar);
 }
 
 void
-status_free(struct status *status)
+statusbar_free(struct statusbar *statusbar)
 {
-	free(status);
+	free(statusbar);
 }
 
 const char *
-status_get_text(struct status *status)
+statusbar_get_text(struct statusbar *statusbar)
 {
-	return (status->text);
+	return (statusbar->text);
 }
 
 void
-status_set_text(struct status *status, const char *fmt, ...)
+statusbar_set_text(struct statusbar *statusbar, const char *fmt, ...)
 {
 	va_list ap;
 
-	status->is_error = 0;
+	statusbar->is_error = 0;
 
 	va_start(ap, fmt);
-	vsnprintf(status->text, sizeof(status->text), fmt, ap);
+	vsnprintf(statusbar->text, sizeof(statusbar->text), fmt, ap);
 	va_end(ap);
 }
 
 void
-status_set_error(struct status *status, const char *fmt, ...)
+statusbar_set_error(struct statusbar *statusbar, const char *fmt, ...)
 {
 	va_list ap;
 
-	status->is_error = 1;
+	statusbar->is_error = 1;
 
 	va_start(ap, fmt);
-	vsnprintf(status->text, sizeof(status->text), fmt, ap);
+	vsnprintf(statusbar->text, sizeof(statusbar->text), fmt, ap);
 	va_end(ap);
 }
 
 void
-status_clear_text(struct status *status)
+statusbar_clear_text(struct statusbar *statusbar)
 {
-	status->text[0] = '\0';
+	statusbar->text[0] = '\0';
 }
 
 const char *
-status_get_info_text(struct status *status)
+statusbar_get_info_text(struct statusbar *statusbar)
 {
-	return (status->info);
+	return (statusbar->info);
 }
 
 void
-status_set_info_text(struct status *status, const char *fmt, ...)
+statusbar_set_info_text(struct statusbar *statusbar, const char *fmt, ...)
 {
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsnprintf(status->info, sizeof(status->info), fmt, ap);
+	vsnprintf(statusbar->info, sizeof(statusbar->info), fmt, ap);
 	va_end(ap);
 }
 
 void
-status_clear_info_text(struct status *status)
+statusbar_clear_info_text(struct statusbar *statusbar)
 {
-	status->info[0] = '\0';
+	statusbar->info[0] = '\0';
 }
 
 void
-status_set_cursor_pos(struct status *status, int value)
+statusbar_set_cursor_pos(struct statusbar *statusbar, int value)
 {
-	status->cursor_pos = value;
+	statusbar->cursor_pos = value;
 }
 
 void
-status_render(struct status *status, cairo_t *cairo)
+statusbar_render(struct statusbar *statusbar, cairo_t *cairo)
 {
 	cairo_font_extents_t exfont;
 	cairo_text_extents_t extext;
@@ -114,8 +114,8 @@ status_render(struct status *status, cairo_t *cairo)
 	const char *font;
 	char *text;
 
-	font = settings_get_string("status.font");
-	size = settings_get_double("status.font.size");
+	font = settings_get_string("statusbar.font");
+	size = settings_get_double("statusbar.font.size");
 
 	cairo_reset_clip(cairo);
 	cairo_identity_matrix(cairo);
@@ -127,36 +127,36 @@ status_render(struct status *status, cairo_t *cairo)
 	width = cairo_image_surface_get_width(cairo_get_target(cairo));
 	height = cairo_image_surface_get_height(cairo_get_target(cairo));
 
-	if (!settings_get_bool("status.transparent")) {
-		color = settings_get_color("status.color");
+	if (!settings_get_bool("statusbar.transparent")) {
+		color = settings_get_color("statusbar.color");
 		cairo_set_source_rgb(cairo, color.r, color.g, color.b);
 		cairo_rectangle(cairo, 0, height - exfont.height - 10,
 		    width, exfont.height + 10);
 		cairo_fill(cairo);
 	}
 
-	color = settings_get_color("status.text.color");
+	color = settings_get_color("statusbar.text.color");
 	cairo_set_source_rgb(cairo, color.r, color.g, color.b);
 
-	cairo_text_extents(cairo, status->info, &extext);
+	cairo_text_extents(cairo, statusbar->info, &extext);
 	cairo_move_to(cairo, width - extext.x_advance - 5,
 	    height - exfont.descent - 5);
-	cairo_show_text(cairo, status->info);
+	cairo_show_text(cairo, statusbar->info);
 
 	cairo_rectangle(cairo, 0, height - exfont.height - 10,
 	    width - extext.x_advance - 10, exfont.height + 10);
 	cairo_clip(cairo);
 
-	if (status->is_error) {
-		color = settings_get_color("status.error.color");
+	if (statusbar->is_error) {
+		color = settings_get_color("statusbar.error.color");
 		cairo_set_source_rgb(cairo, color.r, color.g, color.b);
 	}
 
 	cairo_move_to(cairo, 5, height - exfont.descent - 5);
-	cairo_show_text(cairo, status->text);
+	cairo_show_text(cairo, statusbar->text);
 
-	if (status->cursor_pos > -1) {
-		text = xstrndup(status->text, (size_t)status->cursor_pos);
+	if (statusbar->cursor_pos > -1) {
+		text = xstrndup(statusbar->text, (size_t)statusbar->cursor_pos);
 		cairo_text_extents(cairo, text, &extext);
 		cairo_move_to(cairo, extext.x_advance + 5,
 		    height - exfont.descent - 5);

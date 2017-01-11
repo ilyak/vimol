@@ -7,10 +7,10 @@ PROG= vimol
 
 ALL_C= alias.c atoms.c camera.c cmd.c color.c edit.c error.c exec.c graph.c \
        history.c log.c main.c pair.c rec.c sel.c settings.c spi.c state.c \
-       status.c sys.c tok.c undo.c util.c vec.c view.c wnd.c xmalloc.c yank.c
+       statusbar.c sys.c tok.c undo.c util.c vec.c view.c wnd.c xmalloc.c yank.c
 ALL_O= alias.o atoms.o camera.o cmd.o color.o edit.o error.o exec.o graph.o \
        history.o log.o main.o pair.o rec.o sel.o settings.o spi.o state.o \
-       status.o sys.o tok.o undo.o util.o vec.o view.o wnd.o xmalloc.o yank.o
+       statusbar.o sys.o tok.o undo.o util.o vec.o view.o wnd.o xmalloc.o yank.o
 
 $(PROG): $(ALL_O)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(PROG) $(ALL_O) $(LIBS)

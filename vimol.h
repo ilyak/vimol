@@ -29,21 +29,21 @@
 /* number of yank registers */
 #define YANK_SIZE 26
 
-struct alias;   /* alias management */
-struct atoms;   /* atom storage */
-struct camera;  /* an eye of a user */
-struct cmd;     /* vimol command */
-struct cmdq;    /* command list */
-struct edit;    /* string edit control */
-struct edge;    /* edge of a graph */
-struct graph;   /* vertices connected with edges */
-struct history; /* command-line history management */
-struct state;   /* app state */
-struct status;  /* status bar and command line */
-struct sys;     /* molecular system structure */
-struct undo;    /* undo-redo management */
-struct wnd;     /* windows */
-struct yank;    /* copy-paste buffer */
+struct alias;       /* alias management */
+struct atoms;       /* atom storage */
+struct camera;      /* an eye of a user */
+struct cmd;         /* vimol command */
+struct cmdq;        /* command list */
+struct edit;        /* string edit control */
+struct edge;        /* edge of a graph */
+struct graph;       /* vertices connected with edges */
+struct history;     /* command-line history management */
+struct state;       /* app state */
+struct statusbar;   /* status bar and command line */
+struct sys;         /* molecular system structure */
+struct undo;        /* undo-redo management */
+struct wnd;         /* windows */
+struct yank;        /* copy-paste buffer */
 
 #include "color.h"
 #include "vec.h"
@@ -182,18 +182,18 @@ void state_quit(struct state *, int);
 void state_event_loop(struct state *);
 void state_save(struct state *);
 
-/* status.c */
-struct status *status_create(void);
-void status_free(struct status *);
-const char *status_get_text(struct status *);
-void status_set_text(struct status *, const char *, ...);
-void status_set_error(struct status *, const char *, ...);
-void status_clear_text(struct status *);
-const char *status_get_info_text(struct status *);
-void status_set_info_text(struct status *, const char *, ...);
-void status_clear_info_text(struct status *);
-void status_set_cursor_pos(struct status *, int);
-void status_render(struct status *, cairo_t *);
+/* statusbar.c */
+struct statusbar *statusbar_create(void);
+void statusbar_free(struct statusbar *);
+const char *statusbar_get_text(struct statusbar *);
+void statusbar_set_text(struct statusbar *, const char *, ...);
+void statusbar_set_error(struct statusbar *, const char *, ...);
+void statusbar_clear_text(struct statusbar *);
+const char *statusbar_get_info_text(struct statusbar *);
+void statusbar_set_info_text(struct statusbar *, const char *, ...);
+void statusbar_clear_info_text(struct statusbar *);
+void statusbar_set_cursor_pos(struct statusbar *, int);
+void statusbar_render(struct statusbar *, cairo_t *);
 
 /* sys.c */
 struct sys *sys_create(const char *);
