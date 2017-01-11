@@ -18,7 +18,8 @@
 
 struct graphedge {
 	int type, i, j;
-	struct graphedge *prev, *next, *rev;
+	struct graphedge *rev; /* edge which is reverse to this one */
+	struct graphedge *prev, *next;
 };
 
 struct graph {
