@@ -30,7 +30,6 @@ double vec_dot(const vec_t *, const vec_t *);
 vec_t vec_cross(const vec_t *, const vec_t *);
 double vec_angle(const vec_t *, const vec_t *, const vec_t *);
 double vec_torsion(const vec_t *, const vec_t *, const vec_t *, const vec_t *);
-int vec_to_string(char *, size_t, vec_t);
 
 mat_t mat_zero(void);
 mat_t mat_identity(void);

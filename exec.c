@@ -1157,19 +1157,19 @@ fn_pos(const char *self, struct tokq *args, struct state *state)
 static int
 fn_pos_get(const char *self __unused, struct tokq *args, struct state *state)
 {
-	char buffer[32];
 	struct view *view;
 	struct sel *sel;
+	char *buf;
 	vec_t xyz;
 
 	view = state_get_view(state);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 	xyz = sys_get_sel_center(view_get_sys(view), sel);
-
-	vec_to_string(buffer, sizeof(buffer), xyz);
-	error_set("pos: %s", buffer);
-
+	xasprintf(&buf, "pos: %.3lf %.3lf %.3lf", xyz.x, xyz.y, xyz.z);
+	error_set("%s", buf);
+	free(buf);
 	sel_free(sel);
+
 	return (1);
 }
 

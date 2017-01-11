@@ -171,13 +171,6 @@ vec_torsion(const vec_t *a, const vec_t *b, const vec_t *c, const vec_t *d)
 	return (acos(vec_dot(&t, &u) / sqrt(r2t * r2u)));
 }
 
-int
-vec_to_string(char *buf, size_t size, vec_t vec)
-{
-	return (snprintf(buf, size, "[%.3lf %.3lf %.3lf]",
-	    vec.x, vec.y, vec.z));
-}
-
 mat_t
 mat_zero(void)
 {
