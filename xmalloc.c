@@ -52,12 +52,6 @@ xasprintf(char **ret, const char *fmt, ...)
 }
 
 char *
-xstrcpy(char *s, const char *p)
-{
-	return (strcpy(xrealloc(s, strlen(p) + 1), p));
-}
-
-char *
 xstrdup(const char *s)
 {
 	char *p;

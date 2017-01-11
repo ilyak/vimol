@@ -371,7 +371,6 @@ void wnd_last(struct wnd *);
 void *xcalloc(size_t, size_t);
 void *xrealloc(void *, size_t);
 int xasprintf(char **ret, const char *fmt, ...);
-char *xstrcpy(char *, const char *);
 char *xstrdup(const char *);
 char *xstrndup(const char *, size_t);
 

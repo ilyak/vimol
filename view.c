@@ -360,7 +360,8 @@ view_get_path(struct view *view)
 void
 view_set_path(struct view *view, const char *path)
 {
-	view->path = xstrcpy(view->path, path);
+	free(view->path);
+	view->path = xstrdup(path);
 }
 
 int
