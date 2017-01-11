@@ -137,7 +137,7 @@ set_statusbar_text(struct state *state)
 	struct sys *sys;
 	int iframe, nframe, iwnd, nwnd;
 	const char *text;
-	char *buffer;
+	char *buf1, *buf2, *bufout;
 
 	view = state_get_view(state);
 	sys = view_get_sys(view);
@@ -153,22 +153,23 @@ set_statusbar_text(struct state *state)
 	else if (state->is_input)
 		statusbar_set_text(state->statusbar, ":%s", text);
 
-	buffer = xstrdup("");
+	if (rec_is_recording(state->rec))
+		xasprintf(&buf1, "[rec-%c]", rec_get_register(state->rec)+'a');
+	else
+		buf1 = xstrdup("");
 
-	if (rec_is_recording(state->rec)) {
-		free(buffer);
-		xasprintf(&buffer, "[rec-%c]",
-		    rec_get_register(state->rec) + 'a');
-	}
 	if (state->repeat > 0)
-		xasprintf(&buffer, "%s[%d]", buffer, state->repeat);
-	if (sys_is_modified(sys))
-		xasprintf(&buffer, "%s[+]", buffer);
-	xasprintf(&buffer, "%s[f%d/%d][w%d/%d]", buffer, iframe+1, nframe,
-	    iwnd+1, nwnd);
+		xasprintf(&buf2, "[%d]", state->repeat);
+	else
+		buf2 = xstrdup("");
 
-	statusbar_set_info_text(state->statusbar, "%s", buffer);
-	free(buffer);
+	xasprintf(&bufout, "%s%s%s[f%d/%d][w%d/%d]", buf1, buf2,
+	    sys_is_modified(sys) ? "[+]" : "", iframe+1, nframe, iwnd+1, nwnd);
+	statusbar_set_info_text(state->statusbar, "%s", bufout);
+
+	free(buf1);
+	free(buf2);
+	free(bufout);
 }
 
 static void
