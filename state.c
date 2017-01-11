@@ -124,7 +124,7 @@ assign_default_bindings(struct state *state)
 {
 	unsigned i;
 
-#include "keys.h"
+#include "keybind.h"
 
 	for (i = 0; i < sizeof(keys) / sizeof(*keys); i++)
 		alias_set(state->bind, keys[i].key, keys[i].command);
