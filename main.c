@@ -23,8 +23,6 @@ main(int argc, char **argv)
 	struct wnd *wnd;
 	int idx;
 
-	srand((unsigned)(time(NULL)));
-
 	exec_init();
 	settings_init();
 
