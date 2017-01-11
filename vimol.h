@@ -26,6 +26,8 @@
 #define __dead
 #endif /* __dead */
 
+/* number of recording registers */
+#define REC_SIZE 26
 /* number of yank registers */
 #define YANK_SIZE 26
 
@@ -38,24 +40,22 @@ struct edit;        /* string edit control */
 struct edge;        /* edge of a graph */
 struct graph;       /* vertices connected with edges */
 struct history;     /* command-line history management */
+struct rec;         /* command recording */
+struct sel;         /* selection of objects */
+struct spi;         /* spatial index */
 struct state;       /* app state */
 struct statusbar;   /* status bar and command line */
 struct sys;         /* molecular system structure */
 struct undo;        /* undo-redo management */
+struct view;        /* viewport */
 struct wnd;         /* windows */
 struct yank;        /* copy-paste buffer */
 
 #include "color.h"
 #include "vec.h"
 #include "tok.h"
-#include "sel.h"
 #include "pair.h"
 #include "platform.h"
-#include "rec.h"
-#include "settings.h"
-#include "spi.h"
-#include "util.h"
-#include "view.h"
 
 /* alias.c */
 struct alias *alias_create(void);
@@ -169,6 +169,70 @@ void log_fatal(const char *, ...) __dead;
 void log_assert(int);
 void log_close(void);
 
+/* rec.c */
+struct rec *rec_create(void);
+void rec_free(struct rec *);
+int rec_is_playing(struct rec *);
+int rec_is_recording(struct rec *);
+int rec_get_register(struct rec *);
+void rec_set_register(struct rec *, int);
+void rec_load(struct rec *, const char *);
+void rec_save(struct rec *, const char *);
+void rec_start(struct rec *);
+void rec_add(struct rec *, const char *);
+void rec_stop(struct rec *);
+int rec_play(struct rec *, struct state *);
+
+/* sel.c */
+struct sel *sel_create(int);
+struct sel *sel_copy(struct sel *);
+void sel_free(struct sel *);
+int sel_get_size(struct sel *);
+int sel_get_count(struct sel *);
+void sel_expand(struct sel *);
+void sel_contract(struct sel *, int);
+void sel_add(struct sel *, int);
+void sel_remove(struct sel *, int);
+void sel_swap(struct sel *, int, int);
+void sel_all(struct sel *);
+void sel_clear(struct sel *);
+int sel_selected(struct sel *, int);
+void sel_iter_start(struct sel *);
+int sel_iter_next(struct sel *, int *);
+
+/* settings.c */
+void settings_init(void);
+void settings_free(void);
+int settings_printf(char *, size_t, const char *);
+int settings_has_int(const char *);
+int settings_has_double(const char *);
+int settings_has_bool(const char *);
+int settings_has_string(const char *);
+int settings_has_color(const char *);
+int settings_has_node(const char *);
+int settings_get_int(const char *);
+double settings_get_double(const char *);
+int settings_get_bool(const char *);
+const char *settings_get_string(const char *);
+color_t settings_get_color(const char *);
+int settings_set(const char *, const char *);
+int settings_set_int(const char *, int);
+int settings_set_double(const char *, double);
+int settings_set_bool(const char *, int);
+int settings_set_string(const char *, const char *);
+int settings_set_color(const char *, color_t);
+
+/* spi.c */
+struct spi *spi_create(void);
+void spi_free(struct spi *);
+void spi_add_point(struct spi *, vec_t);
+int spi_get_point_count(struct spi *);
+vec_t spi_get_point(struct spi *, int);
+void spi_clear(struct spi *);
+void spi_compute(struct spi *, double);
+int spi_get_pair_count(struct spi *);
+struct pair spi_get_pair(struct spi *, int);
+
 /* state.c */
 struct state *state_create(void);
 void state_free(struct state *);
@@ -232,6 +296,33 @@ void *undo_get_data(struct undo *);
 void undo_snapshot(struct undo *);
 int undo_undo(struct undo *);
 int undo_redo(struct undo *);
+
+/* util.c */
+int util_is_empty(const char *);
+int util_is_comment(const char *);
+int util_file_exists(const char *);
+int util_has_suffix(const char *, const char *);
+char *util_next_line(char *, FILE *);
+
+/* view.c */
+struct view *view_create(const char *);
+void view_free(struct view *);
+struct camera *view_get_camera(struct view *);
+struct sys *view_get_sys(struct view *);
+struct graph *view_get_graph(struct view *);
+struct sel *view_get_sel(struct view *);
+struct sel *view_get_visible(struct view *);
+const char *view_get_path(struct view *);
+void view_set_path(struct view *, const char *);
+int view_is_empty(struct view *);
+int view_is_modified(struct view *);
+int view_undo(struct view *);
+int view_redo(struct view *);
+void view_snapshot(struct view *);
+void view_reset(struct view *);
+void view_center_sel(struct view *, struct sel *);
+void view_fit_sel(struct view *, struct sel *);
+void view_render(struct view *, cairo_t *);
 
 /* wnd.c */
 struct wnd *wnd_create(void);
