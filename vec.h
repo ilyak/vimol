@@ -3,23 +3,17 @@
 
 #define PI 3.14159265358979323846
 
-typedef struct vec vec_t;
-
-struct vec {
-	double x, y, z;
-};
-
-typedef struct point point_t;
-
-struct point {
+typedef struct {
 	double x, y;
-};
+} point_t;
 
-typedef struct mat mat_t;
+typedef struct {
+	double x, y, z;
+} vec_t;
 
-struct mat {
+typedef struct {
 	double xx, xy, xz, yx, yy, yz, zx, zy, zz;
-};
+} mat_t;
 
 vec_t vec_zero(void);
 vec_t vec_xyz(double, double, double);
