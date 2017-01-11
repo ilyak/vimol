@@ -31,6 +31,11 @@
 /* number of yank registers */
 #define YANK_SIZE 26
 
+struct pair {
+	int i, j;
+};
+struct pairs;       /* dynamic array of pairs */
+
 struct alias;       /* alias management */
 struct atoms;       /* atom storage */
 struct camera;      /* an eye of a user */
@@ -54,7 +59,6 @@ struct yank;        /* copy-paste buffer */
 #include "color.h"
 #include "vec.h"
 #include "tok.h"
-#include "pair.h"
 #include "platform.h"
 
 /* alias.c */
@@ -168,6 +172,14 @@ void log_warn(const char *, ...);
 void log_fatal(const char *, ...) __dead;
 void log_assert(int);
 void log_close(void);
+
+/* pair.c */
+struct pairs *pairs_create(void);
+void pairs_free(struct pairs *);
+void pairs_clear(struct pairs *);
+void pairs_add(struct pairs *, int, int);
+int pairs_get_count(struct pairs *);
+struct pair pairs_get(struct pairs *, int);
 
 /* rec.c */
 struct rec *rec_create(void);
