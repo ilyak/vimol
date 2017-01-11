@@ -29,34 +29,35 @@
 /* number of yank registers */
 #define YANK_SIZE 26
 
-#include "color.h"
-#include "vec.h"
-#include "tok.h"
-#include "sel.h"
-#include "sys.h"
-#include "state.h"
-#include "graph.h"
-#include "log.h"
-#include "pair.h"
-#include "platform.h"
-#include "rec.h"
-#include "settings.h"
-#include "spi.h"
-#include "status.h"
-#include "undo.h"
-#include "util.h"
-#include "view.h"
-#include "wnd.h"
-#include "xmalloc.h"
-
 struct alias;   /* alias management */
 struct atoms;   /* atom storage */
 struct camera;  /* an eye of a user */
 struct cmd;     /* vimol command */
 struct cmdq;    /* command list */
 struct edit;    /* string edit control */
+struct edge;    /* edge of a graph */
+struct graph;   /* vertices connected with edges */
 struct history; /* command-line history management */
+struct state;   /* app state */
+struct status;  /* status bar and command line */
+struct sys;     /* molecular system structure */
+struct undo;    /* undo-redo management */
+struct wnd;     /* windows */
 struct yank;    /* copy-paste buffer */
+
+#include "color.h"
+#include "vec.h"
+#include "tok.h"
+#include "sel.h"
+#include "log.h"
+#include "pair.h"
+#include "platform.h"
+#include "rec.h"
+#include "settings.h"
+#include "spi.h"
+#include "util.h"
+#include "view.h"
+#include "xmalloc.h"
 
 /* alias.c */
 struct alias *alias_create(void);
@@ -129,6 +130,28 @@ void exec_free(void);
 int exec_valid(const char *);
 int exec_run(const char *, struct tokq *, struct state *);
 
+/* graph.c */
+struct graph *graph_create(void);
+struct graph *graph_copy(struct graph *);
+void graph_free(struct graph *);
+void graph_clear(struct graph *);
+void graph_vertex_add(struct graph *);
+void graph_vertex_remove(struct graph *, int);
+void graph_vertex_swap(struct graph *, int, int);
+int graph_get_vertex_count(struct graph *);
+int graph_get_edge_count(struct graph *, int);
+void graph_remove_vertex_edges(struct graph *, int);
+void graph_edge_create(struct graph *, int, int, int);
+void graph_edge_remove(struct graph *, int, int);
+struct edge *graph_edges(struct graph *, int);
+struct edge *graph_edge_find(struct graph *, int, int);
+struct edge *graph_edge_prev(struct edge *);
+struct edge *graph_edge_next(struct edge *);
+int graph_edge_get_type(struct edge *);
+void graph_edge_set_type(struct edge *, int);
+int graph_edge_i(struct edge *);
+int graph_edge_j(struct edge *);
+
 /* history.c */
 struct history *history_create(void);
 void history_free(struct history *);
@@ -140,6 +163,83 @@ int history_next(struct history *);
 int history_prev(struct history *);
 const char *history_get(struct history *);
 int history_search(struct history *, const char *);
+
+/* state.c */
+struct state *state_create(void);
+void state_free(struct state *);
+struct alias *state_get_alias(struct state *);
+struct alias *state_get_bind(struct state *);
+struct rec *state_get_rec(struct state *);
+struct view *state_get_view(struct state *);
+struct wnd *state_get_wnd(struct state *);
+struct yank *state_get_yank(struct state *);
+void state_start_edit(struct state *);
+int state_source(struct state *, const char *);
+void state_render(struct state *);
+void state_save_png(struct state *, const char *);
+void state_toggle_fullscreen(struct state *);
+void state_quit(struct state *, int);
+void state_event_loop(struct state *);
+void state_save(struct state *);
+
+/* status.c */
+struct status *status_create(void);
+void status_free(struct status *);
+const char *status_get_text(struct status *);
+void status_set_text(struct status *, const char *, ...);
+void status_set_error(struct status *, const char *, ...);
+void status_clear_text(struct status *);
+const char *status_get_info_text(struct status *);
+void status_set_info_text(struct status *, const char *, ...);
+void status_clear_info_text(struct status *);
+void status_set_cursor_pos(struct status *, int);
+void status_render(struct status *, cairo_t *);
+
+/* sys.c */
+struct sys *sys_create(const char *);
+struct sys *sys_copy(struct sys *);
+void sys_free(struct sys *);
+struct graph *sys_get_graph(struct sys *);
+struct sel *sys_get_sel(struct sys *);
+struct sel *sys_get_visible(struct sys *);
+int sys_read(struct sys *, const char *);
+int sys_is_modified(struct sys *);
+int sys_get_frame(struct sys *);
+void sys_set_frame(struct sys *, int);
+int sys_get_frame_count(struct sys *);
+void sys_add_atom(struct sys *, const char *, vec_t);
+void sys_remove_atom(struct sys *, int);
+void sys_swap_atoms(struct sys *, int, int);
+int sys_get_atom_count(struct sys *);
+const char *sys_get_atom_name(struct sys *, int);
+void sys_set_atom_name(struct sys *, int, const char *);
+vec_t sys_get_atom_xyz(struct sys *, int);
+void sys_set_atom_xyz(struct sys *, int, vec_t);
+void sys_add_hydrogens(struct sys *, struct sel *);
+vec_t sys_get_sel_center(struct sys *, struct sel *);
+void sys_reset_bonds(struct sys *, struct sel *);
+int sys_save_to_file(struct sys *, const char *);
+
+/* undo.c */
+struct undo *undo_create(void *, void *(*)(void *), void (*)(void *));
+void undo_free(struct undo *);
+void *undo_get_data(struct undo *);
+void undo_snapshot(struct undo *);
+int undo_undo(struct undo *);
+int undo_redo(struct undo *);
+
+/* wnd.c */
+struct wnd *wnd_create(void);
+void wnd_free(struct wnd *);
+struct view *wnd_get_view(struct wnd *);
+int wnd_open(struct wnd *, const char *);
+int wnd_close(struct wnd *);
+int wnd_is_modified(struct wnd *);
+int wnd_any_modified(struct wnd *);
+int wnd_next(struct wnd *);
+int wnd_prev(struct wnd *);
+void wnd_first(struct wnd *);
+void wnd_last(struct wnd *);
 
 /* yank.c */
 struct yank *yank_create(void);
