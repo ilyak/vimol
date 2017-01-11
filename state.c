@@ -137,7 +137,7 @@ set_statusbar_text(struct state *state)
 	struct sys *sys;
 	int frame, nframes;
 	const char *text;
-	char *buffer, tmp[128];
+	char *buffer;
 
 	view = state_get_view(state);
 	sys = view_get_sys(view);
@@ -154,23 +154,14 @@ set_statusbar_text(struct state *state)
 	buffer = xstrdup("");
 
 	if (rec_is_recording(state->rec)) {
-		snprintf(tmp, sizeof(tmp), "[rec %c] ",
+		xasprintf(&buffer, "%s[rec %c] ", buffer,
 		    rec_get_register(state->rec) + 'a');
-		buffer = xstrcat(buffer, tmp);
 	}
-
-	if (state->repeat > 0) {
-		snprintf(tmp, sizeof(tmp), "[%d] ", state->repeat);
-		buffer = xstrcat(buffer, tmp);
-	}
-
-	if (sys_is_modified(sys)) {
-		snprintf(tmp, sizeof(tmp), "[+] ");
-		buffer = xstrcat(buffer, tmp);
-	}
-
-	snprintf(tmp, sizeof(tmp), "[%d/%d]", frame, nframes);
-	buffer = xstrcat(buffer, tmp);
+	if (state->repeat > 0)
+		xasprintf(&buffer, "%s[%d] ", buffer, state->repeat);
+	if (sys_is_modified(sys))
+		xasprintf(&buffer, "%s[+] ", buffer);
+	xasprintf(&buffer, "%s[%d/%d]", buffer, frame, nframes);
 
 	statusbar_set_info_text(state->statusbar, "%s", buffer);
 	free(buffer);

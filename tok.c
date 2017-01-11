@@ -213,18 +213,20 @@ tokq_free(struct tokq *tokq)
 char *
 tokq_strcat(struct tokq *tokq, int start, int count)
 {
-	char *s;
+	char *s, *p;
 	int i;
 
 	log_assert(start >= 0 && start + count <= tokq_count(tokq));
 
-	s = xstrdup("");
+	if (count == 0)
+		return (xstrdup(""));
 
-	for (i = start; i < start + count; i++) {
-		s = xstrcat(s, tokq->data[i]);
+	s = xstrdup(tokq->data[start]);
 
-		if (i < start + count - 1)
-			s = xstrcat(s, " ");
+	for (i = start+1; i < start+count; i++) {
+		xasprintf(&p, "%s %s", s, tokq->data[i]);
+		free(s);
+		s = p;
 	}
 
 	return (s);

@@ -128,16 +128,19 @@ rec_start(struct rec *rec)
 void
 rec_add(struct rec *rec, const char *add)
 {
-	char *s = rec->data[rec->reg];
+	char *s, *p;
 
 	log_assert(rec->is_recording);
 
-	if (s[0] == '\0')
-		s = xstrcpy(s, add);
-	else
-		s = xstrcat(xstrcat(s, "; "), add);
+	s = rec->data[rec->reg];
 
-	rec->data[rec->reg] = s;
+	if (s[0] == '\0')
+		p = xstrdup(add);
+	else
+		xasprintf(&p, "%s; %s", s, add);
+
+	free(s);
+	rec->data[rec->reg] = p;
 }
 
 void

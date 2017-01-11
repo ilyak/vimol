@@ -22,7 +22,7 @@ xcalloc(size_t nmemb, size_t size)
 	void *p;
 
 	if ((p = calloc(nmemb, size)) == NULL)
-		log_fatal("calloc");
+		log_fatal("xcalloc");
 	return (p);
 }
 
@@ -32,8 +32,23 @@ xrealloc(void *ptr, size_t size)
 	void *p;
 
 	if ((p = realloc(ptr, size)) == NULL)
-		log_fatal("realloc");
+		log_fatal("xrealloc");
 	return (p);
+}
+
+int
+xasprintf(char **ret, const char *fmt, ...)
+{
+	va_list ap;
+	int i;
+
+	va_start(ap, fmt);
+	i = vasprintf(ret, fmt, ap);
+	va_end(ap);
+
+	if (i < 0 || *ret == NULL)
+		log_fatal("xasprintf");
+	return (i);
 }
 
 char *
@@ -43,18 +58,12 @@ xstrcpy(char *s, const char *p)
 }
 
 char *
-xstrcat(char *s, const char *p)
-{
-	return (strcat(xrealloc(s, strlen(s) + strlen(p) + 1), p));
-}
-
-char *
 xstrdup(const char *s)
 {
 	char *p;
 
 	if ((p = strdup(s)) == NULL)
-		log_fatal("strdup");
+		log_fatal("xstrdup");
 	return (p);
 }
 
@@ -64,6 +73,6 @@ xstrndup(const char *s, size_t n)
 	char *p;
 
 	if ((p = strndup(s, n)) == NULL)
-		log_fatal("strndup");
+		log_fatal("xstrndup");
 	return (p);
 }
