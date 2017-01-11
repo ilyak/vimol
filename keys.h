@@ -18,7 +18,7 @@ static const struct {
 	{ "N", "select.within 5.0" },
 	{ "O", "frame+ 1" },
 	{ "P", "paste" },
-	{ "Q", "frame 1" },
+	{ "Q", "quit" },
 	{ "R", "play" },
 	{ "S", "select.next 1" },
 	{ "T", "unselect.next 1" },
