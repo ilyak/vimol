@@ -47,10 +47,18 @@
 /* number of yank registers */
 #define YANK_SIZE 26
 
+#include "vec.h"
+
+typedef struct {
+	double r, g, b;
+} color_t;
+
 struct pair {
 	int i, j;
 };
 struct pairs;       /* dynamic array of pairs */
+
+typedef const char *tok_t; /* a tokq token */
 
 struct alias;       /* alias management */
 struct atoms;       /* atom storage */
@@ -67,14 +75,11 @@ struct spi;         /* spatial index */
 struct state;       /* app state */
 struct statusbar;   /* status bar and command line */
 struct sys;         /* molecular system structure */
+struct tokq;        /* token list */
 struct undo;        /* undo-redo management */
 struct view;        /* viewport */
 struct wnd;         /* windows */
 struct yank;        /* copy-paste buffer */
-
-#include "color.h"
-#include "vec.h"
-#include "tok.h"
 
 /* alias.c */
 struct alias *alias_create(void);
@@ -120,6 +125,10 @@ void cmdq_free(struct cmdq *);
 int cmdq_count(struct cmdq *);
 struct cmd *cmdq_cmd(struct cmdq *, int);
 int cmdq_exec(struct cmdq *, struct state *);
+
+/* color.c */
+color_t color_rgb(int, int, int);
+int color_to_string(char *, size_t, color_t);
 
 /* edit.c */
 struct edit *edit_create(void);
@@ -316,6 +325,20 @@ vec_t sys_get_sel_center(struct sys *, struct sel *);
 void sys_reset_bonds(struct sys *, struct sel *);
 int sys_save_to_file(struct sys *, const char *);
 
+/* tok.c */
+int tok_int(tok_t);
+double tok_double(tok_t);
+int tok_bool(tok_t);
+const char *tok_string(tok_t);
+color_t tok_color(tok_t);
+vec_t tok_vec(tok_t);
+struct tokq *tokq_create(const char *);
+struct tokq *tokq_copy(struct tokq *, int, int);
+void tokq_free(struct tokq *);
+char *tokq_strcat(struct tokq *, int, int);
+int tokq_count(struct tokq *);
+tok_t tokq_tok(struct tokq *, int);
+
 /* undo.c */
 struct undo *undo_create(void *, void *(*)(void *), void (*)(void *));
 void undo_free(struct undo *);
@@ -367,7 +390,7 @@ void wnd_last(struct wnd *);
 /* xmalloc.c */
 void *xcalloc(size_t, size_t);
 void *xrealloc(void *, size_t);
-int xasprintf(char **ret, const char *fmt, ...);
+int xasprintf(char **, const char *, ...);
 char *xstrdup(const char *);
 char *xstrndup(const char *, size_t);
 
