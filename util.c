@@ -16,6 +16,34 @@
 
 #include "vimol.h"
 
+color_t
+color_rgb(int r, int g, int b)
+{
+	color_t color;
+
+	r = r < 0 ? 0 : r > 255 ? 255 : r;
+	g = g < 0 ? 0 : g > 255 ? 255 : g;
+	b = b < 0 ? 0 : b > 255 ? 255 : b;
+
+	color.r = (double)r / 255;
+	color.g = (double)g / 255;
+	color.b = (double)b / 255;
+
+	return (color);
+}
+
+int
+color_to_string(char *buf, size_t size, color_t color)
+{
+	int r, g, b;
+
+	r = (int)(color.r * 255);
+	g = (int)(color.g * 255);
+	b = (int)(color.b * 255);
+
+	return (snprintf(buf, size, "[%d %d %d]", r, g, b));
+}
+
 int
 util_is_empty(const char *str)
 {
