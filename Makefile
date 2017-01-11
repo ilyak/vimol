@@ -2,7 +2,7 @@ CC= cc
 PREFIX= /usr/local
 CFLAGS= -Wall -I/usr/include -I/usr/local/include -I/usr/include/cairo -I/usr/local/include/cairo -I/usr/include/SDL2 -I/usr/local/include/SDL2
 LDFLAGS= -L/usr/lib -L/usr/local/lib -L/usr/X11R6/lib
-LIBS= -lcairo -lSDL2
+LIBS= -lcairo -lSDL2 -lm
 PROG= vimol
 
 ALL_C= alias.c atoms.c camera.c cmd.c color.c edit.c error.c exec.c graph.c \
