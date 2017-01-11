@@ -80,7 +80,7 @@ history_save(struct history *history, const char *path)
 	history_reset_current(history);
 
 	while (history_prev(history))
-		;
+		continue;
 
 	while (history->current != history->top) {
 		fprintf(fp, "%s\n", history_get(history));
