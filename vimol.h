@@ -383,6 +383,8 @@ int wnd_next(struct wnd *);
 int wnd_prev(struct wnd *);
 void wnd_first(struct wnd *);
 void wnd_last(struct wnd *);
+int wnd_get_index(struct wnd *);
+int wnd_get_count(struct wnd *);
 
 /* xmalloc.c */
 void *xcalloc(size_t, size_t);

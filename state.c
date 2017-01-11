@@ -135,14 +135,16 @@ set_statusbar_text(struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
-	int frame, nframes;
+	int iframe, nframe, iwnd, nwnd;
 	const char *text;
 	char *buffer;
 
 	view = state_get_view(state);
 	sys = view_get_sys(view);
-	frame = sys_get_frame(sys) + 1;
-	nframes = sys_get_frame_count(sys);
+	iframe = sys_get_frame(sys);
+	nframe = sys_get_frame_count(sys);
+	iwnd = wnd_get_index(state->wnd);
+	nwnd = wnd_get_count(state->wnd);
 	text = edit_get_text(state->edit);
 
 	if (state->is_search)
@@ -154,14 +156,16 @@ set_statusbar_text(struct state *state)
 	buffer = xstrdup("");
 
 	if (rec_is_recording(state->rec)) {
-		xasprintf(&buffer, "%s[rec %c] ", buffer,
+		free(buffer);
+		xasprintf(&buffer, "[rec-%c]",
 		    rec_get_register(state->rec) + 'a');
 	}
 	if (state->repeat > 0)
-		xasprintf(&buffer, "%s[%d] ", buffer, state->repeat);
+		xasprintf(&buffer, "%s[%d]", buffer, state->repeat);
 	if (sys_is_modified(sys))
-		xasprintf(&buffer, "%s[+] ", buffer);
-	xasprintf(&buffer, "%s[%d/%d]", buffer, frame, nframes);
+		xasprintf(&buffer, "%s[+]", buffer);
+	xasprintf(&buffer, "%s[f%d/%d][w%d/%d]", buffer, iframe+1, nframe,
+	    iwnd+1, nwnd);
 
 	statusbar_set_info_text(state->statusbar, "%s", buffer);
 	free(buffer);

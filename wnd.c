@@ -188,3 +188,37 @@ wnd_last(struct wnd *wnd)
 	while (wnd->iter->next)
 		wnd->iter = wnd->iter->next;
 }
+
+int
+wnd_get_index(struct wnd *wnd)
+{
+	struct node *iter = wnd->iter;
+	int idx = 0;
+
+	while (iter->prev)
+		iter = iter->prev;
+
+	while (iter != wnd->iter) {
+		iter = iter->next;
+		idx++;
+	}
+
+	return (idx);
+}
+
+int
+wnd_get_count(struct wnd *wnd)
+{
+	struct node *iter = wnd->iter;
+	int cnt = 1;
+
+	while (iter->prev)
+		iter = iter->prev;
+
+	while (iter->next) {
+		iter = iter->next;
+		cnt++;
+	}
+
+	return (cnt);
+}
