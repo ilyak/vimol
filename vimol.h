@@ -26,6 +26,25 @@
 #define __dead
 #endif /* __dead */
 
+#define VIMOL_DEFAULT_FONT_WIN32  "consolas"
+#define VIMOL_DEFAULT_FONT_OSX    "andalemono"
+#define VIMOL_DEFAULT_FONT_OTHER  "liberationmono"
+
+#define VIMOL_DATA_PREFIX_WIN32   "APPDATA"
+#define VIMOL_DATA_PREFIX_OSX     "HOME"
+#define VIMOL_DATA_PREFIX_OTHER   "HOME"
+
+#if defined(__WIN32__) /* defined in SDL */
+#define VIMOL_DEFAULT_FONT VIMOL_DEFAULT_FONT_WIN32
+#define VIMOL_DATA_PREFIX VIMOL_DATA_PREFIX_WIN32
+#elif defined(__MACOSX__) /* defined in SDL */
+#define VIMOL_DEFAULT_FONT VIMOL_DEFAULT_FONT_OSX
+#define VIMOL_DATA_PREFIX VIMOL_DATA_PREFIX_OSX
+#else
+#define VIMOL_DEFAULT_FONT VIMOL_DEFAULT_FONT_OTHER
+#define VIMOL_DATA_PREFIX VIMOL_DATA_PREFIX_OTHER
+#endif
+
 /* number of recording registers */
 #define REC_SIZE 26
 /* number of yank registers */
@@ -59,7 +78,6 @@ struct yank;        /* copy-paste buffer */
 #include "color.h"
 #include "vec.h"
 #include "tok.h"
-#include "platform.h"
 
 /* alias.c */
 struct alias *alias_create(void);
