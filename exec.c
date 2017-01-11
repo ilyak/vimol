@@ -719,7 +719,7 @@ fn_frame(const char *self, struct tokq *args, struct state *state)
 }
 
 static int
-fn_fs(const char *self __unused, struct tokq *args __unused,
+fn_fullscreen(const char *self __unused, struct tokq *args __unused,
     struct state *state)
 {
 	state_toggle_fullscreen(state);
@@ -2225,7 +2225,7 @@ static const struct {
 	{ { "edit" }, fn_edit },
 	{ { "first" }, fn_first },
 	{ { "frame", "frame+" }, fn_frame },
-	{ { "fs" }, fn_fs },
+	{ { "fullscreen" }, fn_fullscreen },
 	{ { "get" }, fn_get },
 	{ { "group" }, fn_group },
 	{ { "hide" }, fn_hide },

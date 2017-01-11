@@ -154,7 +154,7 @@ static const struct {
 	{ "F8", "toggle origin.visible" },
 	{ "F9", "toggle statusbar.visible" },
 	{ "F10", "toggle statusbar.transparent" },
-	{ "F11", "fs" },
+	{ "F11", "fullscreen" },
 	{ "F12", "nop" },
 	{ "alt-F1", "nop" },
 	{ "alt-F2", "nop" },
