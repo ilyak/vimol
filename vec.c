@@ -46,11 +46,9 @@ vec_random(void)
 	vec_t vec;
 	double rho, phi;
 
-	vec.z = (double)(rand()) / RAND_MAX * 2 - 1.0;
-
+	vec.z = 2.0 * drand48() - 1.0;
 	rho = sqrt(1.0 - vec.z * vec.z);
-	phi = (double)(rand()) / RAND_MAX * 2 * PI;
-
+	phi = 2.0 * PI * drand48();
 	vec.x = rho * cos(phi);
 	vec.y = rho * sin(phi);
 
