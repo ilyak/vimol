@@ -15,11 +15,6 @@
 #include <SDL.h>
 #include <cairo.h>
 
-#define strcasecmp SDL_strcasecmp
-#define strncasecmp SDL_strncasecmp
-#define snprintf SDL_snprintf
-#define vsnprintf SDL_vsnprintf
-
 #ifndef __unused
 #define __unused
 #endif /* __unused */
