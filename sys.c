@@ -490,11 +490,11 @@ sys_add_atom(struct sys *sys, const char *name, vec_t xyz)
 void
 sys_remove_atom(struct sys *sys, int idx)
 {
-	struct atoms *atoms = sys_get_atoms(sys, sys->current_frame);
+	int i;
 
-	log_assert(sys_single_frame(sys));
+	for (i = 0; i < sys_get_frame_count(sys); i++)
+		atoms_remove(sys->frames[i].atoms, idx);
 
-	atoms_remove(atoms, idx);
 	graph_vertex_remove(sys->graph, idx);
 	sel_contract(sys->sel, idx);
 	sel_contract(sys->visible, idx);

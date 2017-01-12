@@ -551,12 +551,6 @@ fn_delete(const char *self __unused, struct tokq *args, struct state *state)
 	int i;
 
 	view = state_get_view(state);
-
-	if (sys_get_frame_count(view_get_sys(view)) > 1) {
-		error_set("cannot delete atoms from multi-frame files");
-		return (0);
-	}
-
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 
 	if (sel_get_count(sel) == 0) {
@@ -570,7 +564,6 @@ fn_delete(const char *self __unused, struct tokq *args, struct state *state)
 	for (i = sys_get_atom_count(sys) - 1; i >= 0; i--) {
 		if (!sel_selected(sel, i))
 			continue;
-
 		sys_remove_atom(sys, i);
 	}
 
