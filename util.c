@@ -109,6 +109,10 @@ util_next_line(char *buffer, FILE *fp)
 		}
 
 		if (ch == '\n' || ch == '\r') {
+			if (ch == '\r') {
+				if ((ch = fgetc(fp)) != '\n')
+					ungetc(ch, fp);
+			}
 			buffer[len] = '\0';
 			return (buffer);
 		}
