@@ -433,15 +433,15 @@ sys_get_frame(struct sys *sys)
 void
 sys_set_frame(struct sys *sys, int frame)
 {
-	int n_frames;
+	int nframes;
 
-	n_frames = sys_get_frame_count(sys);
+	nframes = sys_get_frame_count(sys);
 
 	if (frame < 0)
 		frame = 0;
 
-	if (frame > n_frames - 1)
-		frame = n_frames - 1;
+	if (frame > nframes - 1)
+		frame = nframes - 1;
 
 	sys->current_frame = frame;
 }
@@ -772,8 +772,8 @@ sys_save_to_file(struct sys *sys, const char *path)
 		}
 	}
 
-	sys_set_frame(sys, frame);
 	fclose(fp);
+	sys_set_frame(sys, frame);
 	sys->is_modified = 0;
 
 	return (1);
