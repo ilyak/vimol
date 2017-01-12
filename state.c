@@ -59,39 +59,6 @@ create_window(struct state *state)
 }
 
 static void
-load_info(struct state *state, const char *path)
-{
-	FILE *fp;
-	int x, y, w, h;
-
-	if ((fp = fopen(path, "r")) == NULL)
-		return;
-
-	if (fscanf(fp, "%d %d %d %d", &x, &y, &w, &h) == 4) {
-		SDL_SetWindowPosition(state->window, x, y);
-		SDL_SetWindowSize(state->window, w, h);
-	}
-
-	fclose(fp);
-}
-
-static void
-save_info(struct state *state, const char *path)
-{
-	FILE *fp;
-	int x, y, w, h;
-
-	if ((fp = fopen(path, "w")) == NULL)
-		return;
-
-	SDL_GetWindowPosition(state->window, &x, &y);
-	SDL_GetWindowSize(state->window, &w, &h);
-
-	fprintf(fp, "%d %d %d %d\n", x, y, w, h);
-	fclose(fp);
-}
-
-static void
 create_cairo(struct state *state)
 {
 	SDL_Surface *window_surface;
@@ -449,10 +416,6 @@ state_create(void)
 	state->yank = yank_create();
 
 	create_window(state);
-
-	path = settings_get_string("info.path");
-	load_info(state, path);
-
 	create_cairo(state);
 
 	assign_default_bindings(state);
@@ -638,7 +601,4 @@ state_save(struct state *state)
 
 	path = settings_get_string("rec.path");
 	rec_save(state->rec, path);
-
-	path = settings_get_string("info.path");
-	save_info(state, path);
 }

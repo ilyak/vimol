@@ -139,9 +139,6 @@ add_data_path(void)
 	snprintf(path, sizeof(path), "%srec", prefix);
 	add_node("rec.path", NODE_TYPE_STRING, path);
 
-	snprintf(path, sizeof(path), "%sinfo", prefix);
-	add_node("info.path", NODE_TYPE_STRING, path);
-
 	SDL_free(prefix);
 }
 
