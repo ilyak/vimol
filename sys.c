@@ -73,12 +73,6 @@ sys_add_frame(struct sys *sys, struct atoms *atoms)
 	sys->nframes++;
 }
 
-static int
-sys_single_frame(struct sys *sys)
-{
-	return (sys_get_frame_count(sys) == 1);
-}
-
 static void
 add_hydrogens(struct sys *sys, int i, int j, int k, int offset, int count)
 {
@@ -474,11 +468,11 @@ sys_get_frame_count(struct sys *sys)
 void
 sys_add_atom(struct sys *sys, const char *name, vec_t xyz)
 {
-	struct atoms *atoms = sys_get_atoms(sys, sys->current_frame);
+	int i;
 
-	log_assert(sys_single_frame(sys));
+	for (i = 0; i < sys_get_frame_count(sys); i++)
+		atoms_add(sys->frames[i].atoms, name, xyz);
 
-	atoms_add(atoms, name, xyz);
 	graph_vertex_add(sys->graph);
 	sel_expand(sys->sel);
 	sel_expand(sys->visible);
