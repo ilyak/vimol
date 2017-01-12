@@ -352,6 +352,7 @@ int string_is_comment(const char *);
 int string_has_suffix(const char *, const char *);
 int util_file_exists(const char *);
 char *util_next_line(char *, FILE *);
+void show_errorbox(const char *, ...);
 
 /* view.c */
 struct view *view_create(const char *);

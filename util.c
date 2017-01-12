@@ -127,3 +127,16 @@ util_next_line(char *buffer, FILE *fp)
 
 	return (buffer);
 }
+
+void
+show_errorbox(const char *fmt, ...)
+{
+	char msg[1024];
+	va_list ap;
+
+	va_start(ap, fmt);
+	vsnprintf(msg, sizeof msg, fmt, ap);
+	va_end(ap);
+
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", msg, NULL);
+}
