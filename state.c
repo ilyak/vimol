@@ -73,8 +73,8 @@ create_cairo(struct state *state)
 		fatal("cannot acquire SDL window surface");
 
 	cairo_surface = cairo_image_surface_create_for_data(
-		(unsigned char *)window_surface->pixels, CAIRO_FORMAT_RGB24,
-		window_surface->w, window_surface->h, window_surface->pitch);
+	    (unsigned char *)window_surface->pixels, CAIRO_FORMAT_RGB24,
+	    window_surface->w, window_surface->h, window_surface->pitch);
 
 	if (cairo_surface == NULL)
 		fatal("cannot create cairo surface");
