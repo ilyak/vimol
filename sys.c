@@ -363,8 +363,8 @@ sys_copy(struct sys *sys)
 	struct sys *copy;
 	int i;
 
-	copy = xcalloc(1, sizeof(struct sys));
-	memcpy(copy, sys, sizeof(struct sys));
+	copy = xcalloc(1, sizeof(*sys));
+	memcpy(copy, sys, sizeof(*sys));
 	copy->graph = graph_copy(sys->graph);
 	copy->sel = sel_copy(sys->sel);
 	copy->visible = sel_copy(sys->visible);
