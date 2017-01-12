@@ -126,32 +126,29 @@ get_bond_count(struct graph *graph, int idx)
 }
 
 static int
-parse_atom_pdb(const char *buffer, struct atom *atom)
+parse_atom_pdb(const char *buf, struct atom *atom)
 {
 	size_t i, j, buflen;
 
-	if ((buflen = strlen(buffer)) < 54) {
+	if ((buflen = strlen(buf)) < 54) {
 		error_set("incorrect pdb atom record format");
 		return (0);
 	}
 
-	memset(atom, 0, sizeof(struct atom));
+	memset(atom, 0, sizeof(*atom));
+	atom->name[0] = 'X';
 
 	if (buflen < 78) {
-		for (i = 12, j = 0; i < 16; i++)
-			if (!isspace(buffer[i]))
-				atom->name[j++] = buffer[i];
+		atom->name[0] = buf[13];
 	} else {
-		for (i = 76, j = 0; i < 78; i++)
-			if (!isspace(buffer[i]))
-				atom->name[j++] = buffer[i];
+		for (i = 76, j = 0; i < 78; i++) {
+			if (isalpha(buf[i]))
+				atom->name[j++] = buf[i];
+		}
 	}
 
-	if (atom->name[0] == '\0')
-		atom->name[0] = 'X';
+	sscanf(buf+30, "%lf%lf%lf", &atom->xyz.x, &atom->xyz.y, &atom->xyz.z);
 
-	sscanf(&buffer[30], "%lf%lf%lf", &atom->xyz.x, &atom->xyz.y,
-	    &atom->xyz.z);
 	return (1);
 }
 
