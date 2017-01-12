@@ -16,10 +16,6 @@
 
 #include "vimol.h"
 
-struct frame {
-	struct atoms *atoms;
-};
-
 struct atom {
 	char name[64];
 	vec_t xyz;
@@ -27,12 +23,12 @@ struct atom {
 
 struct sys {
 	int current_frame;
+	int nframes;
 	int is_modified;
 	struct graph *graph;
 	struct sel *sel;
 	struct sel *visible;
-	int nframes, nframesalloc;
-	struct frame *frames;
+	struct atoms **atoms; /* array of nframes atoms */
 };
 
 static const vec_t h_table[] = {
@@ -58,19 +54,15 @@ static const vec_t h_table[] = {
 static struct atoms *
 sys_get_atoms(struct sys *sys, int frame)
 {
-	return (sys->frames[frame].atoms);
+	return (sys->atoms[frame]);
 }
 
 static void
-sys_add_frame(struct sys *sys, struct atoms *atoms)
+sys_add_frame(struct sys *sys)
 {
-	if (sys->nframes == sys->nframesalloc) {
-		sys->nframesalloc *= 2;
-		sys->frames = xrealloc(sys->frames,
-		    sys->nframesalloc * sizeof(struct frame));
-	}
-	sys->frames[sys->nframes].atoms = atoms;
 	sys->nframes++;
+	sys->atoms = xrealloc(sys->atoms, sys->nframes * sizeof(*sys->atoms));
+	sys->atoms[sys->nframes-1] = atoms_create();
 }
 
 static void
@@ -172,7 +164,7 @@ load_from_pdb(struct sys *sys, const char *path)
 		if (strncasecmp(buffer, "ATOM  ", 6) == 0 ||
 		    strncasecmp(buffer, "HETATM", 6) == 0) {
 			if (newframe) {
-				sys_add_frame(sys, atoms_create());
+				sys_add_frame(sys);
 				sys_set_frame(sys, sys_get_frame_count(sys)-1);
 				newframe = 0;
 			}
@@ -192,8 +184,8 @@ load_from_pdb(struct sys *sys, const char *path)
 	sys_set_frame(sys, 0);
 
 	for (i = 0; i < sys_get_frame_count(sys); i++)
-		if (atoms_get_count(sys->frames[0].atoms) !=
-		    atoms_get_count(sys->frames[i].atoms)) {
+		if (atoms_get_count(sys->atoms[0]) !=
+		    atoms_get_count(sys->atoms[i])) {
 			error_set("unexpected number of atoms");
 			goto error;
 		}
@@ -270,7 +262,7 @@ load_from_xyz(struct sys *sys, const char *path, int is_new)
 			goto error;
 		}
 
-		sys_add_frame(sys, atoms_create());
+		sys_add_frame(sys);
 		sys_set_frame(sys, sys_get_frame_count(sys)-1);
 
 		buffer = util_next_line(buffer, fp);
@@ -345,8 +337,7 @@ sys_create_empty(void)
 	sys->graph = graph_create();
 	sys->sel = sel_create(0);
 	sys->visible = sel_create(0);
-	sys->nframesalloc = 8;
-	sys->frames = xcalloc(sys->nframesalloc, sizeof(struct frame));
+	sys_add_frame(sys);
 
 	return (sys);
 }
@@ -357,7 +348,6 @@ sys_create(const char *path)
 	struct sys *sys;
 
 	sys = sys_create_empty();
-	sys_add_frame(sys, atoms_create());
 
 	if (path == NULL || !util_file_exists(path))
 		return (sys);
@@ -381,10 +371,10 @@ sys_copy(struct sys *sys)
 	copy->graph = graph_copy(sys->graph);
 	copy->sel = sel_copy(sys->sel);
 	copy->visible = sel_copy(sys->visible);
-	copy->frames = xcalloc(copy->nframesalloc, sizeof(struct frame));
+	copy->atoms = xcalloc(copy->nframes, sizeof(*copy->atoms));
 
 	for (i = 0; i < sys_get_frame_count(sys); i++)
-		copy->frames[i].atoms = atoms_copy(sys->frames[i].atoms);
+		copy->atoms[i] = atoms_copy(sys->atoms[i]);
 
 	return (copy);
 }
@@ -395,12 +385,12 @@ sys_free(struct sys *sys)
 	int i;
 
 	for (i = 0; i < sys_get_frame_count(sys); i++)
-		atoms_free(sys->frames[i].atoms);
+		atoms_free(sys->atoms[i]);
 
 	sel_free(sys->sel);
 	sel_free(sys->visible);
 	graph_free(sys->graph);
-	free(sys->frames);
+	free(sys->atoms);
 	free(sys);
 }
 
@@ -468,7 +458,7 @@ sys_add_atom(struct sys *sys, const char *name, vec_t xyz)
 	int i;
 
 	for (i = 0; i < sys_get_frame_count(sys); i++)
-		atoms_add(sys->frames[i].atoms, name, xyz);
+		atoms_add(sys->atoms[i], name, xyz);
 
 	graph_vertex_add(sys->graph);
 	sel_expand(sys->sel);
@@ -484,7 +474,7 @@ sys_remove_atom(struct sys *sys, int idx)
 	int i;
 
 	for (i = 0; i < sys_get_frame_count(sys); i++)
-		atoms_remove(sys->frames[i].atoms, idx);
+		atoms_remove(sys->atoms[i], idx);
 
 	graph_vertex_remove(sys->graph, idx);
 	sel_contract(sys->sel, idx);
