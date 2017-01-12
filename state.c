@@ -305,12 +305,6 @@ key_is_ctrl_alt_shift(SDL_Keysym keysym)
 }
 
 static int
-key_is_period(SDL_Keysym keysym)
-{
-	return (keysym.mod == KMOD_NONE && keysym.sym == SDLK_PERIOD);
-}
-
-static int
 key_is_number(SDL_Keysym keysym)
 {
 	return (keysym.mod == KMOD_NONE &&
@@ -326,15 +320,6 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 
 	if (key_is_ctrl_alt_shift(keysym))
 		return;
-
-	/* this cannot be in exec because of possible infinite recursion */
-	if (key_is_period(keysym)) {
-		history_reset_current(state->history);
-		history_prev(state->history);
-		run_cmd(state, history_get(state->history));
-		history_reset_current(state->history);
-		return;
-	}
 
 	if (key_is_number(keysym)) {
 		repeat = state->repeat * 10 + (keysym.sym - SDLK_0);
