@@ -26,29 +26,25 @@ main(int argc, char **argv)
 	exec_init();
 	settings_init();
 
-	log_open(settings_get_string("log.path"));
-
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-		log_fatal("cannot initialize SDL");
+		fatal("cannot initialize SDL");
 
 	SDL_StopTextInput();
 
 	if ((state = state_create()) == NULL)
-		log_fatal("unable to create a program state");
+		fatal("unable to create a program state");
 
 	wnd = state_get_wnd(state);
 
 	for (idx = 1; idx < argc; idx++)
 		if (!wnd_open(wnd, argv[idx]))
-			log_warn("error opening \"%s\" (%s)", argv[idx],
+			warn("error opening file \"%s\": %s", argv[idx],
 			    error_get());
 
 	wnd_first(wnd);
 	wnd_close(wnd);
 
-	if (!state_source(state, settings_get_string("rc.path")))
-		log_warn("%s", error_get());
-
+	state_source(state, settings_get_string("rc.path"));
 	state_event_loop(state);
 
 	state_save(state);
@@ -57,7 +53,6 @@ main(int argc, char **argv)
 	settings_free();
 	exec_free();
 
-	log_close();
 	SDL_Quit();
 
 	return (0);

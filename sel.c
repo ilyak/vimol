@@ -97,8 +97,8 @@ sel_contract(struct sel *sel, int idx)
 {
 	int i;
 
-	log_assert(idx >= 0 && idx < sel_get_size(sel));
-	log_assert(sel->iter == -1);
+	util_assert(idx >= 0 && idx < sel_get_size(sel));
+	util_assert(sel->iter == -1);
 
 	sel_remove(sel, idx);
 
@@ -119,7 +119,7 @@ sel_contract(struct sel *sel, int idx)
 void
 sel_add(struct sel *sel, int idx)
 {
-	log_assert(idx >= 0 && idx < sel_get_size(sel));
+	util_assert(idx >= 0 && idx < sel_get_size(sel));
 
 	if (sel_selected(sel, idx))
 		return;
@@ -140,7 +140,7 @@ sel_remove(struct sel *sel, int idx)
 {
 	struct node *node;
 
-	log_assert(idx >= 0 && idx < sel_get_size(sel));
+	util_assert(idx >= 0 && idx < sel_get_size(sel));
 
 	if (!sel_selected(sel, idx))
 		return;
@@ -195,7 +195,7 @@ sel_clear(struct sel *sel)
 int
 sel_selected(struct sel *sel, int idx)
 {
-	log_assert(idx >= 0 && idx < sel_get_size(sel));
+	util_assert(idx >= 0 && idx < sel_get_size(sel));
 
 	return (idx == sel->head || sel->data[idx].next != -1 ||
 	    sel->data[idx].prev != -1);

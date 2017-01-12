@@ -129,14 +129,39 @@ util_next_line(char *buffer, FILE *fp)
 }
 
 void
-show_errorbox(const char *fmt, ...)
+util_assert_do(int cond, const char *file, int line)
+{
+	if (!cond)
+		fatal("assertion failed in %s:%d", file, line);
+}
+
+static void
+verrorbox(const char *fmt, va_list ap)
 {
 	char msg[1024];
+
+	vsnprintf(msg, sizeof msg, fmt, ap);
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", msg, NULL);
+}
+
+void
+warn(const char *fmt, ...)
+{
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsnprintf(msg, sizeof msg, fmt, ap);
+	verrorbox(fmt, ap);
+	va_end(ap);
+}
+
+void
+fatal(const char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	verrorbox(fmt, ap);
 	va_end(ap);
 
-	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", msg, NULL);
+	exit(1);
 }

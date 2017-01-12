@@ -41,7 +41,7 @@
 #define VIMOL_DATA_PREFIX VIMOL_DATA_PREFIX_OTHER
 #endif
 
-#define log_assert(x) log_assert_do((x), __FILE__, __LINE__)
+#define util_assert(x) util_assert_do((x), __FILE__, __LINE__)
 
 /* number of recording registers */
 #define REC_SIZE 26
@@ -186,13 +186,6 @@ int history_next(struct history *);
 int history_prev(struct history *);
 const char *history_get(struct history *);
 int history_search(struct history *, const char *);
-
-/* log.c */
-void log_open(const char *);
-void log_warn(const char *, ...);
-void log_fatal(const char *, ...) __dead;
-void log_assert_do(int, const char *, int);
-void log_close(void);
 
 /* pair.c */
 struct pairs *pairs_create(void);
@@ -352,7 +345,9 @@ int string_is_comment(const char *);
 int string_has_suffix(const char *, const char *);
 int util_file_exists(const char *);
 char *util_next_line(char *, FILE *);
-void show_errorbox(const char *, ...);
+void util_assert_do(int, const char *, int);
+void warn(const char *, ...);
+void fatal(const char *, ...) __dead;
 
 /* view.c */
 struct view *view_create(const char *);

@@ -81,7 +81,7 @@ atoms_add(struct atoms *atoms, const char *name, vec_t xyz)
 void
 atoms_remove(struct atoms *atoms, int idx)
 {
-	log_assert(idx >= 0 && idx < atoms_get_count(atoms));
+	util_assert(idx >= 0 && idx < atoms_get_count(atoms));
 
 	free(atoms->data[idx].name);
 	atoms->nelts--;
@@ -94,8 +94,8 @@ atoms_swap(struct atoms *atoms, int i, int j)
 {
 	struct atom atom;
 
-	log_assert(i >= 0 && i < atoms_get_count(atoms));
-	log_assert(j >= 0 && j < atoms_get_count(atoms));
+	util_assert(i >= 0 && i < atoms_get_count(atoms));
+	util_assert(j >= 0 && j < atoms_get_count(atoms));
 
 	atom = atoms->data[i];
 	atoms->data[i] = atoms->data[j];
@@ -122,14 +122,16 @@ atoms_get_count(struct atoms *atoms)
 const char *
 atoms_get_name(struct atoms *atoms, int idx)
 {
-	log_assert(idx >= 0 && idx < atoms_get_count(atoms));
+	util_assert(idx >= 0 && idx < atoms_get_count(atoms));
+
 	return (atoms->data[idx].name);
 }
 
 void
 atoms_set_name(struct atoms *atoms, int idx, const char *name)
 {
-	log_assert(idx >= 0 && idx < atoms_get_count(atoms));
+	util_assert(idx >= 0 && idx < atoms_get_count(atoms));
+
 	free(atoms->data[idx].name);
 	atoms->data[idx].name = xstrdup(name);
 }
@@ -137,13 +139,15 @@ atoms_set_name(struct atoms *atoms, int idx, const char *name)
 vec_t
 atoms_get_xyz(struct atoms *atoms, int idx)
 {
-	log_assert(idx >= 0 && idx < atoms_get_count(atoms));
+	util_assert(idx >= 0 && idx < atoms_get_count(atoms));
+
 	return (atoms->data[idx].xyz);
 }
 
 void
 atoms_set_xyz(struct atoms *atoms, int idx, vec_t xyz)
 {
-	log_assert(idx >= 0 && idx < atoms_get_count(atoms));
+	util_assert(idx >= 0 && idx < atoms_get_count(atoms));
+
 	atoms->data[idx].xyz = xyz;
 }

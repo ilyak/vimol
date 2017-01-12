@@ -55,7 +55,7 @@ create_window(struct state *state)
 	    800, 600, SDL_WINDOW_RESIZABLE);
 
 	if (state->window == NULL)
-		log_fatal("cannot create SDL window");
+		fatal("cannot create SDL window");
 }
 
 static void
@@ -70,20 +70,20 @@ create_cairo(struct state *state)
 	window_surface = SDL_GetWindowSurface(state->window);
 
 	if (window_surface == NULL)
-		log_fatal("cannot acquire SDL window surface");
+		fatal("cannot acquire SDL window surface");
 
 	cairo_surface = cairo_image_surface_create_for_data(
 		(unsigned char *)window_surface->pixels, CAIRO_FORMAT_RGB24,
 		window_surface->w, window_surface->h, window_surface->pitch);
 
 	if (cairo_surface == NULL)
-		log_fatal("cannot create cairo surface");
+		fatal("cannot create cairo surface");
 
 	state->cairo = cairo_create(cairo_surface);
 	cairo_surface_destroy(cairo_surface);
 
 	if (state->cairo == NULL)
-		log_fatal("cannot create cairo object");
+		fatal("cannot create cairo object");
 }
 
 static void

@@ -68,7 +68,7 @@ pairs_get_count(struct pairs *pairs)
 struct pair
 pairs_get(struct pairs *pairs, int idx)
 {
-	log_assert(idx >= 0 && idx < pairs_get_count(pairs));
+	util_assert(idx >= 0 && idx < pairs_get_count(pairs));
 
 	return (pairs->data[idx]);
 }

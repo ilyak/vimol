@@ -69,8 +69,8 @@ rec_get_register(struct rec *rec)
 void
 rec_set_register(struct rec *rec, int reg)
 {
-	log_assert(reg >= 0 && reg < REC_SIZE);
-	log_assert(!rec->is_recording);
+	util_assert(reg >= 0 && reg < REC_SIZE);
+	util_assert(!rec->is_recording);
 
 	rec->reg = reg;
 }
@@ -83,7 +83,7 @@ rec_load(struct rec *rec, const char *path)
 	char *buffer;
 
 	if ((fp = fopen(path, "r")) == NULL) {
-		log_warn("unable to open rec file %s", path);
+		warn("unable to open rec file %s", path);
 		return;
 	}
 
@@ -106,7 +106,7 @@ rec_save(struct rec *rec, const char *path)
 	int i;
 
 	if ((fp = fopen(path, "w")) == NULL) {
-		log_warn("unable to write to %s", path);
+		warn("unable to write to %s", path);
 		return;
 	}
 
@@ -119,7 +119,7 @@ rec_save(struct rec *rec, const char *path)
 void
 rec_start(struct rec *rec)
 {
-	log_assert(!rec->is_recording);
+	util_assert(!rec->is_recording);
 
 	rec->data[rec->reg][0] = '\0';
 	rec->is_recording = 1;
@@ -130,7 +130,7 @@ rec_add(struct rec *rec, const char *add)
 {
 	char *s, *p;
 
-	log_assert(rec->is_recording);
+	util_assert(rec->is_recording);
 
 	s = rec->data[rec->reg];
 
@@ -146,7 +146,7 @@ rec_add(struct rec *rec, const char *add)
 void
 rec_stop(struct rec *rec)
 {
-	log_assert(rec->is_recording);
+	util_assert(rec->is_recording);
 
 	rec->is_recording = 0;
 }
@@ -157,7 +157,7 @@ rec_play(struct rec *rec, struct state *state)
 	struct alias *alias;
 	struct cmdq *cmdq;
 
-	log_assert(!rec->is_recording && !rec->is_playing);
+	util_assert(!rec->is_recording && !rec->is_playing);
 
 	alias = state_get_alias(state);
 

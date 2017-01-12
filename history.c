@@ -52,7 +52,7 @@ history_load(struct history *history, const char *path)
 	char *buffer;
 
 	if ((fp = fopen(path, "r")) == NULL) {
-		log_warn("unable to open history file %s", path);
+		warn("unable to open history file %s", path);
 		return;
 	}
 
@@ -72,7 +72,7 @@ history_save(struct history *history, const char *path)
 	int save;
 
 	if ((fp = fopen(path, "w")) == NULL) {
-		log_warn("unable to write history file %s", path);
+		warn("unable to write history file %s", path);
 		return;
 	}
 
