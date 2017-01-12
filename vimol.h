@@ -41,6 +41,8 @@
 #define VIMOL_DATA_PREFIX VIMOL_DATA_PREFIX_OTHER
 #endif
 
+#define log_assert(x) log_assert_do((x), __FILE__, __LINE__)
+
 /* number of recording registers */
 #define REC_SIZE 26
 /* number of yank registers */
@@ -189,7 +191,7 @@ int history_search(struct history *, const char *);
 void log_open(const char *);
 void log_warn(const char *, ...);
 void log_fatal(const char *, ...) __dead;
-void log_assert(int);
+void log_assert_do(int, const char *, int);
 void log_close(void);
 
 /* pair.c */

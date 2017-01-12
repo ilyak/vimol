@@ -71,10 +71,15 @@ log_warn(const char *fmt, ...)
 }
 
 void
-log_assert(int cond)
+log_assert_do(int cond, const char *file, int line)
 {
-	if (!cond)
-		log_fatal("assertion failure");
+	char msg[1024];
+
+	if (cond) return;
+
+	snprintf(msg, sizeof msg, "Assertion failed in %s:%d", file, line);
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", msg, NULL);
+	exit(1);
 }
 
 void
