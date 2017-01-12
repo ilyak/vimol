@@ -121,17 +121,17 @@ set_statusbar_text(struct state *state)
 		statusbar_set_text(state->statusbar, ":%s", text);
 
 	if (rec_is_recording(state->rec))
-		xasprintf(&buf1, "[rec-%c]", rec_get_register(state->rec)+'a');
+		xasprintf(&buf1, "rec-%c ", rec_get_register(state->rec)+'a');
 	else
 		buf1 = xstrdup("");
 
 	if (state->repeat > 0)
-		xasprintf(&buf2, "[%d]", state->repeat);
+		xasprintf(&buf2, "%d ", state->repeat);
 	else
 		buf2 = xstrdup("");
 
-	xasprintf(&bufout, "%s%s%s[f%d/%d][w%d/%d]", buf1, buf2,
-	    sys_is_modified(sys) ? "[+]" : "", iframe+1, nframe, iwnd+1, nwnd);
+	xasprintf(&bufout, "%s%s%sf%d/%d w%d/%d", buf1, buf2,
+	    sys_is_modified(sys) ? "[+] " : "", iframe+1, nframe, iwnd+1, nwnd);
 	statusbar_set_info_text(state->statusbar, "%s", bufout);
 
 	free(buf1);
