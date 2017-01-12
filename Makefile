@@ -1,6 +1,6 @@
 CC= cc
 PREFIX= /usr/local
-CFLAGS= -Wall -I/usr/include -I/usr/local/include -I/usr/include/cairo -I/usr/local/include/cairo -I/usr/include/SDL2 -I/usr/local/include/SDL2
+CFLAGS= -g -Wall -I/usr/include -I/usr/local/include -I/usr/include/cairo -I/usr/local/include/cairo -I/usr/include/SDL2 -I/usr/local/include/SDL2
 LDFLAGS= -L/usr/lib -L/usr/local/lib -L/usr/X11R6/lib
 LIBS= -lcairo -lSDL2 -lm
 PROG= vimol
