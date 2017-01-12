@@ -165,8 +165,10 @@ static int
 load_from_pdb(struct sys *sys, const char *path)
 {
 	FILE *fp;
-	char *buffer;
+	struct atoms *atoms;
 	struct atom atom;
+	char *buffer;
+	int i, newframe = 0;
 
 	if ((fp = fopen(path, "r")) == NULL) {
 		error_set("unable to open %s", path);
@@ -178,12 +180,32 @@ load_from_pdb(struct sys *sys, const char *path)
 	while ((buffer = util_next_line(buffer, fp)) != NULL) {
 		if (strncasecmp(buffer, "ATOM  ", 6) == 0 ||
 		    strncasecmp(buffer, "HETATM", 6) == 0) {
+			if (newframe) {
+				sys_add_frame(sys, atoms_create());
+				sys_set_frame(sys, sys_get_frame_count(sys)-1);
+				newframe = 0;
+			}
 			if (!parse_atom_pdb(buffer, &atom))
 				goto error;
-
-			sys_add_atom(sys, atom.name, atom.xyz);
+			if (sys_get_frame_count(sys) == 1)
+				sys_add_atom(sys, atom.name, atom.xyz);
+			else {
+				atoms = sys_get_atoms(sys, sys->current_frame);
+				atoms_add(atoms, atom.name, atom.xyz);
+			}
 		}
+		if (strncasecmp(buffer, "END", 3) == 0)
+			newframe = 1;
 	}
+
+	sys_set_frame(sys, 0);
+
+	for (i = 0; i < sys_get_frame_count(sys); i++)
+		if (atoms_get_count(sys->frames[0].atoms) !=
+		    atoms_get_count(sys->frames[i].atoms)) {
+			error_set("unexpected number of atoms");
+			goto error;
+		}
 
 	fclose(fp);
 	return (1);
@@ -258,7 +280,7 @@ load_from_xyz(struct sys *sys, const char *path, int is_new)
 		}
 
 		sys_add_frame(sys, atoms_create());
-		sys_set_frame(sys, sys_get_frame_count(sys) - 1);
+		sys_set_frame(sys, sys_get_frame_count(sys)-1);
 
 		buffer = util_next_line(buffer, fp);
 
