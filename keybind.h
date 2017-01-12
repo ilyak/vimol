@@ -44,7 +44,7 @@ static const struct {
 	{ "shift-N", "select.within 2.0" },
 	{ "shift-O", "frame+ 10" },
 	{ "shift-P", "count" },
-	{ "shift-Q", "quit" },
+	{ "shift-Q", "quit!" },
 	{ "shift-R", "rec a" },
 	{ "shift-S", "select.next -1" },
 	{ "shift-T", "unselect.next -1" },
