@@ -131,7 +131,7 @@ static const struct {
 	{ "Delete", "delete" },
 	{ "=", "invert *" },
 	{ "Escape", "nop" },
-	{ "Space", "select *" },
+	{ "Space", "fullscreen" },
 	{ "`", "view.reset" },
 	{ "-", "nop" },
 	{ ";", "nop" },
