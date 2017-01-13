@@ -3,6 +3,7 @@
 
 #define _GNU_SOURCE /* for vasprintf on linux */
 
+#include <assert.h>
 #include <ctype.h>
 #include <math.h>
 #include <stdarg.h>
@@ -41,7 +42,7 @@
 #define VIMOL_DATA_PREFIX VIMOL_DATA_PREFIX_OTHER
 #endif
 
-#define util_assert(x) util_assert_do((x), __FILE__, __LINE__)
+#define util_assert assert
 
 /* number of recording registers */
 #define REC_SIZE 26
@@ -345,7 +346,6 @@ int string_is_comment(const char *);
 int string_has_suffix(const char *, const char *);
 int util_file_exists(const char *);
 char *util_next_line(char *, FILE *);
-void util_assert_do(int, const char *, int);
 void warn(const char *, ...);
 void fatal(const char *, ...) __dead;
 

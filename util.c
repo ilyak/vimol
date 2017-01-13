@@ -128,13 +128,6 @@ util_next_line(char *buffer, FILE *fp)
 	return (buffer);
 }
 
-void
-util_assert_do(int cond, const char *file, int line)
-{
-	if (!cond)
-		fatal("assertion failed in %s:%d", file, line);
-}
-
 static void
 verrorbox(const char *fmt, va_list ap)
 {
