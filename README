@@ -11,7 +11,7 @@ with their corresponding development packages:
 
 	OpenBSD:  pkg_add cairo
 
-	FreeBSD:  install graphics/cairo port
+	FreeBSD:  pkg install cairo
 
 	Ubuntu:   apt-get install libcairo-dev
 
@@ -23,7 +23,7 @@ with their corresponding development packages:
 
 	OpenBSD:  pkg_add sdl2
 
-	FreeBSD:  install devel/sdl20 port
+	FreeBSD:  pkg install sdl2
 
 	Ubuntu:   apt-get install libsdl2-dev
 
