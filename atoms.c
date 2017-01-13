@@ -132,8 +132,10 @@ atoms_set_name(struct atoms *atoms, int idx, const char *name)
 {
 	util_assert(idx >= 0 && idx < atoms_get_count(atoms));
 
-	free(atoms->data[idx].name);
-	atoms->data[idx].name = xstrdup(name);
+	if (name != atoms->data[idx].name) {
+		free(atoms->data[idx].name);
+		atoms->data[idx].name = xstrdup(name);
+	}
 }
 
 vec_t
