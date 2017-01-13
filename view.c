@@ -69,16 +69,60 @@ render_atoms(struct view *view, cairo_t *cairo)
 }
 
 static void
+draw_bond(cairo_t *cairo, int type, double size, point_t p1, point_t p2,
+    color_t clr1, color_t clr2)
+{
+	point_t dp, md;
+	double r;
+	int k;
+
+	dp.x = p1.y - p2.y;
+	dp.y = p2.x - p1.x;
+
+	r = sqrt(dp.x * dp.x + dp.y * dp.y);
+
+	dp.x = 1.5 * size * dp.x / r;
+	dp.y = 1.5 * size * dp.y / r;
+
+	p1.x -= dp.x * (type - 1) / 2;
+	p1.y -= dp.y * (type - 1) / 2;
+
+	p2.x -= dp.x * (type - 1) / 2;
+	p2.y -= dp.y * (type - 1) / 2;
+
+	for (k = 0; k < type; k++) {
+		md.x = (p1.x + p2.x) / 2;
+		md.y = (p1.y + p2.y) / 2;
+
+		cairo_set_source_rgb(cairo, clr1.r, clr1.g, clr1.b);
+		cairo_move_to(cairo, p1.x, p1.y);
+		cairo_line_to(cairo, md.x, md.y);
+		cairo_stroke(cairo);
+
+		cairo_set_source_rgb(cairo, clr2.r, clr2.g, clr2.b);
+		cairo_move_to(cairo, p2.x, p2.y);
+		cairo_line_to(cairo, md.x, md.y);
+		cairo_stroke(cairo);
+
+		p1.x += dp.x;
+		p1.y += dp.y;
+
+		p2.x += dp.x;
+		p2.y += dp.y;
+	}
+}
+
+static void
 render_bonds(struct view *view, cairo_t *cairo)
 {
 	struct sys *sys;
 	struct graph *graph;
 	struct graphedge *edge;
 	struct sel *visible;
-	color_t color;
-	point_t p1, p2, p3, dp;
-	double r, size;
-	int i, j, k, type;
+	point_t p1, p2;
+	color_t clr1, clr2;
+	double size;
+	int i, j, type;
 
 	size = settings_get_double("bond.size");
 	sys = view_get_sys(view);
@@ -99,49 +143,17 @@ render_bonds(struct view *view, cairo_t *cairo)
 
 			p1 = camera_transform(view->camera,
 			    sys_get_atom_xyz(sys, i));
-			p3 = camera_transform(view->camera,
+			p2 = camera_transform(view->camera,
 			    sys_get_atom_xyz(sys, j));
 
 			if (!cairo_in_clip(cairo, p1.x, p1.y) &&
-			    !cairo_in_clip(cairo, p3.x, p3.y))
+			    !cairo_in_clip(cairo, p2.x, p2.y))
 				continue;
 
-			dp.x = p1.y - p3.y;
-			dp.y = p3.x - p1.x;
+			clr1 = get_atom_color(sys_get_atom_name(sys, i));
+			clr2 = get_atom_color(sys_get_atom_name(sys, j));
 
-			r = sqrt(dp.x * dp.x + dp.y * dp.y);
-
-			dp.x = 1.5 * size * dp.x / r;
-			dp.y = 1.5 * size * dp.y / r;
-
-			p1.x -= dp.x * (type - 1) / 2;
-			p1.y -= dp.y * (type - 1) / 2;
-
-			p3.x -= dp.x * (type - 1) / 2;
-			p3.y -= dp.y * (type - 1) / 2;
-
-			for (k = 0; k < type; k++) {
-				p2.x = (p1.x + p3.x) / 2;
-				p2.y = (p1.y + p3.y) / 2;
-
-				color = get_atom_color(sys_get_atom_name(sys, i));
-				cairo_set_source_rgb(cairo, color.r, color.g, color.b);
-				cairo_move_to(cairo, p1.x, p1.y);
-				cairo_line_to(cairo, p2.x, p2.y);
-				cairo_stroke(cairo);
-
-				color = get_atom_color(sys_get_atom_name(sys, j));
-				cairo_set_source_rgb(cairo, color.r, color.g, color.b);
-				cairo_move_to(cairo, p3.x, p3.y);
-				cairo_line_to(cairo, p2.x, p2.y);
-				cairo_stroke(cairo);
-
-				p1.x += dp.x;
-				p1.y += dp.y;
-
-				p3.x += dp.x;
-				p3.y += dp.y;
-			}
+			draw_bond(cairo, type, size, p1, p2, clr1, clr2);
 		}
 	}
 }
