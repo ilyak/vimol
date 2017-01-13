@@ -80,7 +80,8 @@ make_sel(struct tokq *args, int arg_start, int arg_end, struct sel *current)
 }
 
 static struct pairs *
-make_pairs(struct tokq *args, int arg_start, int arg_end, struct sel *selection)
+make_pairs(struct tokq *args, int arg_start, int arg_end,
+    struct sel *selection)
 {
 	struct pairs *pairs;
 	int i, j, k, size;
