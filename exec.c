@@ -1509,22 +1509,19 @@ fn_save(const char *self, struct tokq *args, struct state *state)
 			error_set("no file name");
 			return (0);
 		}
-	} else
-		path = tok_string(tokq_tok(args, 0));
 
-	if (tokq_count(args) == 0 && !force) {
-		if (!string_has_suffix(path, ".xyz")) {
-			error_set(
-		"file will be written in xyz format; add ! to override");
+		if (!(force || string_has_suffix(path, ".xyz"))) {
+			error_set("add ! to overwrite and save in xyz format");
 			return (0);
 		}
-	}
+	} else
+		path = tok_string(tokq_tok(args, 0));
 
 	if (!sys_save_to_file(sys, path))
 		return (0);
 
 	view_set_path(view, path);
-	error_set("saved to \"%s\"", path);
+	error_set("saved to \"%s\"", view_get_path(view));
 
 	return (1);
 }
