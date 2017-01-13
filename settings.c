@@ -169,7 +169,6 @@ static const struct {
 	{ "statusbar.font", NODE_TYPE_STRING, VIMOL_DEFAULT_FONT },
 	{ "statusbar.font.size", NODE_TYPE_DOUBLE, "16.0" },
 	{ "statusbar.text.color", NODE_TYPE_COLOR, "[0 0 0]" },
-	{ "statusbar.transparent", NODE_TYPE_BOOL, "false" },
 	{ "statusbar.visible", NODE_TYPE_BOOL, "true" },
 	{ "color.x", NODE_TYPE_COLOR, "[255 0 255]" },
 	{ "color.h", NODE_TYPE_COLOR, "[255 255 255]" },

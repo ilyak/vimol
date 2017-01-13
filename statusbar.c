@@ -127,13 +127,11 @@ statusbar_render(struct statusbar *statusbar, cairo_t *cairo)
 	width = cairo_image_surface_get_width(cairo_get_target(cairo));
 	height = cairo_image_surface_get_height(cairo_get_target(cairo));
 
-	if (!settings_get_bool("statusbar.transparent")) {
-		color = settings_get_color("statusbar.color");
-		cairo_set_source_rgb(cairo, color.r, color.g, color.b);
-		cairo_rectangle(cairo, 0, height - exfont.height - 10,
-		    width, exfont.height + 10);
-		cairo_fill(cairo);
-	}
+	color = settings_get_color("statusbar.color");
+	cairo_set_source_rgb(cairo, color.r, color.g, color.b);
+	cairo_rectangle(cairo, 0, height - exfont.height - 10,
+	    width, exfont.height + 10);
+	cairo_fill(cairo);
 
 	color = settings_get_color("statusbar.text.color");
 	cairo_set_source_rgb(cairo, color.r, color.g, color.b);
