@@ -16,12 +16,6 @@
 
 #include "vimol.h"
 
-static int
-ends_with(const char *str, char c)
-{
-	return (str[strlen(str) - 1] == c);
-}
-
 static void
 select_connected(struct graph *graph, int idx, struct sel *sel)
 {
@@ -357,10 +351,11 @@ fn_bond(const char *self, struct tokq *args, struct state *state)
 	view_snapshot(view);
 	graph = view_get_graph(view);
 
-	if (strcmp(self, "rmbond") == 0)
-		type = 0;
-	else
-		type = ends_with(self, '3') ? 3 : ends_with(self, '2') ? 2 : 1;
+//XXX
+//	if (strcmp(self, "rmbond") == 0)
+//		type = 0;
+//	else
+//		type = ends_with(self, '3') ? 3 : ends_with(self, '2') ? 2 : 1;
 
 	for (k = 0; k < pairs_get_count(pairs); k++) {
 		pair = pairs_get(pairs, k);
@@ -477,16 +472,21 @@ fn_clear(const char *self __unused, struct tokq *args, struct state *state)
 static int
 fn_close(const char *self, struct tokq *args __unused, struct state *state)
 {
-	struct wnd *wnd;
-	int force;
+	struct wnd *wnd = state_get_wnd(state);
 
-	wnd = state_get_wnd(state);
-	force = ends_with(self, '!');
-
-	if (wnd_is_modified(wnd) && !force) {
+	if (wnd_is_modified(wnd)) {
 		error_set("save changes or add ! to override");
 		return (0);
 	}
+
+	return (wnd_close(wnd));
+}
+
+static int
+fn_force_close(const char *self, struct tokq *args __unused,
+    struct state *state)
+{
+	struct wnd *wnd = state_get_wnd(state);
 
 	return (wnd_close(wnd));
 }
@@ -582,10 +582,9 @@ fn_dist(const char *self, struct tokq *args, struct state *state)
 	struct sel *sel;
 	vec_t pa, pb, dr;
 	double rab, val;
-	int idx, plus;
+	int idx;
 
 	view = state_get_view(state);
-	plus = ends_with(self, '+');
 
 	if (tokq_count(args) < 1) {
 		error_set("specify distance");
@@ -614,15 +613,64 @@ fn_dist(const char *self, struct tokq *args, struct state *state)
 	if ((rab = vec_dist(&pa, &pb)) < 1.0e-8)
 		return (1);
 
-	if (plus) {
-		dr.x = (pb.x - pa.x) * val / rab;
-		dr.y = (pb.y - pa.y) * val / rab;
-		dr.z = (pb.z - pa.z) * val / rab;
-	} else {
-		dr.x = (pb.x - pa.x) * (val - rab) / rab;
-		dr.y = (pb.y - pa.y) * (val - rab) / rab;
-		dr.z = (pb.z - pa.z) * (val - rab) / rab;
+	dr.x = (pb.x - pa.x) * (val - rab) / rab;
+	dr.y = (pb.y - pa.y) * (val - rab) / rab;
+	dr.z = (pb.z - pa.z) * (val - rab) / rab;
+
+	sel_iter_start(sel);
+
+	while (sel_iter_next(sel, &idx)) {
+		pb = sys_get_atom_xyz(sys, idx);
+		pb = vec_add(&pb, &dr);
+		sys_set_atom_xyz(sys, idx, pb);
 	}
+
+	sel_free(sel);
+	return (1);
+}
+
+static int
+fn_plus_dist(const char *self, struct tokq *args, struct state *state)
+{
+	struct view *view;
+	struct sys *sys;
+	struct sel *sel;
+	vec_t pa, pb, dr;
+	double rab, val;
+	int idx;
+
+	view = state_get_view(state);
+
+	if (tokq_count(args) < 1) {
+		error_set("specify distance");
+		return (0);
+	}
+
+	val = tok_double(tokq_tok(args, 0));
+	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
+
+	if (sel_get_count(sel) < 2) {
+		sel_free(sel);
+		error_set("specify at least 2 atoms");
+		return (0);
+	}
+
+	view_snapshot(view);
+	sys = view_get_sys(view);
+
+	sel_iter_start(sel);
+	sel_iter_next(sel, &idx);
+	sel_remove(sel, idx);
+
+	pa = sys_get_atom_xyz(sys, idx);
+	pb = sys_get_sel_center(sys, sel);
+
+	if ((rab = vec_dist(&pa, &pb)) < 1.0e-8)
+		return (1);
+
+	dr.x = (pb.x - pa.x) * val / rab;
+	dr.y = (pb.y - pa.y) * val / rab;
+	dr.z = (pb.z - pa.z) * val / rab;
 
 	sel_iter_start(sel);
 
@@ -686,15 +734,14 @@ fn_view_fit(const char *self __unused, struct tokq *args, struct state *state)
 }
 
 static int
-fn_frame(const char *self, struct tokq *args, struct state *state)
+fn_set_frame(const char *self, struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
-	int n, plus;
+	int n;
 
 	view = state_get_view(state);
 	sys = view_get_sys(view);
-	plus = ends_with(self, '+');
 
 	if (tokq_count(args) < 1)
 		return (0);
@@ -702,11 +749,29 @@ fn_frame(const char *self, struct tokq *args, struct state *state)
 	if ((n = tok_int(tokq_tok(args, 0))) == 0)
 		return (0);
 
-	if (plus)
-		n = sys_get_frame(sys) + n;
-	else
-		n = n < 0 ? sys_get_frame_count(sys) + n : n - 1;
+	n = n < 0 ? sys_get_frame_count(sys) + n : n - 1;
+	sys_set_frame(sys, n);
 
+	return (1);
+}
+
+static int
+fn_add_frame(const char *self, struct tokq *args, struct state *state)
+{
+	struct view *view;
+	struct sys *sys;
+	int n;
+
+	view = state_get_view(state);
+	sys = view_get_sys(view);
+
+	if (tokq_count(args) < 1)
+		return (0);
+
+	if ((n = tok_int(tokq_tok(args, 0))) == 0)
+		return (0);
+
+	n = sys_get_frame(sys) + n;
 	sys_set_frame(sys, n);
 
 	return (1);
@@ -828,20 +893,32 @@ fn_view_pos(const char *self, struct tokq *args, struct state *state)
 	struct view *view;
 	struct camera *camera;
 	vec_t xyz;
-	int plus;
 
 	if (tokq_count(args) < 1)
 		return (0);
 
-	plus = ends_with(self, '+');
 	view = state_get_view(state);
 	camera = view_get_camera(view);
 	xyz = tok_vec(tokq_tok(args, 0));
+	camera_move_to(camera, xyz);
 
-	if (plus)
-		camera_move(camera, xyz);
-	else
-		camera_move_to(camera, xyz);
+	return (1);
+}
+
+static int
+fn_view_pos_plus(const char *self, struct tokq *args, struct state *state)
+{
+	struct view *view;
+	struct camera *camera;
+	vec_t xyz;
+
+	if (tokq_count(args) < 1)
+		return (0);
+
+	view = state_get_view(state);
+	camera = view_get_camera(view);
+	xyz = tok_vec(tokq_tok(args, 0));
+	camera_move(camera, xyz);
 
 	return (1);
 }
@@ -1104,12 +1181,10 @@ fn_pos(const char *self, struct tokq *args, struct state *state)
 	struct view *view;
 	struct sys *sys;
 	struct sel *sel;
-	mat_t rotmat;
 	vec_t dr, xyz;
-	int idx, plus;
+	int idx;
 
 	view = state_get_view(state);
-	plus = ends_with(self, '+');
 
 	if (tokq_count(args) < 1) {
 		error_set("specify a vector [x y z]");
@@ -1126,15 +1201,51 @@ fn_pos(const char *self, struct tokq *args, struct state *state)
 
 	view_snapshot(view);
 	sys = view_get_sys(view);
+	xyz = sys_get_sel_center(sys, sel);
+	dr = vec_sub(&dr, &xyz);
 
-	if (plus) {
-		rotmat = camera_get_rotation(view_get_camera(view));
-		rotmat = mat_transpose(&rotmat);
-		dr = mat_vec(&rotmat, &dr);
-	} else {
-		xyz = sys_get_sel_center(sys, sel);
-		dr = vec_sub(&dr, &xyz);
+	sel_iter_start(sel);
+
+	while (sel_iter_next(sel, &idx)) {
+		xyz = sys_get_atom_xyz(sys, idx);
+		xyz = vec_add(&xyz, &dr);
+		sys_set_atom_xyz(sys, idx, xyz);
 	}
+
+	sel_free(sel);
+	return (1);
+}
+
+static int
+fn_pos_plus(const char *self, struct tokq *args, struct state *state)
+{
+	struct view *view;
+	struct sys *sys;
+	struct sel *sel;
+	mat_t rotmat;
+	vec_t dr, xyz;
+	int idx;
+
+	view = state_get_view(state);
+
+	if (tokq_count(args) < 1) {
+		error_set("specify a vector [x y z]");
+		return (0);
+	}
+
+	dr = tok_vec(tokq_tok(args, 0));
+	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
+
+	if (sel_get_count(sel) == 0) {
+		sel_free(sel);
+		return (1);
+	}
+
+	view_snapshot(view);
+	sys = view_get_sys(view);
+	rotmat = camera_get_rotation(view_get_camera(view));
+	rotmat = mat_transpose(&rotmat);
+	dr = mat_vec(&rotmat, &dr);
 
 	sel_iter_start(sel);
 
@@ -1168,12 +1279,19 @@ fn_pos_get(const char *self __unused, struct tokq *args, struct state *state)
 }
 
 static int
-fn_quit(const char *self, struct tokq *args __unused, struct state *state)
+fn_quit(const char *self __unused, struct tokq *args __unused,
+    struct state *state)
 {
-	int force;
+	state_quit(state, 0);
 
-	force = ends_with(self, '!');
-	state_quit(state, force);
+	return (1);
+}
+
+static int
+fn_force_quit(const char *self __unused, struct tokq *args __unused,
+    struct state *state)
+{
+	state_quit(state, 1);
 
 	return (1);
 }
@@ -1253,16 +1371,38 @@ fn_reload(const char *self, struct tokq *args __unused, struct state *state)
 {
 	struct wnd *wnd;
 	const char *path;
-	int force;
 
 	wnd = state_get_wnd(state);
-	force = ends_with(self, '!');
 
-	if (wnd_is_modified(wnd) && !force) {
+	if (wnd_is_modified(wnd)) {
 		error_set("save changes or add ! to override");
 		return (0);
 	}
 
+	path = view_get_path(wnd_get_view(wnd));
+
+	if (path[0] == '\0') {
+		error_set("no file name");
+		return (0);
+	}
+
+	if (!wnd_open(wnd, path))
+		return (0);
+
+	wnd_prev(wnd);
+	wnd_close(wnd);
+
+	return (1);
+}
+
+static int
+fn_force_reload(const char *self, struct tokq *args __unused,
+    struct state *state)
+{
+	struct wnd *wnd;
+	const char *path;
+
+	wnd = state_get_wnd(state);
 	path = view_get_path(wnd_get_view(wnd));
 
 	if (path[0] == '\0') {
@@ -1497,11 +1637,9 @@ fn_save(const char *self, struct tokq *args, struct state *state)
 	struct view *view;
 	struct sys *sys;
 	const char *path;
-	int force;
 
 	view = state_get_view(state);
 	sys = view_get_sys(view);
-	force = ends_with(self, '!');
 
 	if (tokq_count(args) == 0) {
 		path = view_get_path(view);
@@ -1511,8 +1649,37 @@ fn_save(const char *self, struct tokq *args, struct state *state)
 			return (0);
 		}
 
-		if (!(force || string_has_suffix(path, ".xyz"))) {
+		if (!string_has_suffix(path, ".xyz")) {
 			error_set("add ! to overwrite and save in xyz format");
+			return (0);
+		}
+	} else
+		path = tok_string(tokq_tok(args, 0));
+
+	if (!sys_save_to_file(sys, path))
+		return (0);
+
+	view_set_path(view, path);
+	error_set("saved to \"%s\"", view_get_path(view));
+
+	return (1);
+}
+
+static int
+fn_force_save(const char *self, struct tokq *args, struct state *state)
+{
+	struct view *view;
+	struct sys *sys;
+	const char *path;
+
+	view = state_get_view(state);
+	sys = view_get_sys(view);
+
+	if (tokq_count(args) == 0) {
+		path = view_get_path(view);
+
+		if (path[0] == '\0') {
+			error_set("no file name");
 			return (0);
 		}
 	} else
@@ -2206,16 +2373,19 @@ static const struct {
 	{ { "bond", "b", "bond2", "b2", "bond3", "b3", "rmbond" }, fn_bond },
 	{ { "chain" }, fn_chain },
 	{ { "clear" }, fn_clear },
-	{ { "close", "clos", "clo", "close!", "clos!", "clo!" }, fn_close },
+	{ { "close" }, fn_close },
+	{ { "close!" }, fn_force_close },
 	{ { "coord" }, fn_coord },
 	{ { "copy", "yank" }, fn_copy },
 	{ { "count" }, fn_count },
 	{ { "delete", "del", "rm" }, fn_delete },
-	{ { "dist", "dist+" }, fn_dist },
+	{ { "dist" }, fn_dist },
+	{ { "dist+" }, fn_plus_dist },
 	{ { "dist?" }, fn_dist_get },
 	{ { "edit" }, fn_edit },
 	{ { "first" }, fn_first },
-	{ { "frame", "frame+" }, fn_frame },
+	{ { "frame" }, fn_set_frame },
+	{ { "frame+" }, fn_add_frame },
 	{ { "fullscreen" }, fn_fullscreen },
 	{ { "get" }, fn_get },
 	{ { "group" }, fn_group },
@@ -2233,19 +2403,23 @@ static const struct {
 	{ { "path?" }, fn_path_get },
 	{ { "play" }, fn_play },
 	{ { "png" }, fn_png },
-	{ { "pos", "pos+" }, fn_pos },
+	{ { "pos" }, fn_pos },
+	{ { "pos+" }, fn_pos_plus },
 	{ { "pos?" }, fn_pos_get },
 	{ { "prev" }, fn_prev },
-	{ { "quit", "q", "exit", "quit!", "q!", "exit!" }, fn_quit },
+	{ { "q" }, fn_quit },
+	{ { "q!" }, fn_force_quit },
 	{ { "read", "r" }, fn_read },
 	{ { "rec" }, fn_rec },
 	{ { "redo" }, fn_redo },
-	{ { "reload", "reload!" }, fn_reload },
+	{ { "reload" }, fn_reload },
+	{ { "reload!" }, fn_force_reload },
 	{ { "repeat" }, fn_repeat },
 	{ { "ring" }, fn_ring },
 	{ { "rotate" }, fn_rotate },
 	{ { "run" }, fn_run },
-	{ { "save", "w", "save!", "w!" }, fn_save },
+	{ { "w" }, fn_save },
+	{ { "w!" }, fn_force_save },
 	{ { "select", "sel", "s" }, fn_select },
 	{ { "select.bonded" }, fn_select_bonded },
 	{ { "select.box", "sb" }, fn_select_box },
@@ -2265,7 +2439,8 @@ static const struct {
 	{ { "unselect.next" }, fn_unselect_next },
 	{ { "view.center" }, fn_view_center },
 	{ { "view.fit" }, fn_view_fit },
-	{ { "view.pos", "view.pos+" }, fn_view_pos },
+	{ { "view.pos" }, fn_view_pos },
+	{ { "view.pos+" }, fn_view_pos_plus },
 	{ { "view.reset" }, fn_view_reset },
 	{ { "view.rotate" }, fn_view_rotate },
 	{ { "view.zoom" }, fn_view_zoom },
