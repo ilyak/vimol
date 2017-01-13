@@ -23,23 +23,16 @@
 #define __dead
 #endif /* __dead */
 
-#define VIMOL_DEFAULT_FONT_WIN32  "consolas"
-#define VIMOL_DEFAULT_FONT_OSX    "andalemono"
-#define VIMOL_DEFAULT_FONT_OTHER  "liberationmono"
-
-#define VIMOL_DATA_PREFIX_WIN32   "APPDATA"
-#define VIMOL_DATA_PREFIX_OSX     "HOME"
-#define VIMOL_DATA_PREFIX_OTHER   "HOME"
-
-#if defined(__WIN32__) /* defined in SDL */
-#define VIMOL_DEFAULT_FONT VIMOL_DEFAULT_FONT_WIN32
-#define VIMOL_DATA_PREFIX VIMOL_DATA_PREFIX_WIN32
-#elif defined(__MACOSX__) /* defined in SDL */
-#define VIMOL_DEFAULT_FONT VIMOL_DEFAULT_FONT_OSX
-#define VIMOL_DATA_PREFIX VIMOL_DATA_PREFIX_OSX
+/* OS is defined in SDL */
+#if defined(__WIN32__)
+#define VIMOL_DEFAULT_FONT "consolas"
+#define VIMOL_DATA_PREFIX  "APPDATA"
+#elif defined(__MACOSX__)
+#define VIMOL_DEFAULT_FONT "andalemono"
+#define VIMOL_DATA_PREFIX  "HOME"
 #else
-#define VIMOL_DEFAULT_FONT VIMOL_DEFAULT_FONT_OTHER
-#define VIMOL_DATA_PREFIX VIMOL_DATA_PREFIX_OTHER
+#define VIMOL_DEFAULT_FONT "liberationmono"
+#define VIMOL_DATA_PREFIX  "HOME"
 #endif
 
 /* number of recording registers */
