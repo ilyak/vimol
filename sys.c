@@ -745,22 +745,18 @@ sys_save_to_file(struct sys *sys, const char *path)
 	const char *name;
 	struct atoms *atoms;
 	vec_t xyz;
-	int i, j, frame;
+	int i, j;
 
 	if ((fp = fopen(path, "w")) == NULL) {
 		error_set("unable to write to file %s", path);
 		return (0);
 	}
 
-	frame = sys_get_frame(sys);
-
 	for (i = 0; i < sys_get_frame_count(sys); i++) {
-		sys_set_frame(sys, i);
-		atoms = sys_get_atoms(sys, sys->current_frame);
+		atoms = sys->atoms[i];
+		fprintf(fp, "%d\n\n", atoms_get_count(atoms));
 
-		fprintf(fp, "%d\n\n", sys_get_atom_count(sys));
-
-		for (j = 0; j < sys_get_atom_count(sys); j++) {
+		for (j = 0; j < atoms_get_count(atoms); j++) {
 			name = atoms_get_name(atoms, j);
 			xyz = atoms_get_xyz(atoms, j);
 
@@ -773,7 +769,6 @@ sys_save_to_file(struct sys *sys, const char *path)
 	}
 
 	fclose(fp);
-	sys_set_frame(sys, frame);
 	sys->is_modified = 0;
 
 	return (1);
