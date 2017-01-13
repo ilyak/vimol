@@ -53,37 +53,73 @@ create_window(struct state *state)
 	state->window = SDL_CreateWindow("vimol",
 	    SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 	    800, 600, SDL_WINDOW_RESIZABLE);
-
 	if (state->window == NULL)
-		fatal("cannot create SDL window");
+		fatal("%s", SDL_GetError());
+}
+
+static int
+window_size_changed(struct state *state)
+{
+	SDL_Surface *sdl_surface;
+	cairo_surface_t *cairo_surface;
+	int w, h;
+
+	if ((cairo_surface = cairo_get_target(state->cairo)) == NULL)
+		fatal("cairo_get_target");
+	if ((sdl_surface = SDL_GetWindowSurface(state->window)) == NULL)
+		fatal("%s", SDL_GetError());
+
+	w = cairo_image_surface_get_width(cairo_surface);
+	h = cairo_image_surface_get_height(cairo_surface);
+
+	return (sdl_surface->w != w || sdl_surface->h != h);
 }
 
 static void
 create_cairo(struct state *state)
 {
-	SDL_Surface *window_surface;
+	SDL_Surface *sdl_surface;
 	cairo_surface_t *cairo_surface;
 
 	if (state->cairo)
 		cairo_destroy(state->cairo);
 
-	window_surface = SDL_GetWindowSurface(state->window);
+	if ((sdl_surface = SDL_GetWindowSurface(state->window)) == NULL)
+		fatal("%s", SDL_GetError());
 
-	if (window_surface == NULL)
-		fatal("cannot acquire SDL window surface");
-
-	cairo_surface = cairo_image_surface_create_for_data(
-	    (unsigned char *)window_surface->pixels, CAIRO_FORMAT_RGB24,
-	    window_surface->w, window_surface->h, window_surface->pitch);
-
-	if (cairo_surface == NULL)
-		fatal("cannot create cairo surface");
+	cairo_surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24,
+	    sdl_surface->w, sdl_surface->h);
+	if (cairo_surface_status(cairo_surface) != CAIRO_STATUS_SUCCESS)
+		fatal("unable to create cairo surface");
 
 	state->cairo = cairo_create(cairo_surface);
-	cairo_surface_destroy(cairo_surface);
+	if (cairo_status(state->cairo) != CAIRO_STATUS_SUCCESS)
+		fatal("unable to create cairo object");
 
-	if (state->cairo == NULL)
-		fatal("cannot create cairo object");
+	/* cairo_create references cairo_surface so deref here */
+	cairo_surface_destroy(cairo_surface);
+}
+
+static void
+state_blit(struct state *state)
+{
+	SDL_Surface *sdl_surface;
+	cairo_surface_t *cairo_surface;
+	unsigned char *data;
+
+	util_assert(!window_size_changed(state));
+
+	if ((cairo_surface = cairo_get_target(state->cairo)) == NULL)
+		fatal("cairo_get_target");
+	if ((sdl_surface = SDL_GetWindowSurface(state->window)) == NULL)
+		fatal("%s", SDL_GetError());
+
+	cairo_surface_flush(cairo_surface);
+	data = cairo_image_surface_get_data(cairo_surface);
+	SDL_LockSurface(sdl_surface);
+	memcpy(sdl_surface->pixels, data, sdl_surface->pitch * sdl_surface->h);
+	SDL_UnlockSurface(sdl_surface);
+	SDL_UpdateWindowSurface(state->window);
 }
 
 static void
@@ -371,13 +407,6 @@ process_event(struct state *state, SDL_Event *event)
 			history_search(state->history, text);
 		}
 		break;
-	case SDL_WINDOWEVENT:
-		switch (event->window.event) {
-		case SDL_WINDOWEVENT_RESIZED:
-			create_cairo(state);
-			break;
-		}
-		break;
 	}
 	return (1);
 }
@@ -510,6 +539,9 @@ state_render(struct state *state)
 {
 	int pos;
 
+	if (window_size_changed(state))
+		create_cairo(state);
+
 	view_render(state_get_view(state), state->cairo);
 
 	if (settings_get_bool("statusbar.visible")) {
@@ -526,7 +558,7 @@ state_render(struct state *state)
 		statusbar_render(state->statusbar, state->cairo);
 	}
 
-	SDL_UpdateWindowSurface(state->window);
+	state_blit(state);
 }
 
 void
@@ -544,7 +576,8 @@ state_toggle_fullscreen(struct state *state)
 	flags = SDL_GetWindowFlags(state->window);
 	flags ^= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
-	SDL_SetWindowFullscreen(state->window, flags);
+	if (SDL_SetWindowFullscreen(state->window, flags))
+		fatal("%s", SDL_GetError());
 }
 
 void
