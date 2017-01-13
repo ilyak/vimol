@@ -17,7 +17,7 @@
 #include "vimol.h"
 
 struct atom {
-	char *name;
+	int type;
 	vec_t xyz;
 };
 
@@ -25,6 +25,32 @@ struct atoms {
 	int nelts, nalloc;
 	struct atom *data;
 };
+
+static const char *elementnames[] = {
+	"X", "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg",
+	"Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti", "V", "Cr",
+	"Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr",
+	"Rb", "Sr", "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd",
+	"In", "Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd",
+	"Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Hf",
+	"Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi", "Po",
+	"At", "Rn", "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm",
+	"Bk", "Cf", "Es", "Fm", "Md", "No", "Lr"
+};
+static const int nelementnames = sizeof elementnames / sizeof *elementnames;
+
+static int
+atoms_name_to_type(const char *name)
+{
+	int i;
+
+	for (i = 0; i < nelementnames; i++) {
+		if (name[0] == elementnames[i][0] &&
+		    name[1] == elementnames[i][1])
+			return (i);
+	}
+	return (0);
+}
 
 struct atoms *
 atoms_create(void)
@@ -66,7 +92,7 @@ atoms_add(struct atoms *atoms, const char *name, vec_t xyz)
 {
 	struct atom atom;
 
-	atom.name = xstrdup(name);
+	atom.type = atoms_name_to_type(name);
 	atom.xyz = xyz;
 
 	if (atoms->nelts == atoms->nalloc) {
@@ -83,7 +109,6 @@ atoms_remove(struct atoms *atoms, int idx)
 {
 	assert(idx >= 0 && idx < atoms_get_count(atoms));
 
-	free(atoms->data[idx].name);
 	atoms->nelts--;
 	memmove(atoms->data + idx, atoms->data + idx + 1,
 	    (atoms->nelts - idx) * sizeof(struct atom));
@@ -105,11 +130,6 @@ atoms_swap(struct atoms *atoms, int i, int j)
 void
 atoms_clear(struct atoms *atoms)
 {
-	int i;
-
-	for (i = 0; i < atoms_get_count(atoms); i++)
-		free(atoms->data[i].name);
-
 	atoms->nelts = 0;
 }
 
@@ -124,7 +144,7 @@ atoms_get_name(struct atoms *atoms, int idx)
 {
 	assert(idx >= 0 && idx < atoms_get_count(atoms));
 
-	return (atoms->data[idx].name);
+	return (elementnames[atoms->data[idx].type]);
 }
 
 void
@@ -132,10 +152,7 @@ atoms_set_name(struct atoms *atoms, int idx, const char *name)
 {
 	assert(idx >= 0 && idx < atoms_get_count(atoms));
 
-	if (name != atoms->data[idx].name) {
-		free(atoms->data[idx].name);
-		atoms->data[idx].name = xstrdup(name);
-	}
+	atoms->data[idx].type = atoms_name_to_type(name);
 }
 
 vec_t
