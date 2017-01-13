@@ -58,7 +58,7 @@ yank_free(struct yank *yank)
 void
 yank_set_register(struct yank *yank, int reg)
 {
-	util_assert(reg >= 0 && reg < YANK_SIZE);
+	assert(reg >= 0 && reg < YANK_SIZE);
 
 	yank->reg = reg;
 }

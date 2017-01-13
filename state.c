@@ -107,7 +107,7 @@ state_blit(struct state *state)
 	cairo_surface_t *cairo_surface;
 	unsigned char *data;
 
-	util_assert(!window_size_changed(state));
+	assert(!window_size_changed(state));
 
 	if ((cairo_surface = cairo_get_target(state->cairo)) == NULL)
 		fatal("cairo_get_target");

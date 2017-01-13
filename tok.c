@@ -24,7 +24,7 @@ struct tokq {
 int
 tok_int(tok_t tok)
 {
-	util_assert(tok != NULL);
+	assert(tok != NULL);
 
 	return ((int)strtol(tok, NULL, 10));
 }
@@ -32,7 +32,7 @@ tok_int(tok_t tok)
 double
 tok_double(tok_t tok)
 {
-	util_assert(tok != NULL);
+	assert(tok != NULL);
 
 	return (strtod(tok, NULL));
 }
@@ -40,7 +40,7 @@ tok_double(tok_t tok)
 int
 tok_bool(tok_t tok)
 {
-	util_assert(tok != NULL);
+	assert(tok != NULL);
 
 	return (strcasecmp(tok, "true") == 0);
 }
@@ -48,7 +48,7 @@ tok_bool(tok_t tok)
 const char *
 tok_string(tok_t tok)
 {
-	util_assert(tok != NULL);
+	assert(tok != NULL);
 
 	return ((const char *)tok);
 }
@@ -58,7 +58,7 @@ tok_color(tok_t tok)
 {
 	int r, g, b;
 
-	util_assert(tok != NULL);
+	assert(tok != NULL);
 
 	r = g = b = 0;
 	sscanf(tok, "[ %d %d %d ]", &r, &g, &b);
@@ -71,7 +71,7 @@ tok_vec(tok_t tok)
 {
 	double x, y, z;
 
-	util_assert(tok != NULL);
+	assert(tok != NULL);
 
 	x = y = z = 0.0;
 	sscanf(tok, "[ %lf %lf %lf ]", &x, &y, &z);
@@ -189,7 +189,7 @@ tokq_copy(struct tokq *tokq, int start, int count)
 	struct tokq *copy;
 	int i;
 
-	util_assert(start >= 0 && start + count <= tokq_count(tokq));
+	assert(start >= 0 && start + count <= tokq_count(tokq));
 
 	copy = tokq_create_empty();
 
@@ -217,7 +217,7 @@ tokq_strcat(struct tokq *tokq, int start, int count)
 	char *s, *p;
 	int i;
 
-	util_assert(start >= 0 && start + count <= tokq_count(tokq));
+	assert(start >= 0 && start + count <= tokq_count(tokq));
 
 	if (count == 0)
 		return (xstrdup(""));
@@ -242,7 +242,7 @@ tokq_count(struct tokq *tokq)
 tok_t
 tokq_tok(struct tokq *tokq, int idx)
 {
-	util_assert(idx >= 0 && idx < tokq_count(tokq));
+	assert(idx >= 0 && idx < tokq_count(tokq));
 
 	return (tokq->data[idx]);
 }

@@ -310,7 +310,7 @@ read_file(struct sys *sys, const char *path, int is_new)
 	struct sel *sel;
 	int i, n;
 
-	util_assert(path != NULL);
+	assert(path != NULL);
 
 	n = sys_get_atom_count(sys);
 

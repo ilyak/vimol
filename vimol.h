@@ -42,8 +42,6 @@
 #define VIMOL_DATA_PREFIX VIMOL_DATA_PREFIX_OTHER
 #endif
 
-#define util_assert assert
-
 /* number of recording registers */
 #define REC_SIZE 26
 /* number of yank registers */

@@ -2350,7 +2350,7 @@ exec_run(const char *name, struct tokq *args, struct state *state)
 {
 	struct node *node = exec_find(name);
 
-	util_assert(node != NULL);
+	assert(node != NULL);
 
 	return (node->fn(name, args, state));
 }

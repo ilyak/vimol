@@ -69,8 +69,8 @@ rec_get_register(struct rec *rec)
 void
 rec_set_register(struct rec *rec, int reg)
 {
-	util_assert(reg >= 0 && reg < REC_SIZE);
-	util_assert(!rec->is_recording);
+	assert(reg >= 0 && reg < REC_SIZE);
+	assert(!rec->is_recording);
 
 	rec->reg = reg;
 }
@@ -119,7 +119,7 @@ rec_save(struct rec *rec, const char *path)
 void
 rec_start(struct rec *rec)
 {
-	util_assert(!rec->is_recording);
+	assert(!rec->is_recording);
 
 	rec->data[rec->reg][0] = '\0';
 	rec->is_recording = 1;
@@ -130,7 +130,7 @@ rec_add(struct rec *rec, const char *add)
 {
 	char *s, *p;
 
-	util_assert(rec->is_recording);
+	assert(rec->is_recording);
 
 	s = rec->data[rec->reg];
 
@@ -146,7 +146,7 @@ rec_add(struct rec *rec, const char *add)
 void
 rec_stop(struct rec *rec)
 {
-	util_assert(rec->is_recording);
+	assert(rec->is_recording);
 
 	rec->is_recording = 0;
 }
@@ -157,7 +157,7 @@ rec_play(struct rec *rec, struct state *state)
 	struct alias *alias;
 	struct cmdq *cmdq;
 
-	util_assert(!rec->is_recording && !rec->is_playing);
+	assert(!rec->is_recording && !rec->is_playing);
 
 	alias = state_get_alias(state);
 
