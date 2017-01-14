@@ -45,8 +45,8 @@ atoms_name_to_type(const char *name)
 	size_t i;
 
 	for (i = 0; i < nelementnames; i++) {
-		if (name[0] == elementnames[i][0] &&
-		    name[1] == elementnames[i][1])
+		if (toupper(name[0]) == elementnames[i][0] &&
+		    tolower(name[1]) == elementnames[i][1])
 			return (i);
 	}
 	return (0);
