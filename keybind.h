@@ -3,12 +3,12 @@ static const struct {
 	const char *command;
 } keys[] = {
 	{ "A", "chain" },
-	{ "B", "make-bonds" },
+	{ "B", "view-zoom 0.87" },
 	{ "C", "view-center" },
 	{ "D", "nop" },
 	{ "E", "select *" },
 	{ "F", "view-zoom 1.15" },
-	{ "G", "view-zoom 0.87" },
+	{ "G", "nop" },
 	{ "H", "view-rotate 0 10 0" },
 	{ "I", "toggle id.visible" },
 	{ "J", "view-rotate 10 0 0" },
