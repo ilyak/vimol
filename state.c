@@ -124,12 +124,17 @@ state_blit(struct state *state)
 static void
 assign_default_bindings(struct state *state)
 {
+	struct cmdq *cmdq;
 	unsigned i;
 
 #include "keybind.h"
 
-	for (i = 0; i < sizeof(keys) / sizeof(*keys); i++)
+	for (i = 0; i < sizeof(keys) / sizeof(*keys); i++) {
+		if ((cmdq = cmdq_from_string(keys[i].command)) == NULL)
+			fatal("invalid binding for key %s", keys[i].key);
+		cmdq_free(cmdq);
 		bind_set(state->bind, keys[i].key, keys[i].command);
+	}
 }
 
 static void
