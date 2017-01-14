@@ -212,7 +212,7 @@ fn_get_bind(struct tokq *args, struct state *state)
 }
 
 static int
-fn_all(struct tokq *args, struct state *state)
+fn_for_all_frames(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct cmdq *cmdq;
@@ -281,7 +281,7 @@ fn_get_angle(struct tokq *args, struct state *state)
 }
 
 static int
-fn_coord(struct tokq *args, struct state *state)
+fn_units(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -347,7 +347,7 @@ fn_bond(struct tokq *args, struct state *state)
 }
 
 static int
-fn_remove_bond(struct tokq *args, struct state *state)
+fn_delete_bond(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct graph *graph;
@@ -495,7 +495,7 @@ fn_force_close(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_copy(struct tokq *args, struct state *state)
+fn_copy_selection(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -547,7 +547,7 @@ fn_count(struct tokq *args, struct state *state)
 }
 
 static int
-fn_delete(struct tokq *args, struct state *state)
+fn_delete_selection(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sel *sel;
@@ -633,7 +633,7 @@ fn_set_dist(struct tokq *args, struct state *state)
 }
 
 static int
-fn_plus_dist(struct tokq *args, struct state *state)
+fn_add_dist(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -857,7 +857,7 @@ fn_add_hydrogens(struct tokq *args, struct state *state)
 }
 
 static int
-fn_invert(struct tokq *args, struct state *state)
+fn_invert_selection(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sel *visible;
@@ -901,7 +901,7 @@ fn_view_set_pos(struct tokq *args, struct state *state)
 }
 
 static int
-fn_view_pos_plus(struct tokq *args, struct state *state)
+fn_view_add_pos(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct camera *camera;
@@ -950,36 +950,6 @@ fn_set_name(struct tokq *args, struct state *state)
 }
 
 static int
-fn_get_name(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sys *sys;
-	struct sel *sel;
-	const char *name;
-	int idx;
-
-	view = state_get_view(state);
-	sys = view_get_sys(view);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
-	if (sel_get_count(sel) != 1) {
-		sel_free(sel);
-		error_set("specify 1 atom");
-		return (0);
-	}
-
-	sel_iter_start(sel);
-	sel_iter_next(sel, &idx);
-
-	name = sys_get_atom_name(sys, idx);
-	error_set("atom %d: %s", idx + 1, name);
-
-	sel_free(sel);
-
-	return (1);
-}
-
-static int
 fn_new(struct tokq *args, struct state *state)
 {
 	struct wnd *wnd;
@@ -992,7 +962,7 @@ fn_new(struct tokq *args, struct state *state)
 }
 
 static int
-fn_first(struct tokq *args __unused, struct state *state)
+fn_first_window(struct tokq *args __unused, struct state *state)
 {
 	struct wnd *wnd;
 
@@ -1003,7 +973,7 @@ fn_first(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_last(struct tokq *args __unused, struct state *state)
+fn_last_window(struct tokq *args __unused, struct state *state)
 {
 	struct wnd *wnd;
 
@@ -1014,7 +984,7 @@ fn_last(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_prev(struct tokq *args __unused, struct state *state)
+fn_prev_window(struct tokq *args __unused, struct state *state)
 {
 	struct wnd *wnd;
 
@@ -1029,7 +999,7 @@ fn_prev(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_next(struct tokq *args __unused, struct state *state)
+fn_next_window(struct tokq *args __unused, struct state *state)
 {
 	struct wnd *wnd;
 
@@ -1201,7 +1171,7 @@ fn_set_pos(struct tokq *args, struct state *state)
 }
 
 static int
-fn_pos_plus(struct tokq *args, struct state *state)
+fn_add_pos(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -1430,7 +1400,7 @@ fn_repeat(struct tokq *args, struct state *state)
 }
 
 static int
-fn_autobond(struct tokq *args, struct state *state)
+fn_make_bonds(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -1669,7 +1639,7 @@ fn_force_save(struct tokq *args, struct state *state)
 }
 
 static int
-fn_png(struct tokq *args, struct state *state)
+fn_save_png(struct tokq *args, struct state *state)
 {
 	char path[256];
 	int i;
@@ -2120,7 +2090,7 @@ fn_toggle(struct tokq *args, struct state *state __unused)
 }
 
 static int
-fn_get_tors(struct tokq *args, struct state *state)
+fn_get_torsion(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -2327,11 +2297,12 @@ static const struct node {
 	exec_fn_t fn;
 } execlist[] = {
 	{ "about", fn_about },
-	{ "add.hydrogens", fn_add_hydrogens },
-	{ "all", fn_all },
+	{ "add-dist", fn_add_dist },
+	{ "add-frame", fn_add_frame },
+	{ "add-hydrogens", fn_add_hydrogens },
+	{ "add-pos", fn_add_pos },
 	{ "angle?", fn_get_angle },
 	{ "atom", fn_atom },
-	{ "autobond", fn_autobond },
 	{ "bind", fn_set_bind },
 	{ "bind?", fn_get_bind },
 	{ "bond", fn_bond },
@@ -2339,37 +2310,33 @@ static const struct node {
 	{ "clear", fn_clear },
 	{ "close", fn_close },
 	{ "close!", fn_force_close },
-	{ "coord", fn_coord },
-	{ "copy", fn_copy },
+	{ "copy-selection", fn_copy_selection },
 	{ "count", fn_count },
-	{ "delete", fn_delete },
+	{ "delete-bond", fn_delete_bond },
+	{ "delete-selection", fn_delete_selection },
 	{ "dist", fn_set_dist },
-	{ "dist+", fn_plus_dist },
 	{ "dist?", fn_get_dist },
 	{ "edit", fn_edit },
-	{ "first", fn_first },
-	{ "frame", fn_set_frame },
-	{ "frame+", fn_add_frame },
+	{ "first-window", fn_first_window },
+	{ "for-all-frames", fn_for_all_frames },
 	{ "fullscreen", fn_fullscreen },
 	{ "get", fn_get },
 	{ "group", fn_group },
 	{ "hide", fn_hide },
-	{ "invert", fn_invert },
-	{ "last", fn_last },
+	{ "invert-selection", fn_invert_selection },
+	{ "last-window", fn_last_window },
+	{ "make-bonds", fn_make_bonds },
 	{ "name", fn_set_name },
-	{ "name?", fn_get_name },
 	{ "new", fn_new },
-	{ "next", fn_next },
+	{ "next-window", fn_next_window },
 	{ "nop", fn_nop },
 	{ "open", fn_open },
 	{ "paste", fn_paste },
 	{ "path?", fn_get_path },
 	{ "play", fn_play },
-	{ "png", fn_png },
 	{ "pos", fn_set_pos },
-	{ "pos+", fn_pos_plus },
 	{ "pos?", fn_get_pos },
-	{ "prev", fn_prev },
+	{ "prev-window", fn_prev_window },
 	{ "q", fn_quit },
 	{ "q!", fn_force_quit },
 	{ "read", fn_read },
@@ -2377,35 +2344,37 @@ static const struct node {
 	{ "redo", fn_redo },
 	{ "reload", fn_reload },
 	{ "reload!", fn_force_reload },
-	{ "remove.bond", fn_remove_bond },
 	{ "repeat", fn_repeat },
 	{ "ring", fn_ring },
 	{ "rotate", fn_rotate },
 	{ "run", fn_run },
+	{ "save-png", fn_save_png },
 	{ "select", fn_select },
-	{ "select.bonded", fn_select_bonded },
-	{ "select.box", fn_select_box },
-	{ "select.molecule", fn_select_molecule },
-	{ "select.name", fn_select_name },
-	{ "select.next", fn_select_next },
-	{ "select.water", fn_select_water },
-	{ "select.within", fn_select_within },
+	{ "select-bonded", fn_select_bonded },
+	{ "select-box", fn_select_box },
+	{ "select-molecule", fn_select_molecule },
+	{ "select-name", fn_select_name },
+	{ "select-next", fn_select_next },
+	{ "select-water", fn_select_water },
+	{ "select-within", fn_select_within },
 	{ "set", fn_set },
+	{ "set-frame", fn_set_frame },
 	{ "show", fn_show },
 	{ "source", fn_source },
 	{ "swap", fn_swap },
 	{ "toggle", fn_toggle },
-	{ "tors?", fn_get_tors },
+	{ "torsion?", fn_get_torsion },
 	{ "undo", fn_undo },
+	{ "units", fn_units },
 	{ "unselect", fn_unselect },
-	{ "unselect.next", fn_unselect_next },
-	{ "view.center", fn_view_center },
-	{ "view.fit", fn_view_fit },
-	{ "view.pos", fn_view_set_pos },
-	{ "view.pos+", fn_view_pos_plus },
-	{ "view.reset", fn_view_reset },
-	{ "view.rotate", fn_view_rotate },
-	{ "view.zoom", fn_view_zoom },
+	{ "unselect-next", fn_unselect_next },
+	{ "view-add-pos", fn_view_add_pos },
+	{ "view-center", fn_view_center },
+	{ "view-fit", fn_view_fit },
+	{ "view-reset", fn_view_reset },
+	{ "view-rotate", fn_view_rotate },
+	{ "view-set-pos", fn_view_set_pos },
+	{ "view-zoom", fn_view_zoom },
 	{ "w", fn_save },
 	{ "w!", fn_force_save },
 	{ "wrap", fn_wrap },
