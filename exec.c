@@ -197,16 +197,16 @@ fn_get_bind(struct tokq *args, struct state *state)
 	const char *name, *value;
 
 	if (tokq_count(args) < 1) {
-		error_set("specify a name");
+		error_set("specify key name");
 		return (0);
 	}
 
 	name = tok_string(tokq_tok(args, 0));
 
 	if ((value = bind_get(bind, name)))
-		error_set("\"%s\" is assigned to \"%s\"", name, value);
+		error_set("key \"%s\" is assigned to \"%s\"", name, value);
 	else
-		error_set("\"%s\" is not assigned", name);
+		error_set("key \"%s\" is not assigned", name);
 
 	return (1);
 }
