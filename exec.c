@@ -1585,40 +1585,6 @@ fn_save(struct tokq *args, struct state *state)
 			error_set("no file name");
 			return (0);
 		}
-
-		if (!string_has_suffix(path, ".xyz")) {
-			error_set("add ! to overwrite and save in xyz format");
-			return (0);
-		}
-	} else
-		path = tok_string(tokq_tok(args, 0));
-
-	if (!sys_save_to_file(sys, path))
-		return (0);
-
-	view_set_path(view, path);
-	error_set("saved to \"%s\"", view_get_path(view));
-
-	return (1);
-}
-
-static int
-fn_force_save(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sys *sys;
-	const char *path;
-
-	view = state_get_view(state);
-	sys = view_get_sys(view);
-
-	if (tokq_count(args) == 0) {
-		path = view_get_path(view);
-
-		if (path[0] == '\0') {
-			error_set("no file name");
-			return (0);
-		}
 	} else
 		path = tok_string(tokq_tok(args, 0));
 
@@ -2344,7 +2310,6 @@ static const struct node {
 	{ "view-set-pos", fn_view_set_pos },
 	{ "view-zoom", fn_view_zoom },
 	{ "w", fn_save },
-	{ "w!", fn_force_save },
 	{ "wrap", fn_wrap },
 };
 static const size_t nexeclist = sizeof execlist / sizeof *execlist;

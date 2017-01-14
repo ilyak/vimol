@@ -141,8 +141,11 @@ parse_atom_pdb(const char *buf, struct atom *atom)
 				atom->name[j++] = buf[i];
 	}
 
-	if (atom->name[0] == '\0' && isalpha(buf[13]))
-		atom->name[0] = buf[13];
+	if (atom->name[0] == '\0') {
+		for (i = 12, j = 0; i < 14; i++)
+			if (isalpha(buf[i]))
+				atom->name[j++] = buf[i];
+	}
 
 	if (atom->name[0] == '\0')
 		atom->name[0] = 'X';
@@ -746,19 +749,16 @@ sys_reset_bonds(struct sys *sys, struct sel *sel)
 	free(map);
 }
 
-int
-sys_save_to_file(struct sys *sys, const char *path)
+#define XYZFMT "%-4s %11.6lf %11.6lf %11.6lf"
+#define PDBFMT "ATOM  %5d%3s                %8.3lf%8.3lf%8.3lf"
+
+static void
+save_to_xyz(struct sys *sys, FILE *fp)
 {
-	FILE *fp;
-	const char *name;
 	struct atoms *atoms;
 	vec_t xyz;
+	const char *name;
 	int i, j;
-
-	if ((fp = fopen(path, "w")) == NULL) {
-		error_set("unable to write to file %s", path);
-		return (0);
-	}
 
 	for (i = 0; i < sys_get_frame_count(sys); i++) {
 		atoms = sys->atoms[i];
@@ -768,16 +768,56 @@ sys_save_to_file(struct sys *sys, const char *path)
 			name = atoms_get_name(atoms, j);
 			xyz = atoms_get_xyz(atoms, j);
 
-			fprintf(fp, "%-4s", name);
-			fprintf(fp, " %11.6lf", xyz.x);
-			fprintf(fp, " %11.6lf", xyz.y);
-			fprintf(fp, " %11.6lf", xyz.z);
+			fprintf(fp, XYZFMT, name, xyz.x, xyz.y, xyz.z);
 			fprintf(fp, "\n");
 		}
 	}
+}
+
+static void
+save_to_pdb(struct sys *sys, FILE *fp)
+{
+	struct atoms *atoms;
+	vec_t xyz;
+	const char *name;
+	int i, j;
+
+	for (i = 0; i < sys_get_frame_count(sys); i++) {
+		atoms = sys->atoms[i];
+
+		for (j = 0; j < atoms_get_count(atoms); j++) {
+			name = atoms_get_name(atoms, j);
+			xyz = atoms_get_xyz(atoms, j);
+
+			fprintf(fp, PDBFMT, j+1, name, xyz.x, xyz.y, xyz.z);
+			fprintf(fp, "\n");
+		}
+		fprintf(fp, "END\n");
+	}
+}
+
+int
+sys_save_to_file(struct sys *sys, const char *path)
+{
+	FILE *fp;
+
+	if (!string_has_suffix(path, ".xyz") &&
+	    !string_has_suffix(path, ".pdb")) {
+		error_set("\"%s\": unknown file format", path);
+		return (0);
+	}
+
+	if ((fp = fopen(path, "w")) == NULL) {
+		error_set("unable to open \"%s\" for writing", path);
+		return (0);
+	}
+
+	if (string_has_suffix(path, ".xyz"))
+		save_to_xyz(sys, fp);
+	else if (string_has_suffix(path, ".pdb"))
+		save_to_pdb(sys, fp);
 
 	fclose(fp);
 	sys->is_modified = 0;
-
 	return (1);
 }
