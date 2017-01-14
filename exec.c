@@ -329,7 +329,7 @@ fn_bond(struct tokq *args, struct state *state)
 	struct graph *graph;
 	struct pairs *pairs;
 	struct pair pair;
-	int k, type;
+	int k, type = 1;
 
 	view = state_get_view(state);
 	pairs = make_pairs(args, 0, tokq_count(args), view_get_sel(view));
@@ -342,19 +342,38 @@ fn_bond(struct tokq *args, struct state *state)
 	view_snapshot(view);
 	graph = view_get_graph(view);
 
-//XXX
-//	if (strcmp(self, "rmbond") == 0)
-//		type = 0;
-//	else
-//		type = ends_with(self, '3') ? 3 : ends_with(self, '2') ? 2 : 1;
+	for (k = 0; k < pairs_get_count(pairs); k++) {
+		pair = pairs_get(pairs, k);
+		graph_edge_create(graph, pair.i, pair.j, type);
+	}
+
+	pairs_free(pairs);
+	return (1);
+}
+
+static int
+fn_remove_bond(struct tokq *args, struct state *state)
+{
+	struct view *view;
+	struct graph *graph;
+	struct pairs *pairs;
+	struct pair pair;
+	int k;
+
+	view = state_get_view(state);
+	pairs = make_pairs(args, 0, tokq_count(args), view_get_sel(view));
+
+	if (pairs_get_count(pairs) == 0) {
+		pairs_free(pairs);
+		return (1);
+	}
+
+	view_snapshot(view);
+	graph = view_get_graph(view);
 
 	for (k = 0; k < pairs_get_count(pairs); k++) {
 		pair = pairs_get(pairs, k);
-
-		if (type)
-			graph_edge_create(graph, pair.i, pair.j, type);
-		else
-			graph_edge_remove(graph, pair.i, pair.j);
+		graph_edge_remove(graph, pair.i, pair.j);
 	}
 
 	pairs_free(pairs);
@@ -2330,6 +2349,7 @@ static const struct {
 	{ "atom", fn_atom },
 	{ "autobond", fn_autobond },
 	{ "bond", fn_bond },
+	{ "remove.bond", fn_remove_bond },
 	{ "chain", fn_chain },
 	{ "clear", fn_clear },
 	{ "close", fn_close },
