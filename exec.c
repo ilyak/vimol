@@ -175,7 +175,7 @@ fn_atom(struct tokq *args, struct state *state)
 }
 
 static int
-fn_alias(struct tokq *args, struct state *state)
+fn_bind(struct tokq *args, struct state *state)
 {
 	struct alias *alias = state_get_bind(state);
 	const char *name;
@@ -200,7 +200,7 @@ fn_alias(struct tokq *args, struct state *state)
 }
 
 static int
-fn_alias_get(struct tokq *args, struct state *state)
+fn_get_bind(struct tokq *args, struct state *state)
 {
 	struct alias *alias = state_get_bind(state);
 	const char *name, *value;
@@ -259,7 +259,7 @@ fn_all(struct tokq *args, struct state *state)
 }
 
 static int
-fn_angle_get(struct tokq *args, struct state *state)
+fn_get_angle(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -684,7 +684,7 @@ fn_plus_dist(struct tokq *args, struct state *state)
 }
 
 static int
-fn_dist_get(struct tokq *args, struct state *state)
+fn_get_dist(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -952,7 +952,7 @@ fn_name(struct tokq *args, struct state *state)
 }
 
 static int
-fn_name_get(struct tokq *args, struct state *state)
+fn_get_name(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -1124,7 +1124,7 @@ fn_paste(struct tokq *args, struct state *state)
 }
 
 static int
-fn_path_get(struct tokq *args __unused, struct state *state)
+fn_get_path(struct tokq *args __unused, struct state *state)
 {
 	struct view *view;
 	const char *path;
@@ -1251,7 +1251,7 @@ fn_pos_plus(struct tokq *args, struct state *state)
 }
 
 static int
-fn_pos_get(struct tokq *args, struct state *state)
+fn_get_pos(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sel *sel;
@@ -2130,7 +2130,7 @@ fn_toggle(struct tokq *args, struct state *state __unused)
 }
 
 static int
-fn_tors_get(struct tokq *args, struct state *state)
+fn_get_tors(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -2336,10 +2336,10 @@ static const struct {
 	exec_fn_t fn;
 } exec_list[] = {
 	{ "about", fn_about },
-	{ "bind", fn_alias },
-	{ "bind?", fn_alias_get },
+	{ "bind", fn_bind },
+	{ "bind?", fn_get_bind },
 	{ "all", fn_all },
-	{ "angle?", fn_angle_get },
+	{ "angle?", fn_get_angle },
 	{ "atom", fn_atom },
 	{ "autobond", fn_autobond },
 	{ "bond", fn_bond },
@@ -2348,12 +2348,12 @@ static const struct {
 	{ "close", fn_close },
 	{ "close!", fn_force_close },
 	{ "coord", fn_coord },
-	{ "yank", fn_copy },
+	{ "copy", fn_copy },
 	{ "count", fn_count },
 	{ "delete", fn_delete },
 	{ "dist", fn_dist },
 	{ "dist+", fn_plus_dist },
-	{ "dist?", fn_dist_get },
+	{ "dist?", fn_get_dist },
 	{ "edit", fn_edit },
 	{ "first", fn_first },
 	{ "frame", fn_set_frame },
@@ -2366,18 +2366,18 @@ static const struct {
 	{ "invert", fn_invert },
 	{ "last", fn_last },
 	{ "name", fn_name },
-	{ "name?", fn_name_get },
+	{ "name?", fn_get_name },
 	{ "new", fn_new },
 	{ "next", fn_next },
 	{ "nop", fn_nop },
 	{ "open", fn_open },
 	{ "paste", fn_paste },
-	{ "path?", fn_path_get },
+	{ "path?", fn_get_path },
 	{ "play", fn_play },
 	{ "png", fn_png },
 	{ "pos", fn_pos },
 	{ "pos+", fn_pos_plus },
-	{ "pos?", fn_pos_get },
+	{ "pos?", fn_get_pos },
 	{ "prev", fn_prev },
 	{ "q", fn_quit },
 	{ "q!", fn_force_quit },
@@ -2405,7 +2405,7 @@ static const struct {
 	{ "source", fn_source },
 	{ "swap", fn_swap },
 	{ "toggle", fn_toggle },
-	{ "tors?", fn_tors_get },
+	{ "tors?", fn_get_tors },
 	{ "undo", fn_undo },
 	{ "unselect", fn_unselect },
 	{ "unselect.next", fn_unselect_next },
