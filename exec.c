@@ -177,7 +177,7 @@ fn_atom(struct tokq *args, struct state *state)
 static int
 fn_bind(struct tokq *args, struct state *state)
 {
-	struct alias *bind = state_get_bind(state);
+	struct bind *bind = state_get_bind(state);
 	const char *name;
 	char *value;
 
@@ -189,7 +189,7 @@ fn_bind(struct tokq *args, struct state *state)
 	name = tok_string(tokq_tok(args, 0));
 	value = tokq_strcat(args, 1, tokq_count(args) - 1);
 
-	alias_set(bind, name, value);
+	bind_set(bind, name, value);
 	free(value);
 
 	return (1);
@@ -198,7 +198,7 @@ fn_bind(struct tokq *args, struct state *state)
 static int
 fn_get_bind(struct tokq *args, struct state *state)
 {
-	struct alias *bind = state_get_bind(state);
+	struct bind *bind = state_get_bind(state);
 	const char *name, *value;
 
 	if (tokq_count(args) < 1) {
@@ -208,7 +208,7 @@ fn_get_bind(struct tokq *args, struct state *state)
 
 	name = tok_string(tokq_tok(args, 0));
 
-	if ((value = alias_get(bind, name)))
+	if ((value = bind_get(bind, name)))
 		error_set("\"%s\" is assigned to \"%s\"", name, value);
 	else
 		error_set("\"%s\" is not assigned", name);

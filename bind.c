@@ -21,7 +21,7 @@ struct node {
 	char *value;
 };
 
-struct alias {
+struct bind {
 	int nelts, nalloc;
 	struct node *data;
 };
@@ -36,44 +36,44 @@ compare(const void *a, const void *b)
 }
 
 static struct node *
-alias_find_node(struct alias *alias, const char *name)
+bind_find_node(struct bind *bind, const char *name)
 {
 	struct node node;
 
 	node.name = (char *)name;
 
-	return (bsearch(&node, alias->data, alias->nelts,
+	return (bsearch(&node, bind->data, bind->nelts,
 	    sizeof(struct node), compare));
 }
 
-struct alias *
-alias_create(void)
+struct bind *
+bind_create(void)
 {
-	struct alias *alias;
+	struct bind *bind;
 
-	alias = xcalloc(1, sizeof(*alias));
-	alias->nalloc = 8;
-	alias->data = xcalloc(alias->nalloc, sizeof(struct node));
+	bind = xcalloc(1, sizeof(*bind));
+	bind->nalloc = 8;
+	bind->data = xcalloc(bind->nalloc, sizeof(struct node));
 
-	return (alias);
+	return (bind);
 }
 
 void
-alias_free(struct alias *alias)
+bind_free(struct bind *bind)
 {
 	int i;
 
-	for (i = 0; i < alias->nelts; i++) {
-		free(alias->data[i].name);
-		free(alias->data[i].value);
+	for (i = 0; i < bind->nelts; i++) {
+		free(bind->data[i].name);
+		free(bind->data[i].value);
 	}
 
-	free(alias->data);
-	free(alias);
+	free(bind->data);
+	free(bind);
 }
 
 int
-alias_set(struct alias *alias, const char *name, const char *value)
+bind_set(struct bind *bind, const char *name, const char *value)
 {
 	struct node node;
 	int i, res;
@@ -82,32 +82,32 @@ alias_set(struct alias *alias, const char *name, const char *value)
 	node.value = xstrdup(value);
 	res = 1;
 
-	for (i = 0; i < alias->nelts; i++)
-		if ((res = compare(&alias->data[i], &node)) >= 0)
+	for (i = 0; i < bind->nelts; i++)
+		if ((res = compare(&bind->data[i], &node)) >= 0)
 			break;
 
 	if (res == 0) {
-		free(alias->data[i].name);
-		free(alias->data[i].value);
+		free(bind->data[i].name);
+		free(bind->data[i].value);
 	} else {
-		if (alias->nelts == alias->nalloc) {
-			alias->nalloc *= 2;
-			alias->data = xrealloc(alias->data,
-			    alias->nalloc * sizeof(struct node));
+		if (bind->nelts == bind->nalloc) {
+			bind->nalloc *= 2;
+			bind->data = xrealloc(bind->data,
+			    bind->nalloc * sizeof(struct node));
 		}
-		memmove(alias->data + i + 1, alias->data + i,
-		    (alias->nelts - i) * sizeof(struct node));
-		alias->nelts++;
+		memmove(bind->data + i + 1, bind->data + i,
+		    (bind->nelts - i) * sizeof(struct node));
+		bind->nelts++;
 	}
 
-	alias->data[i] = node;
+	bind->data[i] = node;
 	return (res == 0);
 }
 
 const char *
-alias_get(struct alias *alias, const char *name)
+bind_get(struct bind *bind, const char *name)
 {
-	struct node *node = alias_find_node(alias, name);
+	struct node *node = bind_find_node(bind, name);
 
 	return (node ? node->value : NULL);
 }

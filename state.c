@@ -21,7 +21,7 @@ struct state {
 	int is_search;
 	int force_quit;
 	int repeat;
-	struct alias *bind;
+	struct bind *bind;
 	struct edit *edit;
 	struct history *history;
 	struct rec *rec;
@@ -129,7 +129,7 @@ assign_default_bindings(struct state *state)
 #include "keybind.h"
 
 	for (i = 0; i < sizeof(keys) / sizeof(*keys); i++)
-		alias_set(state->bind, keys[i].key, keys[i].command);
+		bind_set(state->bind, keys[i].key, keys[i].command);
 }
 
 static void
@@ -367,7 +367,7 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 
 	key_string(buffer, sizeof(buffer), keysym.sym, keysym.mod);
 
-	if ((command = alias_get(state->bind, buffer)) == NULL) {
+	if ((command = bind_get(state->bind, buffer)) == NULL) {
 		state->repeat = 0;
 		return;
 	}
@@ -419,7 +419,7 @@ state_create(void)
 	if ((state = xcalloc(1, sizeof(*state))) == NULL)
 		return (NULL);
 
-	state->bind = alias_create();
+	state->bind = bind_create();
 	state->edit = edit_create();
 	state->history = history_create();
 	state->rec = rec_create();
@@ -444,7 +444,7 @@ state_create(void)
 void
 state_free(struct state *state)
 {
-	alias_free(state->bind);
+	bind_free(state->bind);
 	edit_free(state->edit);
 	history_free(state->history);
 	rec_free(state->rec);
@@ -456,7 +456,7 @@ state_free(struct state *state)
 	free(state);
 }
 
-struct alias *
+struct bind *
 state_get_bind(struct state *state)
 {
 	return (state->bind);

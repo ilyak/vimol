@@ -53,8 +53,8 @@ struct pairs;       /* dynamic array of pairs */
 
 typedef const char *tok_t; /* a tokq token */
 
-struct alias;       /* alias management */
 struct atoms;       /* atom storage */
+struct bind;        /* key-command bindings */
 struct camera;      /* an eye of a user */
 struct cmd;         /* vimol command */
 struct cmdq;        /* command list */
@@ -74,12 +74,6 @@ struct view;        /* viewport */
 struct wnd;         /* windows */
 struct yank;        /* copy-paste buffer */
 
-/* alias.c */
-struct alias *alias_create(void);
-void alias_free(struct alias *);
-int alias_set(struct alias *, const char *, const char *);
-const char *alias_get(struct alias *, const char *);
-
 /* atoms.c */
 struct atoms *atoms_create(void);
 struct atoms *atoms_copy(struct atoms *);
@@ -93,6 +87,12 @@ const char *atoms_get_name(struct atoms *, int);
 void atoms_set_name(struct atoms *, int, const char *);
 vec_t atoms_get_xyz(struct atoms *, int);
 void atoms_set_xyz(struct atoms *, int, vec_t);
+
+/* bind.c */
+struct bind *bind_create(void);
+void bind_free(struct bind *);
+int bind_set(struct bind *, const char *, const char *);
+const char *bind_get(struct bind *, const char *);
 
 /* camera.c */
 struct camera *camera_create(void);
@@ -254,7 +254,7 @@ struct pair spi_get_pair(struct spi *, int);
 /* state.c */
 struct state *state_create(void);
 void state_free(struct state *);
-struct alias *state_get_bind(struct state *);
+struct bind *state_get_bind(struct state *);
 struct rec *state_get_rec(struct state *);
 struct view *state_get_view(struct state *);
 struct wnd *state_get_wnd(struct state *);

@@ -5,10 +5,10 @@ LDFLAGS= -L/usr/lib -L/usr/local/lib -L/usr/X11R6/lib
 LIBS= -lcairo -lSDL2 -lm -lc
 PROG= vimol
 
-ALL_C= alias.c atoms.c camera.c cmd.c edit.c error.c exec.c graph.c history.c \
+ALL_C= bind.c atoms.c camera.c cmd.c edit.c error.c exec.c graph.c history.c \
        main.c pair.c rec.c sel.c settings.c spi.c state.c statusbar.c sys.c \
        tok.c undo.c util.c vec.c view.c wnd.c xmalloc.c yank.c
-ALL_O= alias.o atoms.o camera.o cmd.o edit.o error.o exec.o graph.o history.o \
+ALL_O= bind.o atoms.o camera.o cmd.o edit.o error.o exec.o graph.o history.o \
        main.o pair.o rec.o sel.o settings.o spi.o state.o statusbar.o sys.o \
        tok.o undo.o util.o vec.o view.o wnd.o xmalloc.o yank.o
 
