@@ -154,14 +154,11 @@ rec_stop(struct rec *rec)
 int
 rec_play(struct rec *rec, struct state *state)
 {
-	struct alias *alias;
 	struct cmdq *cmdq;
 
 	assert(!rec->is_recording && !rec->is_playing);
 
-	alias = state_get_alias(state);
-
-	if ((cmdq = cmdq_from_string(rec->data[rec->reg], alias)) == NULL)
+	if ((cmdq = cmdq_from_string(rec->data[rec->reg])) == NULL)
 		return (0);
 
 	rec->is_playing = 1;

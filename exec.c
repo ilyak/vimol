@@ -228,16 +228,14 @@ static int
 fn_all(struct tokq *args, struct state *state)
 {
 	struct view *view;
-	struct alias *alias;
 	struct cmdq *cmdq;
 	int i, save, ret;
 	char *str;
 
 	view = state_get_view(state);
-	alias = state_get_alias(state);
 	str = tokq_strcat(args, 0, tokq_count(args));
 
-	if ((cmdq = cmdq_from_string(str, alias)) == NULL)
+	if ((cmdq = cmdq_from_string(str)) == NULL)
 		return (0);
 
 	ret = 1;
@@ -1409,12 +1407,9 @@ fn_force_reload(struct tokq *args __unused, struct state *state)
 static int
 fn_repeat(struct tokq *args, struct state *state)
 {
-	struct alias *alias;
 	struct cmdq *cmdq;
 	char *str;
 	int i, n, ret;
-
-	alias = state_get_alias(state);
 
 	if (tokq_count(args) < 2)
 		return (0);
@@ -1422,7 +1417,7 @@ fn_repeat(struct tokq *args, struct state *state)
 	n = tok_int(tokq_tok(args, 0));
 	str = tokq_strcat(args, 1, tokq_count(args) - 1);
 
-	if ((cmdq = cmdq_from_string(str, alias)) == NULL) {
+	if ((cmdq = cmdq_from_string(str)) == NULL) {
 		free(str);
 		return (0);
 	}

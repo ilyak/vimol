@@ -113,7 +113,7 @@ point_t camera_transform(struct camera *, vec_t);
 const char *cmd_name(struct cmd *);
 struct tokq *cmd_args(struct cmd *);
 int cmd_exec(struct cmd *, struct state *);
-struct cmdq *cmdq_from_string(const char *, struct alias *);
+struct cmdq *cmdq_from_string(const char *);
 void cmdq_free(struct cmdq *);
 int cmdq_count(struct cmdq *);
 struct cmd *cmdq_cmd(struct cmdq *, int);
@@ -254,7 +254,6 @@ struct pair spi_get_pair(struct spi *, int);
 /* state.c */
 struct state *state_create(void);
 void state_free(struct state *);
-struct alias *state_get_alias(struct state *);
 struct alias *state_get_bind(struct state *);
 struct rec *state_get_rec(struct state *);
 struct view *state_get_view(struct state *);

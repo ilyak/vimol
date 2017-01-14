@@ -56,30 +56,28 @@ cmdq_push_back(struct cmdq *cmdq, struct cmd cmd)
 }
 
 static int
-parse_tokq(struct cmdq *cmdq, struct tokq *tokq, struct alias *alias,
-    int expand)
+parse_tokq(struct cmdq *cmdq, struct tokq *tokq)
 {
 	struct cmd cmd;
-	struct tokq *atokq;
 	int argc, i;
-	const char *tok, *astr;
+	const char *tok;
 
 	for (i = 0; i < tokq_count(tokq); i++) {
 		tok = tok_string(tokq_tok(tokq, i));
 
 		if (strcmp(tok, ";") == 0)
 			continue;
-
-		if (expand && (astr = alias_get(alias, tok))) {
-			if ((atokq = tokq_create(astr)) == NULL)
-				return (0);
-			if (!parse_tokq(cmdq, atokq, alias, 0)) {
-				tokq_free(atokq);
-				return (0);
-			}
-			tokq_free(atokq);
-			continue;
-		}
+//XXX
+//		if (expand && (astr = alias_get(alias, tok))) {
+//			if ((atokq = tokq_create(astr)) == NULL)
+//				return (0);
+//			if (!parse_tokq(cmdq, atokq, alias, 0)) {
+//				tokq_free(atokq);
+//				return (0);
+//			}
+//			tokq_free(atokq);
+//			continue;
+//		}
 
 		if (!exec_valid(tok)) {
 			error_set("invalid command \"%s\"", tok);
@@ -105,7 +103,7 @@ parse_tokq(struct cmdq *cmdq, struct tokq *tokq, struct alias *alias,
 }
 
 struct cmdq *
-cmdq_from_string(const char *str, struct alias *alias)
+cmdq_from_string(const char *str)
 {
 	struct cmdq *cmdq;
 	struct tokq *tokq;
@@ -117,7 +115,7 @@ cmdq_from_string(const char *str, struct alias *alias)
 	cmdq->nalloc = 8;
 	cmdq->data = xcalloc(cmdq->nalloc, sizeof(struct cmd));
 
-	if (!parse_tokq(cmdq, tokq, alias, 1)) {
+	if (!parse_tokq(cmdq, tokq)) {
 		cmdq_free(cmdq);
 		tokq_free(tokq);
 		return (NULL);

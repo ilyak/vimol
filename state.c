@@ -21,7 +21,6 @@ struct state {
 	int is_search;
 	int force_quit;
 	int repeat;
-	struct alias *alias;
 	struct alias *bind;
 	struct edit *edit;
 	struct history *history;
@@ -190,7 +189,7 @@ run_cmd(struct state *state, const char *command)
 
 	error_clear();
 
-	if ((cmdq = cmdq_from_string(command, state->alias)) == NULL) {
+	if ((cmdq = cmdq_from_string(command)) == NULL) {
 		statusbar_set_error(state->statusbar, error_get());
 		return;
 	}
@@ -420,7 +419,6 @@ state_create(void)
 	if ((state = xcalloc(1, sizeof(*state))) == NULL)
 		return (NULL);
 
-	state->alias = alias_create();
 	state->bind = alias_create();
 	state->edit = edit_create();
 	state->history = history_create();
@@ -446,7 +444,6 @@ state_create(void)
 void
 state_free(struct state *state)
 {
-	alias_free(state->alias);
 	alias_free(state->bind);
 	edit_free(state->edit);
 	history_free(state->history);
@@ -457,12 +454,6 @@ state_free(struct state *state)
 	cairo_destroy(state->cairo);
 	SDL_DestroyWindow(state->window);
 	free(state);
-}
-
-struct alias *
-state_get_alias(struct state *state)
-{
-	return (state->alias);
 }
 
 struct alias *
@@ -524,7 +515,7 @@ state_source(struct state *state, const char *path)
 		if (string_is_comment(buffer))
 			continue;
 
-		if ((cmdq = cmdq_from_string(buffer, state->alias))) {
+		if ((cmdq = cmdq_from_string(buffer))) {
 			cmdq_exec(cmdq, state);
 			cmdq_free(cmdq);
 		}
