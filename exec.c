@@ -170,7 +170,7 @@ fn_atom(struct tokq *args, struct state *state)
 }
 
 static int
-fn_bind(struct tokq *args, struct state *state)
+fn_set_bind(struct tokq *args, struct state *state)
 {
 	struct bind *bind = state_get_bind(state);
 	const char *name;
@@ -2332,7 +2332,7 @@ static const struct node {
 	{ "angle?", fn_get_angle },
 	{ "atom", fn_atom },
 	{ "autobond", fn_autobond },
-	{ "bind", fn_bind },
+	{ "bind", fn_set_bind },
 	{ "bind?", fn_get_bind },
 	{ "bond", fn_bond },
 	{ "chain", fn_chain },
