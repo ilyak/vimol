@@ -578,7 +578,7 @@ fn_delete(struct tokq *args, struct state *state)
 }
 
 static int
-fn_dist(struct tokq *args, struct state *state)
+fn_set_dist(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -883,7 +883,7 @@ fn_invert(struct tokq *args, struct state *state)
 }
 
 static int
-fn_view_pos(struct tokq *args, struct state *state)
+fn_view_set_pos(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct camera *camera;
@@ -919,7 +919,7 @@ fn_view_pos_plus(struct tokq *args, struct state *state)
 }
 
 static int
-fn_name(struct tokq *args, struct state *state)
+fn_set_name(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -1160,7 +1160,7 @@ fn_play(struct tokq *args, struct state *state)
 }
 
 static int
-fn_pos(struct tokq *args, struct state *state)
+fn_set_pos(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -2343,7 +2343,7 @@ static const struct node {
 	{ "copy", fn_copy },
 	{ "count", fn_count },
 	{ "delete", fn_delete },
-	{ "dist", fn_dist },
+	{ "dist", fn_set_dist },
 	{ "dist+", fn_plus_dist },
 	{ "dist?", fn_get_dist },
 	{ "edit", fn_edit },
@@ -2356,7 +2356,7 @@ static const struct node {
 	{ "hide", fn_hide },
 	{ "invert", fn_invert },
 	{ "last", fn_last },
-	{ "name", fn_name },
+	{ "name", fn_set_name },
 	{ "name?", fn_get_name },
 	{ "new", fn_new },
 	{ "next", fn_next },
@@ -2366,7 +2366,7 @@ static const struct node {
 	{ "path?", fn_get_path },
 	{ "play", fn_play },
 	{ "png", fn_png },
-	{ "pos", fn_pos },
+	{ "pos", fn_set_pos },
 	{ "pos+", fn_pos_plus },
 	{ "pos?", fn_get_pos },
 	{ "prev", fn_prev },
@@ -2401,7 +2401,7 @@ static const struct node {
 	{ "unselect.next", fn_unselect_next },
 	{ "view.center", fn_view_center },
 	{ "view.fit", fn_view_fit },
-	{ "view.pos", fn_view_pos },
+	{ "view.pos", fn_view_set_pos },
 	{ "view.pos+", fn_view_pos_plus },
 	{ "view.reset", fn_view_reset },
 	{ "view.rotate", fn_view_rotate },
