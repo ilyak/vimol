@@ -1632,30 +1632,6 @@ fn_force_save(struct tokq *args, struct state *state)
 }
 
 static int
-fn_save_png(struct tokq *args, struct state *state)
-{
-	char path[256];
-	int i;
-
-	if (tokq_count(args) == 0) {
-		for (i = 0; ; i++) {
-			snprintf(path, sizeof(path), "%05d.png", i);
-
-			if (!util_file_exists(path))
-				break;
-		}
-	} else {
-		snprintf(path, sizeof(path), "%s",
-		    tok_string(tokq_tok(args, 0)));
-	}
-
-	state_save_png(state, path);
-	error_set("saved to \"%s\"", path);
-
-	return (1);
-}
-
-static int
 fn_select(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -2341,7 +2317,6 @@ static const struct node {
 	{ "ring", fn_ring },
 	{ "rotate", fn_rotate },
 	{ "run", fn_run },
-	{ "save-png", fn_save_png },
 	{ "select", fn_select },
 	{ "select-bonded", fn_select_bonded },
 	{ "select-box", fn_select_box },

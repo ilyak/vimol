@@ -260,7 +260,6 @@ struct yank *state_get_yank(struct state *);
 void state_start_edit(struct state *);
 int state_source(struct state *, const char *);
 void state_render(struct state *);
-void state_save_png(struct state *, const char *);
 void state_toggle_fullscreen(struct state *);
 void state_quit(struct state *, int);
 void state_event_loop(struct state *);

@@ -559,13 +559,6 @@ state_render(struct state *state)
 }
 
 void
-state_save_png(struct state *state, const char *path)
-{
-	state_render(state);
-	cairo_surface_write_to_png(cairo_get_target(state->cairo), path);
-}
-
-void
 state_toggle_fullscreen(struct state *state)
 {
 	Uint32 flags;
