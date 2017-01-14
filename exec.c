@@ -2337,19 +2337,20 @@ fn_wrap(struct tokq *args, struct state *state)
 
 typedef int (*exec_fn_t)(struct tokq *, struct state *);
 
-static const struct {
+/* this list MUST remain sorted */
+static const struct node {
 	const char *name;
 	exec_fn_t fn;
-} exec_list[] = {
+} execlist[] = {
 	{ "about", fn_about },
-	{ "bind", fn_bind },
-	{ "bind?", fn_get_bind },
+	{ "add.hydrogens", fn_add_hydrogens },
 	{ "all", fn_all },
 	{ "angle?", fn_get_angle },
 	{ "atom", fn_atom },
 	{ "autobond", fn_autobond },
+	{ "bind", fn_bind },
+	{ "bind?", fn_get_bind },
 	{ "bond", fn_bond },
-	{ "remove.bond", fn_remove_bond },
 	{ "chain", fn_chain },
 	{ "clear", fn_clear },
 	{ "close", fn_close },
@@ -2369,7 +2370,6 @@ static const struct {
 	{ "get", fn_get },
 	{ "group", fn_group },
 	{ "hide", fn_hide },
-	{ "add.hydrogens", fn_add_hydrogens },
 	{ "invert", fn_invert },
 	{ "last", fn_last },
 	{ "name", fn_name },
@@ -2393,12 +2393,11 @@ static const struct {
 	{ "redo", fn_redo },
 	{ "reload", fn_reload },
 	{ "reload!", fn_force_reload },
+	{ "remove.bond", fn_remove_bond },
 	{ "repeat", fn_repeat },
 	{ "ring", fn_ring },
 	{ "rotate", fn_rotate },
 	{ "run", fn_run },
-	{ "w", fn_save },
-	{ "w!", fn_force_save },
 	{ "select", fn_select },
 	{ "select.bonded", fn_select_bonded },
 	{ "select.box", fn_select_box },
@@ -2423,20 +2422,11 @@ static const struct {
 	{ "view.reset", fn_view_reset },
 	{ "view.rotate", fn_view_rotate },
 	{ "view.zoom", fn_view_zoom },
+	{ "w", fn_save },
+	{ "w!", fn_force_save },
 	{ "wrap", fn_wrap },
 };
-
-struct node {
-	const char *name;
-	exec_fn_t fn;
-};
-
-struct exec {
-	int nelts, nalloc;
-	struct node *data;
-};
-
-static struct exec *exec = NULL;
+static const size_t nexeclist = sizeof execlist / sizeof *execlist;
 
 static int
 compare(const void *a, const void *b)
@@ -2447,50 +2437,15 @@ compare(const void *a, const void *b)
 	return (strcasecmp(aa->name, bb->name));
 }
 
-static struct node *
+static const struct node *
 exec_find(const char *name)
 {
 	struct node node;
 
 	node.name = name;
 
-	return (bsearch(&node, exec->data, exec->nelts,
+	return (bsearch(&node, execlist, nexeclist,
 	    sizeof(struct node), compare));
-}
-
-static void
-exec_add(const char *name, exec_fn_t fn)
-{
-	if (exec->nelts == exec->nalloc) {
-		exec->nalloc *= 2;
-		exec->data = xrealloc(exec->data,
-		    exec->nalloc * sizeof(struct node));
-	}
-	exec->data[exec->nelts].name = name;
-	exec->data[exec->nelts].fn = fn;
-	exec->nelts++;
-}
-
-void
-exec_init(void)
-{
-	unsigned i;
-
-	exec = xcalloc(1, sizeof(struct exec));
-	exec->nalloc = 8;
-	exec->data = xcalloc(exec->nalloc, sizeof(struct node));
-
-	for (i = 0; i < sizeof(exec_list) / sizeof(*exec_list); i++)
-		exec_add(exec_list[i].name, exec_list[i].fn);
-
-	qsort(exec->data, exec->nelts, sizeof(struct node), compare);
-}
-
-void
-exec_free(void)
-{
-	free(exec->data);
-	free(exec);
 }
 
 int
@@ -2502,7 +2457,7 @@ exec_valid(const char *name)
 int
 exec_run(const char *name, struct tokq *args, struct state *state)
 {
-	struct node *node = exec_find(name);
+	const struct node *node = exec_find(name);
 
 	assert(node != NULL);
 

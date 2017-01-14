@@ -140,8 +140,6 @@ const char *error_get(void);
 void error_clear(void);
 
 /* exec.c */
-void exec_init(void);
-void exec_free(void);
 int exec_valid(const char *);
 int exec_run(const char *, struct tokq *, struct state *);
 

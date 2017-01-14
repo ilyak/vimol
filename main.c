@@ -23,7 +23,6 @@ main(int argc, char **argv)
 	struct wnd *wnd;
 	int idx;
 
-	exec_init();
 	settings_init();
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -49,11 +48,8 @@ main(int argc, char **argv)
 
 	state_save(state);
 	state_free(state);
-
-	settings_free();
-	exec_free();
-
 	SDL_Quit();
+	settings_free();
 
 	return (0);
 }
