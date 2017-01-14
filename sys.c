@@ -128,16 +128,24 @@ parse_atom_pdb(const char *buf, struct atom *atom)
 	}
 
 	memset(atom, 0, sizeof(*atom));
-	atom->name[0] = 'X';
 
-	if (buflen < 78) {
-		atom->name[0] = buf[13];
-	} else {
-		for (i = 76, j = 0; i < 78; i++) {
+	if (buflen >= 72) {
+		for (i = 70, j = 0; i < 72; i++)
 			if (isalpha(buf[i]))
 				atom->name[j++] = buf[i];
-		}
 	}
+
+	if (atom->name[0] == '\0' && buflen >= 78) {
+		for (i = 76, j = 0; i < 78; i++)
+			if (isalpha(buf[i]))
+				atom->name[j++] = buf[i];
+	}
+
+	if (atom->name[0] == '\0' && isalpha(buf[13]))
+		atom->name[0] = buf[13];
+
+	if (atom->name[0] == '\0')
+		atom->name[0] = 'X';
 
 	sscanf(buf+30, "%lf%lf%lf", &atom->xyz.x, &atom->xyz.y, &atom->xyz.z);
 
