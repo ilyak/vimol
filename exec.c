@@ -768,7 +768,7 @@ fn_set_frame(struct tokq *args, struct state *state)
 }
 
 static int
-fn_add_frame(struct tokq *args, struct state *state)
+fn_next_frame(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -2233,7 +2233,6 @@ static const struct node {
 } execlist[] = {
 	{ "?", fn_about },
 	{ "add-dist", fn_add_dist },
-	{ "add-frame", fn_add_frame },
 	{ "add-hydrogens", fn_add_hydrogens },
 	{ "add-pos", fn_add_pos },
 	{ "angle?", fn_get_angle },
@@ -2263,6 +2262,7 @@ static const struct node {
 	{ "make-bonds", fn_make_bonds },
 	{ "name", fn_set_name },
 	{ "new", fn_new },
+	{ "next-frame", fn_next_frame },
 	{ "next-window", fn_next_window },
 	{ "nop", fn_nop },
 	{ "open", fn_open },
