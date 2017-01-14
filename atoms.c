@@ -37,12 +37,12 @@ static const char *elementnames[] = {
 	"At", "Rn", "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm",
 	"Bk", "Cf", "Es", "Fm", "Md", "No", "Lr"
 };
-static const int nelementnames = sizeof elementnames / sizeof *elementnames;
+static const size_t nelementnames = sizeof elementnames / sizeof *elementnames;
 
 static int
 atoms_name_to_type(const char *name)
 {
-	int i;
+	size_t i;
 
 	for (i = 0; i < nelementnames; i++) {
 		if (name[0] == elementnames[i][0] &&
