@@ -153,11 +153,6 @@ fn_atom(struct tokq *args, struct state *state)
 
 	view = state_get_view(state);
 
-	if (sys_get_frame_count(view_get_sys(view)) > 1) {
-		error_set("cannot add atoms to multi-frame files");
-		return (0);
-	}
-
 	if (tokq_count(args) < 1)
 		name = "X";
 	else
@@ -846,12 +841,6 @@ fn_add_hydrogens(struct tokq *args, struct state *state)
 	struct sel *sel;
 
 	view = state_get_view(state);
-
-	if (sys_get_frame_count(view_get_sys(view)) > 1) {
-		error_set("cannot add atoms to multi-frame files");
-		return (0);
-	}
-
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 
 	if (sel_get_count(sel) == 0) {
@@ -1106,11 +1095,6 @@ fn_paste(struct tokq *args, struct state *state)
 
 	view = state_get_view(state);
 	yank = state_get_yank(state);
-
-	if (sys_get_frame_count(view_get_sys(view)) > 1) {
-		error_set("cannot add atoms to multi-frame files");
-		return (0);
-	}
 
 	if (tokq_count(args) > 0) {
 		if ((reg = parse_register(tokq_tok(args, 0))) == -1)
