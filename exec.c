@@ -2231,7 +2231,7 @@ static const struct node {
 	const char *name;
 	exec_fn_t fn;
 } execlist[] = {
-	{ "about", fn_about },
+	{ "?", fn_about },
 	{ "add-dist", fn_add_dist },
 	{ "add-frame", fn_add_frame },
 	{ "add-hydrogens", fn_add_hydrogens },
