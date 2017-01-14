@@ -53,32 +53,6 @@ tok_string(tok_t tok)
 	return ((const char *)tok);
 }
 
-color_t
-tok_color(tok_t tok)
-{
-	int r, g, b;
-
-	assert(tok != NULL);
-
-	r = g = b = 0;
-	sscanf(tok, "[ %d %d %d ]", &r, &g, &b);
-
-	return (color_rgb(r, g, b));
-}
-
-vec_t
-tok_vec(tok_t tok)
-{
-	double x, y, z;
-
-	assert(tok != NULL);
-
-	x = y = z = 0.0;
-	sscanf(tok, "[ %lf %lf %lf ]", &x, &y, &z);
-
-	return (vec_xyz(x, y, z));
-}
-
 static void
 tokq_push_back(struct tokq *tokq, char *str)
 {
@@ -215,16 +189,20 @@ char *
 tokq_strcat(struct tokq *tokq, int start, int count)
 {
 	char *s, *p;
-	int i;
+	int i, end;
 
-	assert(start >= 0 && start + count <= tokq_count(tokq));
+	assert(start >= 0 && count >= 0);
 
-	if (count == 0)
+	if (start >= tokq_count(tokq) || count == 0)
 		return (xstrdup(""));
+
+	end = start + count;
+	if (end > tokq_count(tokq))
+		end = tokq_count(tokq);
 
 	s = xstrdup(tokq->data[start]);
 
-	for (i = start+1; i < start+count; i++) {
+	for (i = start+1; i < end; i++) {
 		xasprintf(&p, "%s %s", s, tokq->data[i]);
 		free(s);
 		s = p;

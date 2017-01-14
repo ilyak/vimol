@@ -41,7 +41,7 @@ color_to_string(char *buf, size_t size, color_t color)
 	g = (int)(color.g * 255);
 	b = (int)(color.b * 255);
 
-	return (snprintf(buf, size, "[%d %d %d]", r, g, b));
+	return (snprintf(buf, size, "%d %d %d", r, g, b));
 }
 
 int

@@ -309,8 +309,6 @@ int tok_int(tok_t);
 double tok_double(tok_t);
 int tok_bool(tok_t);
 const char *tok_string(tok_t);
-color_t tok_color(tok_t);
-vec_t tok_vec(tok_t);
 struct tokq *tokq_create(const char *);
 struct tokq *tokq_copy(struct tokq *, int, int);
 void tokq_free(struct tokq *);

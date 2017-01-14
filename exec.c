@@ -136,6 +136,19 @@ parse_register(tok_t tok)
 	return (reg - 'a');
 }
 
+static vec_t
+parse_vec(struct tokq *args, int start)
+{
+	vec_t xyz = { 0, 0, 0 };
+	char *s;
+
+	s = tokq_strcat(args, start, 3);
+	sscanf(s, "%lf %lf %lf", &xyz.x, &xyz.y, &xyz.z);
+	free(s);
+
+	return (xyz);
+}
+
 static int
 fn_about(struct tokq *args __unused, struct state *state __unused)
 {
@@ -158,11 +171,7 @@ fn_atom(struct tokq *args, struct state *state)
 	else
 		name = tok_string(tokq_tok(args, 0));
 
-	if (tokq_count(args) < 2)
-		xyz = vec_zero();
-	else
-		xyz = tok_vec(tokq_tok(args, 1));
-
+	xyz = parse_vec(args, 1);
 	view_snapshot(view);
 	sys_add_atom(view_get_sys(view), name, xyz);
 
@@ -886,16 +895,11 @@ static int
 fn_view_set_pos(struct tokq *args, struct state *state)
 {
 	struct view *view;
-	struct camera *camera;
 	vec_t xyz;
 
-	if (tokq_count(args) < 1)
-		return (0);
-
 	view = state_get_view(state);
-	camera = view_get_camera(view);
-	xyz = tok_vec(tokq_tok(args, 0));
-	camera_move_to(camera, xyz);
+	xyz = parse_vec(args, 0);
+	camera_move_to(view_get_camera(view), xyz);
 
 	return (1);
 }
@@ -904,16 +908,11 @@ static int
 fn_view_add_pos(struct tokq *args, struct state *state)
 {
 	struct view *view;
-	struct camera *camera;
 	vec_t xyz;
 
-	if (tokq_count(args) < 1)
-		return (0);
-
 	view = state_get_view(state);
-	camera = view_get_camera(view);
-	xyz = tok_vec(tokq_tok(args, 0));
-	camera_move(camera, xyz);
+	xyz = parse_vec(args, 0);
+	camera_move(view_get_camera(view), xyz);
 
 	return (1);
 }
@@ -1141,12 +1140,12 @@ fn_set_pos(struct tokq *args, struct state *state)
 	view = state_get_view(state);
 
 	if (tokq_count(args) < 1) {
-		error_set("specify a vector [x y z]");
+		error_set("specify atom position");
 		return (0);
 	}
 
-	dr = tok_vec(tokq_tok(args, 0));
-	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
+	dr = parse_vec(args, 0);
+	sel = make_sel(args, 3, tokq_count(args), view_get_sel(view));
 
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
@@ -1183,12 +1182,12 @@ fn_add_pos(struct tokq *args, struct state *state)
 	view = state_get_view(state);
 
 	if (tokq_count(args) < 1) {
-		error_set("specify a vector [x y z]");
+		error_set("specify a vector");
 		return (0);
 	}
 
-	dr = tok_vec(tokq_tok(args, 0));
-	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
+	dr = parse_vec(args, 0);
+	sel = make_sel(args, 3, tokq_count(args), view_get_sel(view));
 
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
@@ -1502,12 +1501,12 @@ fn_rotate(struct tokq *args, struct state *state)
 	view = state_get_view(state);
 
 	if (tokq_count(args) < 1) {
-		error_set("specify rotation angles [a b c]");
+		error_set("specify rotation angles a b c");
 		return (0);
 	}
 
-	abc = tok_vec(tokq_tok(args, 0));
-	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
+	abc = parse_vec(args, 0);
+	sel = make_sel(args, 3, tokq_count(args), view_get_sel(view));
 
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
@@ -1549,18 +1548,12 @@ static int
 fn_view_rotate(struct tokq *args, struct state *state)
 {
 	struct view *view;
-	struct camera *camera;
 	vec_t xyz;
 
-	if (tokq_count(args) < 1)
-		return (0);
-
 	view = state_get_view(state);
-	camera = view_get_camera(view);
-	xyz = tok_vec(tokq_tok(args, 0));
-
+	xyz = parse_vec(args, 0);
 	vec_scale(&xyz, PI / 180.0);
-	camera_rotate(camera, xyz);
+	camera_rotate(view_get_camera(view), xyz);
 
 	return (1);
 }
@@ -1726,12 +1719,12 @@ fn_select_box(struct tokq *args, struct state *state)
 		return (0);
 	}
 
-	if (tokq_count(args) < 2) {
+	if (tokq_count(args) < 4) {
 		p1 = vec_zero();
-		p2 = tok_vec(tokq_tok(args, 0));
+		p2 = parse_vec(args, 0);
 	} else {
-		p1 = tok_vec(tokq_tok(args, 0));
-		p2 = tok_vec(tokq_tok(args, 1));
+		p1 = parse_vec(args, 0);
+		p2 = parse_vec(args, 3);
 	}
 
 	view = state_get_view(state);
@@ -2236,12 +2229,12 @@ fn_wrap(struct tokq *args, struct state *state)
 		return (0);
 	}
 
-	if (tokq_count(args) < 2) {
+	if (tokq_count(args) < 4) {
 		p1 = vec_zero();
-		p2 = tok_vec(tokq_tok(args, 0));
+		p2 = parse_vec(args, 0);
 	} else {
-		p1 = tok_vec(tokq_tok(args, 0));
-		p2 = tok_vec(tokq_tok(args, 1));
+		p1 = parse_vec(args, 0);
+		p2 = parse_vec(args, 3);
 	}
 
 	cell = vec_sub(&p2, &p1);
