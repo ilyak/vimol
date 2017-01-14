@@ -142,16 +142,11 @@ set_statusbar_text(struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
-	int iframe, nframe, iwnd, nwnd;
 	const char *text;
-	char *buf1, *buf2, *bufout;
+	char buf[256] = "";
 
 	view = state_get_view(state);
 	sys = view_get_sys(view);
-	iframe = sys_get_frame(sys);
-	nframe = sys_get_frame_count(sys);
-	iwnd = wnd_get_index(state->wnd);
-	nwnd = wnd_get_count(state->wnd);
 	text = edit_get_text(state->edit);
 
 	if (state->is_search)
@@ -160,23 +155,20 @@ set_statusbar_text(struct state *state)
 	else if (state->is_input)
 		statusbar_set_text(state->statusbar, ":%s", text);
 
-	if (rec_is_recording(state->rec))
-		xasprintf(&buf1, "rec-%c ", rec_get_register(state->rec)+'a');
-	else
-		buf1 = xstrdup("");
-
-	if (state->repeat > 0)
-		xasprintf(&buf2, "%d ", state->repeat);
-	else
-		buf2 = xstrdup("");
-
-	xasprintf(&bufout, "%s%s%sf%d/%d w%d/%d", buf1, buf2,
-	    sys_is_modified(sys) ? "[+] " : "", iframe+1, nframe, iwnd+1, nwnd);
-	statusbar_set_info_text(state->statusbar, "%s", bufout);
-
-	free(buf1);
-	free(buf2);
-	free(bufout);
+	if (state->repeat > 0) {
+		snprintf(buf, sizeof buf, "%s%d ", buf, state->repeat);
+	}
+	if (rec_is_recording(state->rec)) {
+		snprintf(buf, sizeof buf, "%srec[%c] ", buf,
+		    rec_get_register(state->rec) + 'a');
+	}
+	if (sys_is_modified(sys)) {
+		snprintf(buf, sizeof buf, "%s[+] ", buf);
+	}
+	snprintf(buf, sizeof buf, "%s%d/%d %d/%d", buf,
+	    sys_get_frame(sys) + 1, sys_get_frame_count(sys),
+	    wnd_get_index(state->wnd) + 1, wnd_get_count(state->wnd));
+	statusbar_set_info_text(state->statusbar, "%s", buf);
 }
 
 static void
