@@ -67,17 +67,6 @@ parse_tokq(struct cmdq *cmdq, struct tokq *tokq)
 
 		if (strcmp(tok, ";") == 0)
 			continue;
-//XXX
-//		if (expand && (astr = alias_get(alias, tok))) {
-//			if ((atokq = tokq_create(astr)) == NULL)
-//				return (0);
-//			if (!parse_tokq(cmdq, atokq, alias, 0)) {
-//				tokq_free(atokq);
-//				return (0);
-//			}
-//			tokq_free(atokq);
-//			continue;
-//		}
 
 		if (!exec_valid(tok)) {
 			error_set("invalid command \"%s\"", tok);
