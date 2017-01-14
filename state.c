@@ -538,7 +538,8 @@ state_render(struct state *state)
 	if (window_size_changed(state))
 		create_cairo(state);
 
-	view_render(state_get_view(state), state->cairo);
+	if (!state->is_search && !state->is_input)
+		view_render(state_get_view(state), state->cairo);
 
 	if (settings_get_bool("statusbar.visible")) {
 		set_statusbar_text(state);
