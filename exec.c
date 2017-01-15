@@ -1065,7 +1065,7 @@ fn_get_path(struct tokq *args __unused, struct state *state)
 	if (path[0] == '\0')
 		error_set("no file name");
 	else
-		error_set("\"%s\"", path);
+		error_set("%s", path);
 
 	return (1);
 }
