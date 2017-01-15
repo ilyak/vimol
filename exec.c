@@ -1762,9 +1762,9 @@ fn_select_water(struct tokq *args __unused, struct state *state)
 		    !sel_selected(visible, k))
 			continue;
 
-		if (strcasecmp(sys_get_atom_name(sys, i), "O") != 0 ||
-		    strcasecmp(sys_get_atom_name(sys, j), "H") != 0 ||
-		    strcasecmp(sys_get_atom_name(sys, k), "H") != 0)
+		if (sys_get_atom_type(sys, i) != 8 || /* O */
+		    sys_get_atom_type(sys, j) != 1 || /* H */
+		    sys_get_atom_type(sys, k) != 1)   /* H */
 			continue;
 
 		sel_add(view_get_sel(view), i);

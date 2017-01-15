@@ -296,6 +296,7 @@ void sys_remove_atom(struct sys *, int);
 void sys_swap_atoms(struct sys *, int, int);
 int sys_get_atom_count(struct sys *);
 const char *sys_get_atom_name(struct sys *, int);
+int sys_get_atom_type(struct sys *, int);
 void sys_set_atom_name(struct sys *, int, const char *);
 vec_t sys_get_atom_xyz(struct sys *, int);
 void sys_set_atom_xyz(struct sys *, int, vec_t);
