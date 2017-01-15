@@ -51,10 +51,8 @@ history_load(struct history *history, const char *path)
 	FILE *fp;
 	char *buffer;
 
-	if ((fp = fopen(path, "r")) == NULL) {
-		warn("unable to open history file %s", path);
+	if ((fp = fopen(path, "r")) == NULL)
 		return;
-	}
 
 	buffer = NULL;
 
@@ -71,10 +69,8 @@ history_save(struct history *history, const char *path)
 	FILE *fp;
 	int save;
 
-	if ((fp = fopen(path, "w")) == NULL) {
-		warn("unable to write history file %s", path);
+	if ((fp = fopen(path, "w")) == NULL)
 		return;
-	}
 
 	save = history->current;
 	history_reset_current(history);

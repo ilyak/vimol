@@ -79,13 +79,11 @@ void
 rec_load(struct rec *rec, const char *path)
 {
 	FILE *fp;
-	int i;
 	char *buffer;
+	int i;
 
-	if ((fp = fopen(path, "r")) == NULL) {
-		warn("unable to open rec file %s", path);
+	if ((fp = fopen(path, "r")) == NULL)
 		return;
-	}
 
 	buffer = NULL;
 
@@ -105,10 +103,8 @@ rec_save(struct rec *rec, const char *path)
 	FILE *fp;
 	int i;
 
-	if ((fp = fopen(path, "w")) == NULL) {
-		warn("unable to write to %s", path);
+	if ((fp = fopen(path, "w")) == NULL)
 		return;
-	}
 
 	for (i = 0; i < REC_SIZE; i++)
 		fprintf(fp, "%s\n", rec->data[i]);
