@@ -5,7 +5,7 @@ static const struct {
 	{ "A", "chain" },
 	{ "B", "view-zoom 0.87" },
 	{ "C", "view-center" },
-	{ "D", "nop" },
+	{ "D", "delete-selection" },
 	{ "E", "select *" },
 	{ "F", "view-zoom 1.15" },
 	{ "G", "nop" },
