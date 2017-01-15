@@ -1138,12 +1138,6 @@ fn_set_pos(struct tokq *args, struct state *state)
 	int idx;
 
 	view = state_get_view(state);
-
-	if (tokq_count(args) < 1) {
-		error_set("specify atom position");
-		return (0);
-	}
-
 	dr = parse_vec(args, 0);
 	sel = make_sel(args, 3, tokq_count(args), view_get_sel(view));
 
@@ -1180,12 +1174,6 @@ fn_add_pos(struct tokq *args, struct state *state)
 	int idx;
 
 	view = state_get_view(state);
-
-	if (tokq_count(args) < 1) {
-		error_set("specify a vector");
-		return (0);
-	}
-
 	dr = parse_vec(args, 0);
 	sel = make_sel(args, 3, tokq_count(args), view_get_sel(view));
 
