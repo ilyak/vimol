@@ -221,38 +221,6 @@ fn_get_bind(struct tokq *args, struct state *state)
 }
 
 static int
-fn_for_all_frames(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct cmdq *cmdq;
-	int i, save, ret;
-	char *str;
-
-	view = state_get_view(state);
-	str = tokq_strcat(args, 0, tokq_count(args));
-
-	if ((cmdq = cmdq_from_string(str)) == NULL)
-		return (0);
-
-	ret = 1;
-	save = sys_get_frame(view_get_sys(view));
-
-	for (i = 0; i < sys_get_frame_count(view_get_sys(view)); i++) {
-		sys_set_frame(view_get_sys(view), i);
-
-		if (!(ret = cmdq_exec(cmdq, state)))
-			break;
-	}
-
-	sys_set_frame(view_get_sys(view), save);
-
-	cmdq_free(cmdq);
-	free(str);
-
-	return (ret);
-}
-
-static int
 fn_get_angle(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -2239,7 +2207,6 @@ static const struct node {
 	{ "dist?", fn_get_dist },
 	{ "edit", fn_edit },
 	{ "first-window", fn_first_window },
-	{ "for-all-frames", fn_for_all_frames },
 	{ "fullscreen", fn_fullscreen },
 	{ "get", fn_get },
 	{ "get-path", fn_get_path },
