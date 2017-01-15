@@ -52,9 +52,9 @@ static const vec_t h_table[] = {
 };
 
 static struct atoms *
-sys_get_atoms(struct sys *sys, int frame)
+sys_get_atoms(struct sys *sys)
 {
-	return (sys->atoms[frame]);
+	return (sys->atoms[sys->current_frame]);
 }
 
 static void
@@ -97,12 +97,6 @@ add_hydrogens(struct sys *sys, int i, int j, int k, int offset, int count)
 		j = sys_get_atom_count(sys) - 1;
 		graph_edge_create(sys->graph, i, j, 1);
 	}
-}
-
-static int
-is_hydrogen(const char *name)
-{
-	return (toupper(name[0]) == 'H' && name[1] == '\0');
 }
 
 static int
@@ -184,7 +178,7 @@ load_from_pdb(struct sys *sys, const char *path)
 			if (sys_get_frame_count(sys) == 1)
 				sys_add_atom(sys, atom.name, atom.xyz);
 			else {
-				atoms = sys_get_atoms(sys, sys->current_frame);
+				atoms = sys_get_atoms(sys);
 				atoms_add(atoms, atom.name, atom.xyz);
 			}
 		}
@@ -287,7 +281,7 @@ load_from_xyz(struct sys *sys, const char *path, int is_new)
 			if (!parse_atom_xyz(buffer, &atom))
 				goto error;
 
-			atoms = sys_get_atoms(sys, sys->current_frame);
+			atoms = sys_get_atoms(sys);
 			atoms_add(atoms, atom.name, atom.xyz);
 		}
 	}
@@ -497,7 +491,7 @@ sys_remove_atom(struct sys *sys, int idx)
 void
 sys_swap_atoms(struct sys *sys, int i, int j)
 {
-	struct atoms *atoms = sys_get_atoms(sys, sys->current_frame);
+	struct atoms *atoms = sys_get_atoms(sys);
 
 	atoms_swap(atoms, i, j);
 	graph_vertex_swap(sys->graph, i, j);
@@ -508,7 +502,7 @@ sys_swap_atoms(struct sys *sys, int i, int j)
 int
 sys_get_atom_count(struct sys *sys)
 {
-	struct atoms *atoms = sys_get_atoms(sys, sys->current_frame);
+	struct atoms *atoms = sys_get_atoms(sys);
 
 	return (atoms_get_count(atoms));
 }
@@ -516,7 +510,7 @@ sys_get_atom_count(struct sys *sys)
 const char *
 sys_get_atom_name(struct sys *sys, int idx)
 {
-	struct atoms *atoms = sys_get_atoms(sys, sys->current_frame);
+	struct atoms *atoms = sys_get_atoms(sys);
 
 	return (atoms_get_name(atoms, idx));
 }
@@ -524,7 +518,7 @@ sys_get_atom_name(struct sys *sys, int idx)
 void
 sys_set_atom_name(struct sys *sys, int idx, const char *name)
 {
-	struct atoms *atoms = sys_get_atoms(sys, sys->current_frame);
+	struct atoms *atoms = sys_get_atoms(sys);
 
 	atoms_set_name(atoms, idx, name);
 
@@ -534,7 +528,7 @@ sys_set_atom_name(struct sys *sys, int idx, const char *name)
 vec_t
 sys_get_atom_xyz(struct sys *sys, int idx)
 {
-	struct atoms *atoms = sys_get_atoms(sys, sys->current_frame);
+	struct atoms *atoms = sys_get_atoms(sys);
 
 	return (atoms_get_xyz(atoms, idx));
 }
@@ -542,7 +536,7 @@ sys_get_atom_xyz(struct sys *sys, int idx)
 void
 sys_set_atom_xyz(struct sys *sys, int idx, vec_t xyz)
 {
-	struct atoms *atoms = sys_get_atoms(sys, sys->current_frame);
+	struct atoms *atoms = sys_get_atoms(sys);
 
 	atoms_set_xyz(atoms, idx, xyz);
 
@@ -552,17 +546,16 @@ sys_set_atom_xyz(struct sys *sys, int idx, vec_t xyz)
 void
 sys_add_hydrogens(struct sys *sys, struct sel *sel)
 {
+	struct atoms *atoms;
 	vec_t r1, r2, r3;
 	int n_bond, n_neig;
 	int i, j, k;
-	const char *name;
 
+	atoms = sys_get_atoms(sys);
 	sel_iter_start(sel);
 
 	while (sel_iter_next(sel, &i)) {
-		name = sys_get_atom_name(sys, i);
-
-		if (strcasecmp(name, "C") == 0) {
+		if (atoms_get_type(atoms, i) == 6) { /* C */
 			n_neig = graph_get_edge_count(sys->graph, i);
 			n_bond = get_bond_count(sys->graph, i);
 			j = k = -1;
@@ -617,7 +610,7 @@ sys_add_hydrogens(struct sys *sys, struct sel *sel)
 					}
 				}
 			}
-		} else if (strcasecmp(name, "N") == 0) {
+		} else if (atoms_get_type(atoms, i) == 7) { /* N */
 			n_neig = graph_get_edge_count(sys->graph, i);
 			n_bond = get_bond_count(sys->graph, i);
 			j = k = -1;
@@ -638,7 +631,19 @@ sys_add_hydrogens(struct sys *sys, struct sel *sel)
 				/* add 1 */
 				add_hydrogens(sys, i, j, k, 9, 1);
 			}
-		} else if (strcasecmp(name, "P") == 0) {
+		} else if (atoms_get_type(atoms, i) == 8) { /* O */
+			n_bond = get_bond_count(sys->graph, i);
+			j = k = -1;
+
+			if (n_bond == 0) {
+				/* add 2 */
+				add_hydrogens(sys, i, j, k, 13, 2);
+			} else if (n_bond == 1) {
+				j = graph_edge_j(graph_edges(sys->graph, i));
+				/* add 1 */
+				add_hydrogens(sys, i, j, k, 14, 1);
+			}
+		} else if (atoms_get_type(atoms, i) == 15) { /* P */
 			n_neig = graph_get_edge_count(sys->graph, i);
 			n_bond = get_bond_count(sys->graph, i);
 			j = k = -1;
@@ -659,19 +664,7 @@ sys_add_hydrogens(struct sys *sys, struct sel *sel)
 				/* add 1 */
 				add_hydrogens(sys, i, j, k, 12, 1);
 			}
-		} else if (strcasecmp(name, "O") == 0) {
-			n_bond = get_bond_count(sys->graph, i);
-			j = k = -1;
-
-			if (n_bond == 0) {
-				/* add 2 */
-				add_hydrogens(sys, i, j, k, 13, 2);
-			} else if (n_bond == 1) {
-				j = graph_edge_j(graph_edges(sys->graph, i));
-				/* add 1 */
-				add_hydrogens(sys, i, j, k, 14, 1);
-			}
-		} else if (strcasecmp(name, "S") == 0) {
+		} else if (atoms_get_type(atoms, i) == 16) { /* S */
 			n_bond = get_bond_count(sys->graph, i);
 			j = k = -1;
 
@@ -737,8 +730,9 @@ sys_reset_bonds(struct sys *sys, struct sel *sel)
 		i = map[pair.i];
 		j = map[pair.j];
 
-		if (is_hydrogen(sys_get_atom_name(sys, i)) &&
-		    is_hydrogen(sys_get_atom_name(sys, j)))
+		/* hydrogens */
+		if (atoms_get_type(sys_get_atoms(sys), i) == 1 &&
+		    atoms_get_type(sys_get_atoms(sys), j) == 1)
 			continue;
 
 		if (graph_edge_find(sys->graph, i, j) == NULL)

@@ -147,6 +147,14 @@ atoms_get_name(struct atoms *atoms, int idx)
 	return (elementnames[atoms->data[idx].type]);
 }
 
+int
+atoms_get_type(struct atoms *atoms, int idx)
+{
+	assert(idx >= 0 && idx < atoms_get_count(atoms));
+
+	return (atoms->data[idx].type);
+}
+
 void
 atoms_set_name(struct atoms *atoms, int idx, const char *name)
 {
