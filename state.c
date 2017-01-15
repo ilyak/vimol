@@ -122,14 +122,14 @@ state_blit(struct state *state)
 }
 
 static void
-assign_default_bindings(struct state *state)
+set_default_bindings(struct state *state)
 {
 	struct cmdq *cmdq;
-	unsigned i;
+	size_t i;
 
 #include "keybind.h"
 
-	for (i = 0; i < sizeof(keys) / sizeof(*keys); i++) {
+	for (i = 0; i < sizeof keys / sizeof *keys; i++) {
 		if ((cmdq = cmdq_from_string(keys[i].command)) == NULL)
 			fatal("invalid binding for key %s", keys[i].key);
 		cmdq_free(cmdq);
@@ -427,7 +427,7 @@ state_create(void)
 	create_window(state);
 	create_cairo(state);
 
-	assign_default_bindings(state);
+	set_default_bindings(state);
 
 	path = settings_get_string("rec.path");
 	rec_load(state->rec, path);

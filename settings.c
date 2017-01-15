@@ -281,7 +281,7 @@ static const struct {
 void
 settings_init(void)
 {
-	unsigned i;
+	size_t i;
 
 	settings = xcalloc(1, sizeof(struct settings));
 	settings->nalloc = 8;
@@ -289,7 +289,7 @@ settings_init(void)
 
 	add_data_path();
 
-	for (i = 0; i < sizeof(node_list) / sizeof(*node_list); i++)
+	for (i = 0; i < sizeof node_list / sizeof *node_list; i++)
 		add_node(node_list[i].name, node_list[i].type,
 		    node_list[i].default_value);
 
