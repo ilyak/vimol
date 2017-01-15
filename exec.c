@@ -905,7 +905,7 @@ fn_view_set_pos(struct tokq *args, struct state *state)
 }
 
 static int
-fn_view_add_pos(struct tokq *args, struct state *state)
+fn_view_move(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	vec_t xyz;
@@ -1164,7 +1164,7 @@ fn_set_pos(struct tokq *args, struct state *state)
 }
 
 static int
-fn_add_pos(struct tokq *args, struct state *state)
+fn_move_selection(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -2222,7 +2222,6 @@ static const struct node {
 	{ "?", fn_about },
 	{ "add-dist", fn_add_dist },
 	{ "add-hydrogens", fn_add_hydrogens },
-	{ "add-pos", fn_add_pos },
 	{ "angle?", fn_get_angle },
 	{ "atom", fn_atom },
 	{ "bind", fn_set_bind },
@@ -2249,6 +2248,7 @@ static const struct node {
 	{ "invert-selection", fn_invert_selection },
 	{ "last-window", fn_last_window },
 	{ "make-bonds", fn_make_bonds },
+	{ "move-selection", fn_move_selection },
 	{ "name", fn_set_name },
 	{ "new", fn_new },
 	{ "next-frame", fn_next_frame },
@@ -2290,9 +2290,9 @@ static const struct node {
 	{ "units", fn_units },
 	{ "unselect", fn_unselect },
 	{ "unselect-next", fn_unselect_next },
-	{ "view-add-pos", fn_view_add_pos },
 	{ "view-center", fn_view_center },
 	{ "view-fit", fn_view_fit },
+	{ "view-move", fn_view_move },
 	{ "view-reset", fn_view_reset },
 	{ "view-rotate", fn_view_rotate },
 	{ "view-set-pos", fn_view_set_pos },
