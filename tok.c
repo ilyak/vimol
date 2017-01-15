@@ -89,23 +89,7 @@ next_token(const char **str)
 		return (xstrndup(ptr + 1, size));
 	}
 
-	if (**str == '[') {
-		(*str)++, size++;
-
-		while (**str && **str != ']')
-			(*str)++, size++;
-
-		if (**str == ']')
-			(*str)++, size++;
-		else {
-			error_set("no matching ']' found");
-			return (NULL);
-		}
-
-		return (xstrndup(ptr, size));
-	}
-
-	while (**str && !isspace(**str) && !strchr(";\"[", **str))
+	while (**str && !isspace(**str) && !strchr(";\"", **str))
 		(*str)++, size++;
 
 	return (xstrndup(ptr, size));
