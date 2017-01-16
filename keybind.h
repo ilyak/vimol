@@ -27,7 +27,7 @@ static const struct {
 	{ "W", "select-molecule" },
 	{ "X", "copy-selection a; delete-selection" },
 	{ "Y", "copy-selection a" },
-	{ "Z", "select-name H" },
+	{ "Z", "select-element H" },
 	{ "shift-A", "ring" },
 	{ "shift-B", "nop" },
 	{ "shift-C", "view-center; view-fit" },

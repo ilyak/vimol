@@ -1436,7 +1436,7 @@ fn_select_molecule(struct tokq *args, struct state *state)
 }
 
 static int
-fn_select_name(struct tokq *args, struct state *state)
+fn_select_element(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -1930,8 +1930,8 @@ static const struct node {
 	{ "select", fn_select },
 	{ "select-bonded", fn_select_bonded },
 	{ "select-box", fn_select_box },
+	{ "select-element", fn_select_element },
 	{ "select-molecule", fn_select_molecule },
-	{ "select-name", fn_select_name },
 	{ "select-next", fn_select_next },
 	{ "select-water", fn_select_water },
 	{ "select-within", fn_select_within },
