@@ -1881,37 +1881,6 @@ fn_edit(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_swap(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sys *sys;
-	struct sel *sel;
-	int i, j;
-
-	view = state_get_view(state);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
-	if (sel_get_count(sel) != 2) {
-		sel_free(sel);
-		error_set("specify 2 indices");
-		return (0);
-	}
-
-	view_snapshot(view);
-	sys = view_get_sys(view);
-
-	sel_iter_start(sel);
-	sel_iter_next(sel, &i);
-	sel_iter_next(sel, &j);
-
-	sys_swap_atoms(sys, i, j);
-
-	sel_free(sel);
-
-	return (1);
-}
-
-static int
 fn_toggle(struct tokq *args, struct state *state __unused)
 {
 	const char *name;
@@ -2209,7 +2178,6 @@ static const struct node {
 	{ "set-frame", fn_set_frame },
 	{ "show", fn_show },
 	{ "source", fn_source },
-	{ "swap", fn_swap },
 	{ "toggle", fn_toggle },
 	{ "torsion?", fn_get_torsion },
 	{ "undo", fn_undo },
