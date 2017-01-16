@@ -221,43 +221,6 @@ fn_get_bind(struct tokq *args, struct state *state)
 }
 
 static int
-fn_units(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sys *sys;
-	vec_t xyz;
-	double factor;
-	int i;
-
-	view = state_get_view(state);
-
-	if (tokq_count(args) < 1) {
-		error_set("specify units");
-		return (0);
-	}
-
-	if (strcasecmp(tok_string(tokq_tok(args, 0)), "bohr") == 0) {
-		factor = 0.52917721092;
-	} else if (strcasecmp(tok_string(tokq_tok(args, 0)), "nm") == 0) {
-		factor = 10.0;
-	} else {
-		error_set("specify 'bohr' or 'nm'");
-		return (0);
-	}
-
-	view_snapshot(view);
-	sys = view_get_sys(view);
-
-	for (i = 0; i < sys_get_atom_count(sys); i++) {
-		xyz = sys_get_atom_xyz(sys, i);
-		vec_scale(&xyz, factor);
-		sys_set_atom_xyz(sys, i, xyz);
-	}
-
-	return (1);
-}
-
-static int
 fn_bond(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -1979,7 +1942,6 @@ static const struct node {
 	{ "source", fn_source },
 	{ "toggle", fn_toggle },
 	{ "undo", fn_undo },
-	{ "units", fn_units },
 	{ "unselect", fn_unselect },
 	{ "unselect-next", fn_unselect_next },
 	{ "view-center", fn_view_center },
