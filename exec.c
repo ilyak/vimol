@@ -553,61 +553,6 @@ fn_delete_selection(struct tokq *args, struct state *state)
 }
 
 static int
-fn_set_distance(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sys *sys;
-	struct sel *sel;
-	vec_t pa, pb, dr;
-	double rab, val;
-	int idx;
-
-	view = state_get_view(state);
-
-	if (tokq_count(args) < 1) {
-		error_set("specify distance");
-		return (0);
-	}
-
-	val = tok_double(tokq_tok(args, 0));
-	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
-
-	if (sel_get_count(sel) < 2) {
-		sel_free(sel);
-		error_set("specify at least 2 atoms");
-		return (0);
-	}
-
-	view_snapshot(view);
-	sys = view_get_sys(view);
-
-	sel_iter_start(sel);
-	sel_iter_next(sel, &idx);
-	sel_remove(sel, idx);
-
-	pa = sys_get_atom_xyz(sys, idx);
-	pb = sys_get_sel_center(sys, sel);
-
-	if ((rab = vec_dist(&pa, &pb)) < 1.0e-8)
-		return (1);
-
-	dr.x = (pb.x - pa.x) * (val - rab) / rab;
-	dr.y = (pb.y - pa.y) * (val - rab) / rab;
-	dr.z = (pb.z - pa.z) * (val - rab) / rab;
-
-	sel_iter_start(sel);
-
-	while (sel_iter_next(sel, &idx)) {
-		pb = sys_get_atom_xyz(sys, idx);
-		pb = vec_add(&pb, &dr);
-		sys_set_atom_xyz(sys, idx, pb);
-	}
-
-	sel_free(sel);
-	return (1);
-}
-
-static int
 fn_add_dist(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -1062,7 +1007,7 @@ fn_play(struct tokq *args, struct state *state)
 }
 
 static int
-fn_set_pos(struct tokq *args, struct state *state)
+fn_set_position(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -1134,19 +1079,16 @@ fn_move_selection(struct tokq *args, struct state *state)
 }
 
 static int
-fn_get_pos(struct tokq *args, struct state *state)
+fn_position(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sel *sel;
-	char *buf;
 	vec_t xyz;
 
 	view = state_get_view(state);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 	xyz = sys_get_sel_center(view_get_sys(view), sel);
-	xasprintf(&buf, "pos: %.3lf %.3lf %.3lf", xyz.x, xyz.y, xyz.z);
-	error_set("%s", buf);
-	free(buf);
+	error_set("position %.3lf %.3lf %.3lf", xyz.x, xyz.y, xyz.z);
 	sel_free(sel);
 
 	return (1);
@@ -1380,7 +1322,7 @@ fn_ring(struct tokq *args, struct state *state)
 }
 
 static int
-fn_rotate(struct tokq *args, struct state *state)
+fn_rotate_selection(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -2113,7 +2055,6 @@ static const struct node {
 	{ "count", fn_count },
 	{ "delete-bond", fn_delete_bond },
 	{ "delete-selection", fn_delete_selection },
-	{ "set-distance", fn_set_distance },
 	{ "distance", fn_distance },
 	{ "edit", fn_edit },
 	{ "first-window", fn_first_window },
@@ -2134,8 +2075,7 @@ static const struct node {
 	{ "open", fn_new },
 	{ "paste", fn_paste },
 	{ "play", fn_play },
-	{ "pos", fn_set_pos },
-	{ "pos?", fn_get_pos },
+	{ "position", fn_position },
 	{ "prev-window", fn_prev_window },
 	{ "q", fn_quit },
 	{ "q!", fn_force_quit },
@@ -2147,7 +2087,7 @@ static const struct node {
 	{ "reload", fn_reload },
 	{ "reload!", fn_force_reload },
 	{ "ring", fn_ring },
-	{ "rotate", fn_rotate },
+	{ "rotate-selection", fn_rotate_selection },
 	{ "select", fn_select },
 	{ "select-bonded", fn_select_bonded },
 	{ "select-box", fn_select_box },
@@ -2158,6 +2098,7 @@ static const struct node {
 	{ "select-within", fn_select_within },
 	{ "set", fn_set },
 	{ "set-frame", fn_set_frame },
+	{ "set-position", fn_set_position },
 	{ "show-selection", fn_show_selection },
 	{ "source", fn_source },
 	{ "toggle", fn_toggle },
