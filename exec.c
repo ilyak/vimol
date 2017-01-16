@@ -1325,36 +1325,6 @@ fn_force_reload(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_repeat(struct tokq *args, struct state *state)
-{
-	struct cmdq *cmdq;
-	char *str;
-	int i, n, ret;
-
-	if (tokq_count(args) < 2)
-		return (0);
-
-	n = tok_int(tokq_tok(args, 0));
-	str = tokq_strcat(args, 1, tokq_count(args) - 1);
-
-	if ((cmdq = cmdq_from_string(str)) == NULL) {
-		free(str);
-		return (0);
-	}
-
-	ret = 1;
-
-	for (i = 0; i < n; i++)
-		if (!(ret = cmdq_exec(cmdq, state)))
-			break;
-
-	cmdq_free(cmdq);
-	free(str);
-
-	return (ret);
-}
-
-static int
 fn_make_bonds(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -2253,7 +2223,6 @@ static const struct node {
 	{ "redo", fn_redo },
 	{ "reload", fn_reload },
 	{ "reload!", fn_force_reload },
-	{ "repeat", fn_repeat },
 	{ "ring", fn_ring },
 	{ "rotate", fn_rotate },
 	{ "run", fn_run },
