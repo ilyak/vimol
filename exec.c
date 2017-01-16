@@ -221,39 +221,37 @@ fn_get_bind(struct tokq *args, struct state *state)
 }
 
 static int
-fn_get_angle(struct tokq *args, struct state *state)
+fn_angle(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
 	struct sel *sel;
 	vec_t pa, pb, pc;
-	int a, b;
-	double value;
+	double angle;
+	int a, b, c;
 
 	view = state_get_view(state);
 	sys = view_get_sys(view);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 
-	if (sel_get_count(sel) < 3) {
+	if (sel_get_count(sel) != 3) {
 		sel_free(sel);
-		error_set("specify at least 3 atoms");
+		error_set("specify 3 atoms for angle");
 		return (0);
 	}
 
 	sel_iter_start(sel);
 	sel_iter_next(sel, &a);
 	sel_iter_next(sel, &b);
-	sel_remove(sel, a);
-	sel_remove(sel, b);
-
+	sel_iter_next(sel, &c);
 	pa = sys_get_atom_xyz(sys, a);
 	pb = sys_get_atom_xyz(sys, b);
-	pc = sys_get_sel_center(sys, sel);
+	pc = sys_get_atom_xyz(sys, c);
 
-	value = vec_angle(&pa, &pb, &pc) * 180 / PI;
-	error_set("angle %d-%d-sel: %.3lf", a + 1, b + 1, value);
-
+	angle = vec_angle(&pa, &pb, &pc) * 180 / PI;
+	error_set("%d-%d-%d angle is %.3lf", a+1, b+1, c+1, angle);
 	sel_free(sel);
+
 	return (1);
 }
 
@@ -555,7 +553,7 @@ fn_delete_selection(struct tokq *args, struct state *state)
 }
 
 static int
-fn_set_dist(struct tokq *args, struct state *state)
+fn_set_distance(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -665,36 +663,33 @@ fn_add_dist(struct tokq *args, struct state *state)
 }
 
 static int
-fn_get_dist(struct tokq *args, struct state *state)
+fn_distance(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
 	struct sel *sel;
 	vec_t pa, pb;
-	double rab;
-	int a;
+	int a, b;
 
 	view = state_get_view(state);
 	sys = view_get_sys(view);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 
-	if (sel_get_count(sel) < 2) {
+	if (sel_get_count(sel) != 2) {
 		sel_free(sel);
-		error_set("specify at least 2 atoms");
+		error_set("specify 2 atoms for distance");
 		return (0);
 	}
 
 	sel_iter_start(sel);
 	sel_iter_next(sel, &a);
-	sel_remove(sel, a);
-
+	sel_iter_next(sel, &b);
 	pa = sys_get_atom_xyz(sys, a);
-	pb = sys_get_sel_center(sys, sel);
+	pb = sys_get_atom_xyz(sys, b);
 
-	rab = vec_dist(&pa, &pb);
-	error_set("dist %d-sel: %.3lf", a + 1, rab);
-
+	error_set("%d-%d distance is %.3lf", a+1, b+1, vec_dist(&pa, &pb));
 	sel_free(sel);
+
 	return (1);
 }
 
@@ -1900,22 +1895,22 @@ fn_toggle(struct tokq *args, struct state *state __unused)
 }
 
 static int
-fn_get_torsion(struct tokq *args, struct state *state)
+fn_torsion(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
 	struct sel *sel;
 	vec_t pa, pb, pc, pd;
-	int a, b, c;
 	double value;
+	int a, b, c, d;
 
 	view = state_get_view(state);
 	sys = view_get_sys(view);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 
-	if (sel_get_count(sel) < 4) {
+	if (sel_get_count(sel) != 4) {
 		sel_free(sel);
-		error_set("specify at least 4 atoms");
+		error_set("specify 4 atoms for torsion");
 		return (0);
 	}
 
@@ -1923,19 +1918,16 @@ fn_get_torsion(struct tokq *args, struct state *state)
 	sel_iter_next(sel, &a);
 	sel_iter_next(sel, &b);
 	sel_iter_next(sel, &c);
-	sel_remove(sel, a);
-	sel_remove(sel, b);
-	sel_remove(sel, c);
-
+	sel_iter_next(sel, &d);
 	pa = sys_get_atom_xyz(sys, a);
 	pb = sys_get_atom_xyz(sys, b);
 	pc = sys_get_atom_xyz(sys, c);
-	pd = sys_get_sel_center(sys, sel);
+	pd = sys_get_atom_xyz(sys, d);
 
 	value = vec_torsion(&pa, &pb, &pc, &pd) * 180 / PI;
-	error_set("torsion %d-%d-%d-sel: %.3lf", a + 1, b + 1, c + 1, value);
-
+	error_set("%d-%d-%d-%d torsion is %.3lf", a+1, b+1, c+1, d+1, value);
 	sel_free(sel);
+
 	return (1);
 }
 
@@ -2118,7 +2110,7 @@ static const struct node {
 	{ "?", fn_about },
 	{ "add-dist", fn_add_dist },
 	{ "add-hydrogens", fn_add_hydrogens },
-	{ "angle?", fn_get_angle },
+	{ "angle", fn_angle },
 	{ "atom", fn_atom },
 	{ "bind", fn_set_bind },
 	{ "bind?", fn_get_bind },
@@ -2131,8 +2123,8 @@ static const struct node {
 	{ "count", fn_count },
 	{ "delete-bond", fn_delete_bond },
 	{ "delete-selection", fn_delete_selection },
-	{ "dist", fn_set_dist },
-	{ "dist?", fn_get_dist },
+	{ "set-distance", fn_set_distance },
+	{ "distance", fn_distance },
 	{ "edit", fn_edit },
 	{ "first-window", fn_first_window },
 	{ "fullscreen", fn_fullscreen },
@@ -2178,7 +2170,7 @@ static const struct node {
 	{ "show-selection", fn_show_selection },
 	{ "source", fn_source },
 	{ "toggle", fn_toggle },
-	{ "torsion?", fn_get_torsion },
+	{ "torsion", fn_torsion },
 	{ "undo", fn_undo },
 	{ "units", fn_units },
 	{ "unselect", fn_unselect },
