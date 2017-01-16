@@ -790,7 +790,7 @@ fn_get(struct tokq *args, struct state *state __unused)
 }
 
 static int
-fn_hide(struct tokq *args, struct state *state)
+fn_hide_selection(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sel *visible;
@@ -807,7 +807,6 @@ fn_hide(struct tokq *args, struct state *state)
 		sel_remove(visible, idx);
 
 	sel_free(sel);
-
 	return (1);
 }
 
@@ -1798,7 +1797,7 @@ fn_set(struct tokq *args, struct state *state __unused)
 }
 
 static int
-fn_show(struct tokq *args, struct state *state)
+fn_show_selection(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sel *visible;
@@ -2140,7 +2139,7 @@ static const struct node {
 	{ "get", fn_get },
 	{ "get-path", fn_get_path },
 	{ "group", fn_group },
-	{ "hide", fn_hide },
+	{ "hide-selection", fn_hide_selection },
 	{ "invert-selection", fn_invert_selection },
 	{ "last-window", fn_last_window },
 	{ "make-bonds", fn_make_bonds },
@@ -2176,7 +2175,7 @@ static const struct node {
 	{ "select-within", fn_select_within },
 	{ "set", fn_set },
 	{ "set-frame", fn_set_frame },
-	{ "show", fn_show },
+	{ "show-selection", fn_show_selection },
 	{ "source", fn_source },
 	{ "toggle", fn_toggle },
 	{ "torsion?", fn_get_torsion },
