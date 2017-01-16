@@ -346,7 +346,7 @@ key_is_number(SDL_Keysym keysym)
 static void
 key_down_view(struct state *state, SDL_Keysym keysym)
 {
-	char buffer[1024];
+	char keystr[256];
 	const char *command;
 	int repeat;
 
@@ -362,21 +362,12 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 		return;
 	}
 
-	key_string(buffer, sizeof(buffer), keysym.sym, keysym.mod);
+	key_string(keystr, sizeof keystr, keysym.sym, keysym.mod);
 
-	if ((command = bind_get(state->bind, buffer)) == NULL) {
-		state->repeat = 0;
-		return;
-	}
-
-	if (state->repeat > 1)
-		snprintf(buffer, sizeof(buffer), "repeat %d \"%s\"",
-		    state->repeat, command);
-	else
-		snprintf(buffer, sizeof(buffer), "%s", command);
+	if ((command = bind_get(state->bind, keystr)) != NULL)
+		run_cmd(state, command);
 
 	state->repeat = 0;
-	run_cmd(state, buffer);
 }
 
 static int
@@ -481,6 +472,12 @@ struct yank *
 state_get_yank(struct state *state)
 {
 	return (state->yank);
+}
+
+int
+state_get_repeat(struct state *state)
+{
+	return (state->repeat);
 }
 
 void
