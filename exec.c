@@ -553,61 +553,6 @@ fn_delete_selection(struct tokq *args, struct state *state)
 }
 
 static int
-fn_add_dist(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sys *sys;
-	struct sel *sel;
-	vec_t pa, pb, dr;
-	double rab, val;
-	int idx;
-
-	view = state_get_view(state);
-
-	if (tokq_count(args) < 1) {
-		error_set("specify distance");
-		return (0);
-	}
-
-	val = tok_double(tokq_tok(args, 0));
-	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
-
-	if (sel_get_count(sel) < 2) {
-		sel_free(sel);
-		error_set("specify at least 2 atoms");
-		return (0);
-	}
-
-	view_snapshot(view);
-	sys = view_get_sys(view);
-
-	sel_iter_start(sel);
-	sel_iter_next(sel, &idx);
-	sel_remove(sel, idx);
-
-	pa = sys_get_atom_xyz(sys, idx);
-	pb = sys_get_sel_center(sys, sel);
-
-	if ((rab = vec_dist(&pa, &pb)) < 1.0e-8)
-		return (1);
-
-	dr.x = (pb.x - pa.x) * val / rab;
-	dr.y = (pb.y - pa.y) * val / rab;
-	dr.z = (pb.z - pa.z) * val / rab;
-
-	sel_iter_start(sel);
-
-	while (sel_iter_next(sel, &idx)) {
-		pb = sys_get_atom_xyz(sys, idx);
-		pb = vec_add(&pb, &dr);
-		sys_set_atom_xyz(sys, idx, pb);
-	}
-
-	sel_free(sel);
-	return (1);
-}
-
-static int
 fn_distance(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -958,7 +903,7 @@ fn_paste(struct tokq *args, struct state *state)
 }
 
 static int
-fn_get_path(struct tokq *args __unused, struct state *state)
+fn_show_path(struct tokq *args __unused, struct state *state)
 {
 	struct view *view;
 	const char *path;
@@ -2040,7 +1985,6 @@ static const struct node {
 	exec_fn_t fn;
 } execlist[] = {
 	{ "?", fn_about },
-	{ "add-dist", fn_add_dist },
 	{ "add-hydrogens", fn_add_hydrogens },
 	{ "angle", fn_angle },
 	{ "atom", fn_atom },
@@ -2060,7 +2004,6 @@ static const struct node {
 	{ "first-window", fn_first_window },
 	{ "fullscreen", fn_fullscreen },
 	{ "get", fn_get },
-	{ "get-path", fn_get_path },
 	{ "group", fn_group },
 	{ "hide-selection", fn_hide_selection },
 	{ "invert-selection", fn_invert_selection },
@@ -2099,6 +2042,7 @@ static const struct node {
 	{ "set", fn_set },
 	{ "set-frame", fn_set_frame },
 	{ "set-position", fn_set_position },
+	{ "show-path", fn_show_path },
 	{ "show-selection", fn_show_selection },
 	{ "source", fn_source },
 	{ "toggle", fn_toggle },

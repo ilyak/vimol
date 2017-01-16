@@ -60,7 +60,7 @@ static const struct {
 	{ "ctrl-D", "distance" },
 	{ "ctrl-E", "nop" },
 	{ "ctrl-F", "nop" },
-	{ "ctrl-G", "get-path" },
+	{ "ctrl-G", "show-path" },
 	{ "ctrl-H", "move-selection -0.1 0 0" },
 	{ "ctrl-shift-H", "rotate-selection 0 10 0" },
 	{ "ctrl-I", "nop" },
