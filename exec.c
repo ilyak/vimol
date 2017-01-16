@@ -1625,17 +1625,6 @@ fn_source(struct tokq *args, struct state *state)
 }
 
 static int
-fn_edit(struct tokq *args __unused, struct state *state)
-{
-	if (rec_is_playing(state_get_rec(state)))
-		return (1);
-
-	state_start_edit(state);
-
-	return (1);
-}
-
-static int
 fn_toggle(struct tokq *args, struct state *state __unused)
 {
 	const char *name;
@@ -1818,7 +1807,6 @@ static const struct node {
 	{ "count", fn_count },
 	{ "delete-bond", fn_delete_bond },
 	{ "delete-selection", fn_delete_selection },
-	{ "edit", fn_edit },
 	{ "first-window", fn_first_window },
 	{ "fullscreen", fn_fullscreen },
 	{ "get", fn_get },

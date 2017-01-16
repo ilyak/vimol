@@ -325,6 +325,17 @@ key_down_statusbar(struct state *state, SDL_Keysym keysym)
 	}
 }
 
+static void
+start_cmdline(struct state *state)
+{
+	state->is_input = 1;
+
+	edit_clear(state->edit);
+	history_reset_current(state->history);
+
+	SDL_StartTextInput();
+}
+
 static int
 key_is_ctrl_alt_shift(SDL_Keysym keysym)
 {
@@ -352,6 +363,11 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 
 	if (key_is_ctrl_alt_shift(keysym))
 		return;
+
+	if ((keysym.mod & KMOD_SHIFT) && keysym.sym == SDLK_SEMICOLON) {
+		start_cmdline(state);
+		return;
+	}
 
 	if (key_is_number(keysym)) {
 		repeat = state->repeat * 10 + (keysym.sym - SDLK_0);
@@ -478,17 +494,6 @@ int
 state_get_repeat(struct state *state)
 {
 	return (state->repeat);
-}
-
-void
-state_start_edit(struct state *state)
-{
-	state->is_input = 1;
-
-	edit_clear(state->edit);
-	history_reset_current(state->history);
-
-	SDL_StartTextInput();
 }
 
 int

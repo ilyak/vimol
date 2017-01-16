@@ -100,7 +100,6 @@ static const struct {
 	{ "]", "next-frame 1" },
 	{ "shift-[", "next-frame -100" },
 	{ "shift-]", "next-frame 100" },
-	{ "shift-;", "edit" },
 	{ ",", "prev-window" },
 	{ ".", "next-window" },
 	{ "shift-,", "first-window" },
