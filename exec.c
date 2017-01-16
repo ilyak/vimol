@@ -989,41 +989,6 @@ fn_nop(struct tokq *args __unused, struct state *state __unused)
 }
 
 static int
-fn_open(struct tokq *args, struct state *state)
-{
-	struct wnd *wnd;
-	int is_empty, is_modified;
-	const char *path;
-
-	wnd = state_get_wnd(state);
-
-	if (tokq_count(args) < 1) {
-		error_set("specify a file");
-		return (0);
-	}
-
-	path = tok_string(tokq_tok(args, 0));
-
-	if (!util_file_exists(path)) {
-		error_set("unable to find file \"%s\"", path);
-		return (0);
-	}
-
-	is_empty = view_is_empty(wnd_get_view(wnd));
-	is_modified = view_is_modified(wnd_get_view(wnd));
-
-	if (!wnd_open(wnd, path))
-		return (0);
-
-	if (is_empty && !is_modified) {
-		wnd_prev(wnd);
-		wnd_close(wnd);
-	}
-
-	return (1);
-}
-
-static int
 fn_paste(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -2216,7 +2181,7 @@ static const struct node {
 	{ "next-frame", fn_next_frame },
 	{ "next-window", fn_next_window },
 	{ "nop", fn_nop },
-	{ "open", fn_open },
+	{ "open", fn_new },
 	{ "paste", fn_paste },
 	{ "play", fn_play },
 	{ "pos", fn_set_pos },
