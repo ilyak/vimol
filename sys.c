@@ -105,7 +105,8 @@ get_bond_count(struct graph *graph, int idx)
 	struct graphedge *edge;
 	int count = 0;
 
-	for (edge = graph_edges(graph, idx); edge; edge = graph_edge_next(edge))
+	for (edge = graph_get_edges(graph, idx); edge;
+	    edge = graph_edge_next(edge))
 		count += graph_edge_get_type(edge);
 
 	return (count);
@@ -570,40 +571,40 @@ sys_add_hydrogens(struct sys *sys, struct sel *sel)
 				/* add 4 sp3 */
 				add_hydrogens(sys, i, j, k, 0, 4);
 			} else if (n_bond == 1) {
-				j = graph_edge_j(graph_edges(sys->graph, i));
+				j = graph_edge_j(graph_get_edges(sys->graph, i));
 				/* add 3 sp3 */
 				add_hydrogens(sys, i, j, k, 1, 3);
 			} else if (n_bond == 2) {
-				j = graph_edge_j(graph_edges(sys->graph, i));
+				j = graph_edge_j(graph_get_edges(sys->graph, i));
 				if (n_neig == 1) {
 					/* keep double bond atoms in plane */
 					if (graph_get_edge_count(sys->graph, j) > 1) {
-						if ((k = graph_edge_j(graph_edges(sys->graph, j))) == i)
-							k = graph_edge_j(graph_edge_next(graph_edges(sys->graph, j)));
+						if ((k = graph_edge_j(graph_get_edges(sys->graph, j))) == i)
+							k = graph_edge_j(graph_edge_next(graph_get_edges(sys->graph, j)));
 					}
 					/* add 2 sp2 */
 					add_hydrogens(sys, i, j, k, 4, 2);
 				} else if (n_neig == 2) {
-					k = graph_edge_j(graph_edge_next(graph_edges(sys->graph, i)));
+					k = graph_edge_j(graph_edge_next(graph_get_edges(sys->graph, i)));
 					/* add 2 sp3 */
 					add_hydrogens(sys, i, j, k, 2, 2);
 				}
 			} else if (n_bond == 3) {
-				j = graph_edge_j(graph_edges(sys->graph, i));
+				j = graph_edge_j(graph_get_edges(sys->graph, i));
 				if (n_neig == 1) {
 					/* add 1 sp */
 					add_hydrogens(sys, i, j, k, 6, 1);
 				} else if (n_neig == 2) {
-					k = graph_edge_j(graph_edge_next(graph_edges(sys->graph, i)));
+					k = graph_edge_j(graph_edge_next(graph_get_edges(sys->graph, i)));
 					/* add 1 sp2 */
 					add_hydrogens(sys, i, j, k, 5, 1);
 				} else if (n_neig == 3) {
-					k = graph_edge_j(graph_edge_next(graph_edges(sys->graph, i)));
+					k = graph_edge_j(graph_edge_next(graph_get_edges(sys->graph, i)));
 					/* add 1 sp3 */
 					add_hydrogens(sys, i, j, k, 2, 1);
 
 					/* check if it's the correct one */
-					r1 = sys_get_atom_xyz(sys, graph_edge_j(graph_edge_next(graph_edge_next(graph_edges(sys->graph, i)))));
+					r1 = sys_get_atom_xyz(sys, graph_edge_j(graph_edge_next(graph_edge_next(graph_get_edges(sys->graph, i)))));
 					r2 = sys_get_atom_xyz(sys, sys_get_atom_count(sys) - 1);
 					r3 = sys_get_atom_xyz(sys, i);
 
@@ -625,14 +626,14 @@ sys_add_hydrogens(struct sys *sys, struct sel *sel)
 				/* add 3 */
 				add_hydrogens(sys, i, j, k, 7, 3);
 			} else if (n_bond == 1) {
-				j = graph_edge_j(graph_edges(sys->graph, i));
+				j = graph_edge_j(graph_get_edges(sys->graph, i));
 				/* add 2 */
 				add_hydrogens(sys, i, j, k, 8, 2);
 			} else if (n_bond == 2) {
-				j = graph_edge_j(graph_edges(sys->graph, i));
+				j = graph_edge_j(graph_get_edges(sys->graph, i));
 
 				if (n_neig > 1)
-					k = graph_edge_j(graph_edge_next(graph_edges(sys->graph, i)));
+					k = graph_edge_j(graph_edge_next(graph_get_edges(sys->graph, i)));
 
 				/* add 1 */
 				add_hydrogens(sys, i, j, k, 9, 1);
@@ -645,7 +646,7 @@ sys_add_hydrogens(struct sys *sys, struct sel *sel)
 				/* add 2 */
 				add_hydrogens(sys, i, j, k, 13, 2);
 			} else if (n_bond == 1) {
-				j = graph_edge_j(graph_edges(sys->graph, i));
+				j = graph_edge_j(graph_get_edges(sys->graph, i));
 				/* add 1 */
 				add_hydrogens(sys, i, j, k, 14, 1);
 			}
@@ -658,14 +659,14 @@ sys_add_hydrogens(struct sys *sys, struct sel *sel)
 				/* add 3 */
 				add_hydrogens(sys, i, j, k, 10, 3);
 			} else if (n_bond == 1) {
-				j = graph_edge_j(graph_edges(sys->graph, i));
+				j = graph_edge_j(graph_get_edges(sys->graph, i));
 				/* add 2 */
 				add_hydrogens(sys, i, j, k, 11, 2);
 			} else if (n_bond == 2) {
-				j = graph_edge_j(graph_edges(sys->graph, i));
+				j = graph_edge_j(graph_get_edges(sys->graph, i));
 
 				if (n_neig > 1)
-					k = graph_edge_j(graph_edge_next(graph_edges(sys->graph, i)));
+					k = graph_edge_j(graph_edge_next(graph_get_edges(sys->graph, i)));
 
 				/* add 1 */
 				add_hydrogens(sys, i, j, k, 12, 1);
@@ -678,7 +679,7 @@ sys_add_hydrogens(struct sys *sys, struct sel *sel)
 				/* add 2 */
 				add_hydrogens(sys, i, j, k, 15, 2);
 			} else if (n_bond == 1) {
-				j = graph_edge_j(graph_edges(sys->graph, i));
+				j = graph_edge_j(graph_get_edges(sys->graph, i));
 				/* add 1 */
 				add_hydrogens(sys, i, j, k, 16, 1);
 			}
@@ -749,7 +750,7 @@ sys_reset_bonds(struct sys *sys, struct sel *sel)
 		/* Oxygen */
 		if (sys_get_atom_type(sys, i) == 8 &&
 		    graph_get_edge_count(sys->graph, i) == 1)
-			graph_edge_set_type(graph_edges(sys->graph, i), 2);
+			graph_edge_set_type(graph_get_edges(sys->graph, i), 2);
 	}
 
 	spi_free(spi);

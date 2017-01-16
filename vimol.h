@@ -173,7 +173,7 @@ int graph_get_edge_count(struct graph *, int);
 void graph_remove_vertex_edges(struct graph *, int);
 void graph_edge_create(struct graph *, int, int, int);
 void graph_edge_remove(struct graph *, int, int);
-struct graphedge *graph_edges(struct graph *, int);
+struct graphedge *graph_get_edges(struct graph *, int);
 struct graphedge *graph_edge_find(struct graph *, int, int);
 struct graphedge *graph_edge_prev(struct graphedge *);
 struct graphedge *graph_edge_next(struct graphedge *);

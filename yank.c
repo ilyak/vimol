@@ -103,7 +103,7 @@ yank_copy(struct yank *yank, struct sys *sys, struct sel *sel)
 	sel_iter_start(sel);
 
 	while (sel_iter_next(sel, &i)) {
-		edge = graph_edges(sys_get_graph(sys), i);
+		edge = graph_get_edges(sys_get_graph(sys), i);
 
 		while (edge) {
 			type = graph_edge_get_type(edge);
@@ -141,7 +141,7 @@ yank_paste(struct yank *yank, struct sys *sys)
 	}
 
 	for (i = 0; i < graph_get_vertex_count(graph); i++) {
-		edge = graph_edges(graph, i);
+		edge = graph_get_edges(graph, i);
 
 		while (edge) {
 			type = graph_edge_get_type(edge);

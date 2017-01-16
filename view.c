@@ -133,7 +133,7 @@ render_bonds(struct view *view, cairo_t *cairo)
 	sel_iter_start(visible);
 
 	while (sel_iter_next(visible, &i)) {
-		for (edge = graph_edges(graph, i); edge;
+		for (edge = graph_get_edges(graph, i); edge;
 		     edge = graph_edge_next(edge)) {
 			type = graph_edge_get_type(edge);
 			j = graph_edge_j(edge);

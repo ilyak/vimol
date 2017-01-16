@@ -26,7 +26,8 @@ select_connected(struct graph *graph, int idx, struct sel *sel)
 
 	sel_add(sel, idx);
 
-	for (edge = graph_edges(graph, idx); edge; edge = graph_edge_next(edge))
+	for (edge = graph_get_edges(graph, idx); edge;
+	    edge = graph_edge_next(edge))
 		select_connected(graph, graph_edge_j(edge), sel);
 }
 
@@ -1349,7 +1350,7 @@ fn_select_bonded(struct tokq *args, struct state *state)
 	sel_iter_start(sel);
 
 	while (sel_iter_next(sel, &i)) {
-		for (edge = graph_edges(graph, i); edge;
+		for (edge = graph_get_edges(graph, i); edge;
 		    edge = graph_edge_next(edge))
 			if (sel_selected(visible, graph_edge_j(edge)))
 				sel_add(view_get_sel(view), graph_edge_j(edge));
@@ -1511,8 +1512,8 @@ fn_select_water(struct tokq *args __unused, struct state *state)
 		if (graph_get_edge_count(graph, i) != 2)
 			continue;
 
-		j = graph_edge_j(graph_edges(graph, i));
-		k = graph_edge_j(graph_edge_next(graph_edges(graph, i)));
+		j = graph_edge_j(graph_get_edges(graph, i));
+		k = graph_edge_j(graph_edge_next(graph_get_edges(graph, i)));
 
 		if (!sel_selected(visible, j) ||
 		    !sel_selected(visible, k))

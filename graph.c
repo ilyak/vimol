@@ -241,7 +241,7 @@ graph_edge_remove(struct graph *graph, int i, int j)
 }
 
 struct graphedge *
-graph_edges(struct graph *graph, int idx)
+graph_get_edges(struct graph *graph, int idx)
 {
 	assert(idx >= 0 && idx < graph_get_vertex_count(graph));
 
