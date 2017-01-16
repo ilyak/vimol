@@ -1450,16 +1450,6 @@ fn_view_rotate(struct tokq *args, struct state *state)
 }
 
 static int
-fn_run(struct tokq *args, struct state *state __unused)
-{
-	int ret = system(tokq_strcat(args, 0, tokq_count(args)));
-
-	error_set("finished with exit code '%d'", ret);
-
-	return (1);
-}
-
-static int
 fn_save(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -2158,7 +2148,6 @@ static const struct node {
 	{ "reload!", fn_force_reload },
 	{ "ring", fn_ring },
 	{ "rotate", fn_rotate },
-	{ "run", fn_run },
 	{ "select", fn_select },
 	{ "select-bonded", fn_select_bonded },
 	{ "select-box", fn_select_box },
