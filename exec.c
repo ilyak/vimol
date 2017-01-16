@@ -1313,8 +1313,16 @@ fn_select(struct tokq *args, struct state *state)
 
 	if (tokq_count(args) == 0) {
 		idx = state_get_repeat(state) - 1;
-		if (idx < 0)
+		if (idx < 0) {
+			sel_iter_start(visible);
+			while (sel_iter_next(visible, &idx)) {
+				if (!sel_selected(view_get_sel(view), idx)) {
+					sel_add(view_get_sel(view), idx);
+					return (1);
+				}
+			}
 			return (1);
+		}
 		if (idx < sel_get_size(view_get_sel(view)))
 			if (sel_selected(visible, idx))
 				sel_add(view_get_sel(view), idx);
@@ -1455,38 +1463,6 @@ fn_select_element(struct tokq *args, struct state *state)
 		while (sel_iter_next(visible, &i))
 			if (strcasecmp(sys_get_atom_name(sys, i), name) == 0)
 				sel_add(view_get_sel(view), i);
-	}
-
-	return (1);
-}
-
-static int
-fn_select_next(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sel *visible;
-	struct sel *sel;
-	int count, i;
-
-	view = state_get_view(state);
-	visible = view_get_visible(view);
-	sel = view_get_sel(view);
-	count = tokq_count(args) > 0 ? tok_int(tokq_tok(args, 0)) : 1;
-
-	if (count < 0) {
-		for (i = sel_get_size(sel) - 1; i >= 0 && count < 0; i--) {
-			if (sel_selected(visible, i) && !sel_selected(sel, i)) {
-				sel_add(sel, i);
-				count++;
-			}
-		}
-	} else {
-		for (i = 0; i < sel_get_size(sel) && count > 0; i++) {
-			if (sel_selected(visible, i) && !sel_selected(sel, i)) {
-				sel_add(sel, i);
-				count--;
-			}
-		}
 	}
 
 	return (1);
@@ -1732,8 +1708,14 @@ fn_unselect(struct tokq *args, struct state *state)
 
 	if (tokq_count(args) == 0) {
 		idx = state_get_repeat(state) - 1;
-		if (idx < 0)
+		if (idx < 0) {
+			sel_iter_start(view_get_sel(view));
+			while (sel_iter_next(view_get_sel(view), &idx))
+				continue;
+			if (idx >= 0)
+				sel_remove(view_get_sel(view), idx);
 			return (1);
+		}
 		if (idx < sel_get_size(view_get_sel(view)))
 			sel_remove(view_get_sel(view), idx);
 		return (1);
@@ -1746,38 +1728,6 @@ fn_unselect(struct tokq *args, struct state *state)
 		sel_remove(view_get_sel(view), idx);
 
 	sel_free(sel);
-	return (1);
-}
-
-static int
-fn_unselect_next(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sel *visible;
-	struct sel *sel;
-	int count, i;
-
-	view = state_get_view(state);
-	visible = view_get_visible(view);
-	sel = view_get_sel(view);
-	count = tokq_count(args) > 0 ? tok_int(tokq_tok(args, 0)) : 1;
-
-	if (count < 0) {
-		for (i = sel_get_size(sel) - 1; i >= 0 && count < 0; i--) {
-			if (sel_selected(visible, i) && sel_selected(sel, i)) {
-				sel_remove(sel, i);
-				count++;
-			}
-		}
-	} else {
-		for (i = 0; i < sel_get_size(sel) && count > 0; i++) {
-			if (sel_selected(visible, i) && sel_selected(sel, i)) {
-				sel_remove(sel, i);
-				count--;
-			}
-		}
-	}
-
 	return (1);
 }
 
@@ -1932,7 +1882,6 @@ static const struct node {
 	{ "select-box", fn_select_box },
 	{ "select-element", fn_select_element },
 	{ "select-molecule", fn_select_molecule },
-	{ "select-next", fn_select_next },
 	{ "select-water", fn_select_water },
 	{ "select-within", fn_select_within },
 	{ "set", fn_set },
@@ -1944,7 +1893,6 @@ static const struct node {
 	{ "toggle", fn_toggle },
 	{ "undo", fn_undo },
 	{ "unselect", fn_unselect },
-	{ "unselect-next", fn_unselect_next },
 	{ "view-center", fn_view_center },
 	{ "view-fit", fn_view_fit },
 	{ "view-move", fn_view_move },
