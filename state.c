@@ -337,21 +337,27 @@ start_cmdline(struct state *state)
 }
 
 static int
-key_is_ctrl_alt_shift(SDL_Keysym keysym)
+keysym_ctrlaltshift(SDL_Keysym keysym)
 {
 	return (keysym.sym == SDLK_LSHIFT ||
 		keysym.sym == SDLK_RSHIFT ||
-		keysym.sym == SDLK_LCTRL  ||
-		keysym.sym == SDLK_RCTRL  ||
-		keysym.sym == SDLK_LALT   ||
+		keysym.sym == SDLK_LCTRL ||
+		keysym.sym == SDLK_RCTRL ||
+		keysym.sym == SDLK_LALT ||
 		keysym.sym == SDLK_RALT);
 }
 
 static int
-key_is_number(SDL_Keysym keysym)
+keysym_number(SDL_Keysym keysym)
 {
-	return (keysym.mod == KMOD_NONE &&
-	    keysym.sym >= SDLK_0 && keysym.sym <= SDLK_9);
+	return (keysym.sym >= SDLK_0 && keysym.sym <= SDLK_9 &&
+		keysym.mod == KMOD_NONE);
+}
+
+static int
+keysym_colon(SDL_Keysym keysym)
+{
+	return (keysym.sym == SDLK_SEMICOLON && (keysym.mod & KMOD_SHIFT));
 }
 
 static void
@@ -361,20 +367,18 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 	const char *command;
 	int repeat;
 
-	if (key_is_ctrl_alt_shift(keysym))
+	if (keysym_ctrlaltshift(keysym))
 		return;
 
-	if ((keysym.mod & KMOD_SHIFT) && keysym.sym == SDLK_SEMICOLON) {
+	if (keysym_colon(keysym)) {
 		start_cmdline(state);
 		return;
 	}
 
-	if (key_is_number(keysym)) {
+	if (keysym_number(keysym)) {
 		repeat = state->repeat * 10 + (keysym.sym - SDLK_0);
-
 		if (repeat <= 999999)
 			state->repeat = repeat;
-
 		return;
 	}
 
