@@ -221,41 +221,6 @@ fn_get_bind(struct tokq *args, struct state *state)
 }
 
 static int
-fn_angle(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sys *sys;
-	struct sel *sel;
-	vec_t pa, pb, pc;
-	double angle;
-	int a, b, c;
-
-	view = state_get_view(state);
-	sys = view_get_sys(view);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
-	if (sel_get_count(sel) != 3) {
-		sel_free(sel);
-		error_set("specify 3 atoms for angle");
-		return (0);
-	}
-
-	sel_iter_start(sel);
-	sel_iter_next(sel, &a);
-	sel_iter_next(sel, &b);
-	sel_iter_next(sel, &c);
-	pa = sys_get_atom_xyz(sys, a);
-	pb = sys_get_atom_xyz(sys, b);
-	pc = sys_get_atom_xyz(sys, c);
-
-	angle = vec_angle(&pa, &pb, &pc) * 180 / PI;
-	error_set("%d-%d-%d angle is %.3lf", a+1, b+1, c+1, angle);
-	sel_free(sel);
-
-	return (1);
-}
-
-static int
 fn_units(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -549,37 +514,6 @@ fn_delete_selection(struct tokq *args, struct state *state)
 	error_set("deleted %d atoms", sel_get_count(sel));
 
 	sel_free(sel);
-	return (1);
-}
-
-static int
-fn_distance(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sys *sys;
-	struct sel *sel;
-	vec_t pa, pb;
-	int a, b;
-
-	view = state_get_view(state);
-	sys = view_get_sys(view);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
-	if (sel_get_count(sel) != 2) {
-		sel_free(sel);
-		error_set("specify 2 atoms for distance");
-		return (0);
-	}
-
-	sel_iter_start(sel);
-	sel_iter_next(sel, &a);
-	sel_iter_next(sel, &b);
-	pa = sys_get_atom_xyz(sys, a);
-	pb = sys_get_atom_xyz(sys, b);
-
-	error_set("%d-%d distance is %.3lf", a+1, b+1, vec_dist(&pa, &pb));
-	sel_free(sel);
-
 	return (1);
 }
 
@@ -987,6 +921,59 @@ fn_set_position(struct tokq *args, struct state *state)
 }
 
 static int
+fn_measure(struct tokq *args, struct state *state)
+{
+	struct view *view;
+	struct sys *sys;
+	struct sel *sel;
+	vec_t pa, pb, pc, pd;
+	double val;
+	int a, b, c, d;
+
+	view = state_get_view(state);
+	sys = view_get_sys(view);
+	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
+
+	if (sel_get_count(sel) < 1 || sel_get_count(sel) > 4) {
+		sel_free(sel);
+		error_set("specify 1, 2, 3, or 4 atoms");
+		return (0);
+	}
+
+	sel_iter_start(sel);
+	sel_iter_next(sel, &a);
+	pa = sys_get_atom_xyz(sys, a);
+	error_set("%d position: %.3lf %.3lf %.3lf", a+1, pa.x, pa.y, pa.z);
+
+	if (sel_get_count(sel) == 1)
+		goto done;
+
+	sel_iter_next(sel, &b);
+	pb = sys_get_atom_xyz(sys, b);
+	val = vec_dist(&pa, &pb);
+	error_set("%d-%d distance: %.3lf", a+1, b+1, val);
+
+	if (sel_get_count(sel) == 2)
+		goto done;
+
+	sel_iter_next(sel, &c);
+	pc = sys_get_atom_xyz(sys, c);
+	val = vec_angle(&pa, &pb, &pc) * 180 / PI;
+	error_set("%d-%d-%d angle: %.3lf", a+1, b+1, c+1, val);
+
+	if (sel_get_count(sel) == 3)
+		goto done;
+
+	sel_iter_next(sel, &d);
+	pd = sys_get_atom_xyz(sys, d);
+	val = vec_torsion(&pa, &pb, &pc, &pd) * 180 / PI;
+	error_set("%d-%d-%d-%d torsion: %.3lf", a+1, b+1, c+1, d+1, val);
+done:
+	sel_free(sel);
+	return (1);
+}
+
+static int
 fn_move_selection(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -1020,22 +1007,6 @@ fn_move_selection(struct tokq *args, struct state *state)
 	}
 
 	sel_free(sel);
-	return (1);
-}
-
-static int
-fn_position(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sel *sel;
-	vec_t xyz;
-
-	view = state_get_view(state);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-	xyz = sys_get_sel_center(view_get_sys(view), sel);
-	error_set("position %.3lf %.3lf %.3lf", xyz.x, xyz.y, xyz.z);
-	sel_free(sel);
-
 	return (1);
 }
 
@@ -1772,43 +1743,6 @@ fn_toggle(struct tokq *args, struct state *state __unused)
 }
 
 static int
-fn_torsion(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sys *sys;
-	struct sel *sel;
-	vec_t pa, pb, pc, pd;
-	double value;
-	int a, b, c, d;
-
-	view = state_get_view(state);
-	sys = view_get_sys(view);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
-	if (sel_get_count(sel) != 4) {
-		sel_free(sel);
-		error_set("specify 4 atoms for torsion");
-		return (0);
-	}
-
-	sel_iter_start(sel);
-	sel_iter_next(sel, &a);
-	sel_iter_next(sel, &b);
-	sel_iter_next(sel, &c);
-	sel_iter_next(sel, &d);
-	pa = sys_get_atom_xyz(sys, a);
-	pb = sys_get_atom_xyz(sys, b);
-	pc = sys_get_atom_xyz(sys, c);
-	pd = sys_get_atom_xyz(sys, d);
-
-	value = vec_torsion(&pa, &pb, &pc, &pd) * 180 / PI;
-	error_set("%d-%d-%d-%d torsion is %.3lf", a+1, b+1, c+1, d+1, value);
-	sel_free(sel);
-
-	return (1);
-}
-
-static int
 fn_undo(struct tokq *args __unused, struct state *state)
 {
 	struct view *view;
@@ -1986,7 +1920,6 @@ static const struct node {
 } execlist[] = {
 	{ "?", fn_about },
 	{ "add-hydrogens", fn_add_hydrogens },
-	{ "angle", fn_angle },
 	{ "atom", fn_atom },
 	{ "bind", fn_set_bind },
 	{ "bind?", fn_get_bind },
@@ -1999,7 +1932,6 @@ static const struct node {
 	{ "count", fn_count },
 	{ "delete-bond", fn_delete_bond },
 	{ "delete-selection", fn_delete_selection },
-	{ "distance", fn_distance },
 	{ "edit", fn_edit },
 	{ "first-window", fn_first_window },
 	{ "fullscreen", fn_fullscreen },
@@ -2009,6 +1941,7 @@ static const struct node {
 	{ "invert-selection", fn_invert_selection },
 	{ "last-window", fn_last_window },
 	{ "make-bonds", fn_make_bonds },
+	{ "measure", fn_measure },
 	{ "move-selection", fn_move_selection },
 	{ "name", fn_set_name },
 	{ "new", fn_new },
@@ -2018,7 +1951,6 @@ static const struct node {
 	{ "open", fn_new },
 	{ "paste", fn_paste },
 	{ "play", fn_play },
-	{ "position", fn_position },
 	{ "prev-window", fn_prev_window },
 	{ "q", fn_quit },
 	{ "q!", fn_force_quit },
@@ -2046,7 +1978,6 @@ static const struct node {
 	{ "show-selection", fn_show_selection },
 	{ "source", fn_source },
 	{ "toggle", fn_toggle },
-	{ "torsion", fn_torsion },
 	{ "undo", fn_undo },
 	{ "units", fn_units },
 	{ "unselect", fn_unselect },
