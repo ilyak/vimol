@@ -351,33 +351,6 @@ fn_chain(struct tokq *args, struct state *state)
 }
 
 static int
-fn_clear(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct graph *graph;
-	struct sel *sel;
-	int i;
-
-	view = state_get_view(state);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
-	if (sel_get_count(sel) == 0) {
-		sel_free(sel);
-		return (0);
-	}
-
-	view_snapshot(view);
-	graph = view_get_graph(view);
-
-	sel_iter_start(sel);
-	while (sel_iter_next(sel, &i))
-		graph_remove_vertex_edges(graph, i);
-
-	sel_free(sel);
-	return (1);
-}
-
-static int
 fn_close(struct tokq *args __unused, struct state *state)
 {
 	struct wnd *wnd = state_get_wnd(state);
@@ -1839,7 +1812,6 @@ static const struct node {
 	{ "bind?", fn_get_bind },
 	{ "bond", fn_bond },
 	{ "chain", fn_chain },
-	{ "clear", fn_clear },
 	{ "close", fn_close },
 	{ "close!", fn_force_close },
 	{ "copy-selection", fn_copy_selection },

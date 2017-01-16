@@ -31,7 +31,7 @@ static const struct {
 	{ "shift-A", "ring" },
 	{ "shift-B", "nop" },
 	{ "shift-C", "view-center; view-fit" },
-	{ "shift-D", "clear" },
+	{ "shift-D", "nop" },
 	{ "shift-E", "nop" },
 	{ "shift-F", "view-rotate 0 0 -10" },
 	{ "shift-G", "view-rotate 0 0 10" },
