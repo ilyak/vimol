@@ -74,46 +74,6 @@ make_sel(struct tokq *args, int arg_start, int arg_end, struct sel *current)
 	return (ret);
 }
 
-static struct pairs *
-make_pairs(struct tokq *args, int arg_start, int arg_end,
-    struct sel *selection)
-{
-	struct pairs *pairs;
-	int i, j, k, size;
-
-	pairs = pairs_create();
-	size = sel_get_size(selection);
-
-	if (arg_start >= arg_end) {
-		sel_iter_start(selection);
-
-		while (sel_iter_next(selection, &i))
-			if (sel_iter_next(selection, &j))
-				pairs_add(pairs, i, j);
-
-		return (pairs);
-	}
-
-	for (k = arg_start; k < arg_end; k++) {
-		i = tok_int(tokq_tok(args, k));
-
-		if (++k < arg_end) {
-			j = tok_int(tokq_tok(args, k));
-
-			if (i < 0) i = size + i;
-			else i = i - 1;
-
-			if (j < 0) j = size + j;
-			else j = j - 1;
-
-			if (i >= 0 && i < size && j >= 0 && j < size)
-				pairs_add(pairs, i, j);
-		}
-	}
-
-	return (pairs);
-}
-
 static int
 parse_register(tok_t tok)
 {
@@ -226,56 +186,33 @@ fn_bond(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct graph *graph;
-	struct pairs *pairs;
-	struct pair pair;
-	int k, type = 1;
+	struct sel *sel;
+	struct graphedge *edge;
+	int a, b, type;
 
 	view = state_get_view(state);
-	pairs = make_pairs(args, 0, tokq_count(args), view_get_sel(view));
-
-	if (pairs_get_count(pairs) == 0) {
-		pairs_free(pairs);
-		return (1);
-	}
-
-	view_snapshot(view);
 	graph = view_get_graph(view);
+	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 
-	for (k = 0; k < pairs_get_count(pairs); k++) {
-		pair = pairs_get(pairs, k);
-		graph_edge_create(graph, pair.i, pair.j, type);
+	if (sel_get_count(sel) != 2) {
+		error_set("select 2 atoms");
+		sel_free(sel);
+		return (0);
 	}
 
-	pairs_free(pairs);
-	return (1);
-}
+	sel_iter_start(sel);
+	sel_iter_next(sel, &a);
+	sel_iter_next(sel, &b);
 
-static int
-fn_delete_bond(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct graph *graph;
-	struct pairs *pairs;
-	struct pair pair;
-	int k;
-
-	view = state_get_view(state);
-	pairs = make_pairs(args, 0, tokq_count(args), view_get_sel(view));
-
-	if (pairs_get_count(pairs) == 0) {
-		pairs_free(pairs);
-		return (1);
+	if ((edge = graph_edge_find(graph, a, b)) == NULL) {
+		graph_edge_create(graph, a, b, 1);
+	} else {
+		if ((type = graph_edge_get_type(edge)) == 3)
+			graph_edge_remove(graph, a, b);
+		else
+			graph_edge_set_type(edge, type+1);
 	}
-
-	view_snapshot(view);
-	graph = view_get_graph(view);
-
-	for (k = 0; k < pairs_get_count(pairs); k++) {
-		pair = pairs_get(pairs, k);
-		graph_edge_remove(graph, pair.i, pair.j);
-	}
-
-	pairs_free(pairs);
+	sel_free(sel);
 	return (1);
 }
 
@@ -1085,10 +1022,9 @@ fn_force_reload(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_make_bonds(struct tokq *args, struct state *state)
+fn_reset_bonds(struct tokq *args, struct state *state)
 {
 	struct view *view;
-	struct sys *sys;
 	struct sel *sel;
 
 	view = state_get_view(state);
@@ -1100,11 +1036,8 @@ fn_make_bonds(struct tokq *args, struct state *state)
 	}
 
 	view_snapshot(view);
-	sys = view_get_sys(view);
-
-	sys_reset_bonds(sys, sel);
+	sys_reset_bonds(view_get_sys(view), sel);
 	sel_free(sel);
-
 	return (1);
 }
 
@@ -1805,7 +1738,6 @@ static const struct node {
 	{ "close!", fn_force_close },
 	{ "copy-selection", fn_copy_selection },
 	{ "count", fn_count },
-	{ "delete-bond", fn_delete_bond },
 	{ "delete-selection", fn_delete_selection },
 	{ "first-window", fn_first_window },
 	{ "fullscreen", fn_fullscreen },
@@ -1814,7 +1746,6 @@ static const struct node {
 	{ "hide-selection", fn_hide_selection },
 	{ "invert-selection", fn_invert_selection },
 	{ "last-window", fn_last_window },
-	{ "make-bonds", fn_make_bonds },
 	{ "measure", fn_measure },
 	{ "move-selection", fn_move_selection },
 	{ "name", fn_set_name },
@@ -1835,6 +1766,7 @@ static const struct node {
 	{ "redo", fn_redo },
 	{ "reload", fn_reload },
 	{ "reload!", fn_force_reload },
+	{ "reset-bonds", fn_reset_bonds },
 	{ "ring", fn_ring },
 	{ "rotate-selection", fn_rotate_selection },
 	{ "select", fn_select },

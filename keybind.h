@@ -21,7 +21,7 @@ static const struct {
 	{ "Q", "quit" },
 	{ "R", "play" },
 	{ "S", "select" },
-	{ "T", "nop" },
+	{ "T", "bond" },
 	{ "U", "undo" },
 	{ "V", "hide-selection; unselect *" },
 	{ "W", "select-molecule" },
