@@ -2149,6 +2149,8 @@ static const struct node {
 	{ "prev-window", fn_prev_window },
 	{ "q", fn_quit },
 	{ "q!", fn_force_quit },
+	{ "quit", fn_quit },
+	{ "quit!", fn_force_quit },
 	{ "read", fn_read },
 	{ "rec", fn_rec },
 	{ "redo", fn_redo },
