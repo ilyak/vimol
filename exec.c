@@ -1074,7 +1074,7 @@ static int
 fn_play(struct tokq *args, struct state *state)
 {
 	struct rec *rec;
-	int reg;
+	int i, reg, repeat;
 
 	rec = state_get_rec(state);
 
@@ -1093,7 +1093,13 @@ fn_play(struct tokq *args, struct state *state)
 		rec_set_register(rec, reg);
 	}
 
-	return (rec_play(rec, state));
+	if ((repeat = state_get_repeat(state)) <= 0)
+		repeat = 1;
+
+	for (i = 0; i < repeat; i++)
+		if (!rec_play(rec, state))
+			return (0);
+	return (1);
 }
 
 static int
