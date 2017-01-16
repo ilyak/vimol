@@ -721,7 +721,6 @@ sys_reset_bonds(struct sys *sys, struct sel *sel)
 	map = xcalloc(n, sizeof(int));
 
 	sel_iter_start(sel);
-
 	for (k = 0; sel_iter_next(sel, &i); k++) {
 		spi_add_point(spi, sys_get_atom_xyz(sys, i));
 		map[k] = i;
@@ -736,13 +735,21 @@ sys_reset_bonds(struct sys *sys, struct sel *sel)
 		i = map[pair.i];
 		j = map[pair.j];
 
-		/* hydrogens */
+		/* Hydrogens */
 		if (sys_get_atom_type(sys, i) == 1 &&
 		    sys_get_atom_type(sys, j) == 1)
 			continue;
 
 		if (graph_edge_find(sys->graph, i, j) == NULL)
 			graph_edge_create(sys->graph, i, j, 1);
+	}
+
+	sel_iter_start(sel);
+	for (k = 0; sel_iter_next(sel, &i); k++) {
+		/* Oxygen */
+		if (sys_get_atom_type(sys, i) == 8 &&
+		    graph_get_edge_count(sys->graph, i) == 1)
+			graph_edge_set_type(graph_edges(sys->graph, i), 2);
 	}
 
 	spi_free(spi);
