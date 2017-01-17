@@ -103,6 +103,17 @@ cmdq_from_string(const char *str)
 }
 
 int
+cmdq_is_valid_string(const char *str)
+{
+	struct cmdq *cmdq;
+
+	if ((cmdq = cmdq_from_string(str)) == NULL)
+		return (0);
+	cmdq_free(cmdq);
+	return (1);
+}
+
+int
 cmdq_exec(struct cmdq *cmdq, struct state *state)
 {
 	int i;

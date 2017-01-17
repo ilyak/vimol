@@ -127,6 +127,7 @@ point_t camera_transform(struct camera *, vec_t);
 
 /* cmd.c */
 struct cmdq *cmdq_from_string(const char *);
+int cmdq_is_valid_string(const char *);
 int cmdq_exec(struct cmdq *, struct state *);
 void cmdq_free(struct cmdq *);
 
