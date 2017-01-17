@@ -119,6 +119,28 @@ fn_about(struct tokq *args __unused, struct state *state __unused)
 }
 
 static int
+fn_add_hydrogens(struct tokq *args, struct state *state)
+{
+	struct view *view;
+	struct sel *sel;
+
+	view = state_get_view(state);
+	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
+
+	if (sel_get_count(sel) == 0) {
+		sel_free(sel);
+		return (1);
+	}
+
+	view_snapshot(view);
+	sys_add_hydrogens(view_get_sys(view), sel);
+
+	sel_free(sel);
+
+	return (1);
+}
+
+static int
 fn_atom(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -196,21 +218,6 @@ fn_bond(struct tokq *args, struct state *state)
 			graph_edge_set_type(edge, type+1);
 	}
 	sel_free(sel);
-	return (1);
-}
-
-static int
-fn_view_center(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sel *sel;
-
-	view = state_get_view(state);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
-	view_center_sel(view, sel);
-	sel_free(sel);
-
 	return (1);
 }
 
@@ -360,6 +367,21 @@ fn_delete_selection(struct tokq *args, struct state *state)
 }
 
 static int
+fn_view_center(struct tokq *args, struct state *state)
+{
+	struct view *view;
+	struct sel *sel;
+
+	view = state_get_view(state);
+	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
+
+	view_center_sel(view, sel);
+	sel_free(sel);
+
+	return (1);
+}
+
+static int
 fn_view_fit(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -468,28 +490,6 @@ fn_hide_selection(struct tokq *args, struct state *state)
 		sel_remove(visible, idx);
 
 	sel_free(sel);
-	return (1);
-}
-
-static int
-fn_add_hydrogens(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sel *sel;
-
-	view = state_get_view(state);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
-	if (sel_get_count(sel) == 0) {
-		sel_free(sel);
-		return (1);
-	}
-
-	view_snapshot(view);
-	sys_add_hydrogens(view_get_sys(view), sel);
-
-	sel_free(sel);
-
 	return (1);
 }
 
