@@ -129,7 +129,7 @@ set_default_bindings(struct state *state)
 #include "keybind.h"
 
 	for (i = 0; i < sizeof keys / sizeof *keys; i++) {
-		if (!cmdq_is_valid_string(keys[i].command))
+		if (!cmdq_validate_string(keys[i].command))
 			fatal("invalid binding for key %s", keys[i].key);
 		bind_set(state->bind, keys[i].key, keys[i].command);
 	}

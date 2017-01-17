@@ -103,7 +103,7 @@ cmdq_from_string(const char *str)
 }
 
 int
-cmdq_is_valid_string(const char *str)
+cmdq_validate_string(const char *str)
 {
 	struct cmdq *cmdq;
 
