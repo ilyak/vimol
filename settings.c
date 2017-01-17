@@ -275,7 +275,7 @@ static const struct {
 	{ "color.fm", NODE_TYPE_COLOR, "179 31 186" },
 	{ "color.md", NODE_TYPE_COLOR, "179 13 167" },
 	{ "color.no", NODE_TYPE_COLOR, "189 13 135" },
-	{ "color.lr", NODE_TYPE_COLOR, "201 0 102" }
+	{ "color.lr", NODE_TYPE_COLOR, "201 0 102" },
 };
 
 void
