@@ -449,30 +449,6 @@ fn_fullscreen(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_get(struct tokq *args, struct state *state __unused)
-{
-	char buffer[1024];
-	const char *name;
-
-	if (tokq_count(args) < 1) {
-		error_set("specify setting name");
-		return (0);
-	}
-
-	name = tok_string(tokq_tok(args, 0));
-
-	if (!settings_has_node(name)) {
-		error_set("unknown setting \"%s\"", name);
-		return (0);
-	}
-
-	settings_printf(buffer, sizeof(buffer), name);
-	error_set("%s = %s", name, buffer);
-
-	return (1);
-}
-
-static int
 fn_hide_selection(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -1440,16 +1416,27 @@ fn_select_within(struct tokq *args, struct state *state)
 static int
 fn_set(struct tokq *args, struct state *state __unused)
 {
+	char buf[1024];
 	const char *name, *value;
 
-	if (tokq_count(args) < 2) {
-		error_set("specify setting name and value");
+	if (tokq_count(args) == 0) {
+		error_set("specify a setting name");
 		return (0);
 	}
 
 	name = tok_string(tokq_tok(args, 0));
-	value = tok_string(tokq_tok(args, 1));
 
+	if (tokq_count(args) == 1) {
+		if (!settings_has_node(name)) {
+			error_set("unknown setting \"%s\"", name);
+			return (0);
+		}
+		settings_printf(buf, sizeof buf, name);
+		error_set("%s is %s", name, buf);
+		return (1);
+	}
+
+	value = tok_string(tokq_tok(args, 1));
 	return (settings_set(name, value));
 }
 
@@ -1707,7 +1694,6 @@ static const struct node {
 	{ "delete-selection", fn_delete_selection },
 	{ "first-window", fn_first_window },
 	{ "fullscreen", fn_fullscreen },
-	{ "get", fn_get },
 	{ "group", fn_group },
 	{ "hide-selection", fn_hide_selection },
 	{ "invert-selection", fn_invert_selection },
