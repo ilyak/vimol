@@ -641,14 +641,6 @@ fn_next_window(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_nop(struct tokq *args __unused, struct state *state __unused)
-{
-	/* no op */
-
-	return (1);
-}
-
-static int
 fn_paste(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -1718,7 +1710,6 @@ static const struct node {
 	{ "new", fn_new },
 	{ "next-frame", fn_next_frame },
 	{ "next-window", fn_next_window },
-	{ "nop", fn_nop },
 	{ "open", fn_new },
 	{ "paste", fn_paste },
 	{ "play", fn_play },
