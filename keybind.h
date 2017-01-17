@@ -60,7 +60,7 @@ static const struct {
 	{ "ctrl-D", "" },
 	{ "ctrl-E", "" },
 	{ "ctrl-F", "" },
-	{ "ctrl-G", "show-path" },
+	{ "ctrl-G", "show-filename" },
 	{ "ctrl-H", "move-selection -0.1 0 0" },
 	{ "ctrl-shift-H", "rotate-selection 0 10 0" },
 	{ "ctrl-I", "" },

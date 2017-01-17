@@ -671,18 +671,26 @@ fn_paste(struct tokq *args, struct state *state)
 }
 
 static int
-fn_show_path(struct tokq *args __unused, struct state *state)
+fn_show_filename(struct tokq *args __unused, struct state *state)
 {
 	struct view *view;
-	const char *path;
+	const char *path, *ptr;
 
 	view = state_get_view(state);
 	path = view_get_path(view);
 
-	if (path[0] == '\0')
+	if (path[0] == '\0') {
 		error_set("no file name");
-	else
-		error_set("%s", path);
+		return (1);
+	}
+
+	if ((ptr = strrchr(path, '/')) == NULL)
+		if ((ptr = strrchr(path, '\\')) == NULL)
+			ptr = path;
+	if (ptr != path)
+		ptr++;
+
+	error_set("%s", ptr);
 
 	return (1);
 }
@@ -1736,7 +1744,7 @@ static const struct node {
 	{ "set", fn_set },
 	{ "set-frame", fn_set_frame },
 	{ "set-position", fn_set_position },
-	{ "show-path", fn_show_path },
+	{ "show-filename", fn_show_filename },
 	{ "show-selection", fn_show_selection },
 	{ "source", fn_source },
 	{ "toggle", fn_toggle },
