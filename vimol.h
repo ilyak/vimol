@@ -72,7 +72,6 @@ typedef const char *tok_t; /* a tokq token */
 struct atoms;       /* atom storage */
 struct bind;        /* key-command bindings */
 struct camera;      /* an eye of a user */
-struct cmd;         /* vimol command */
 struct cmdq;        /* command list */
 struct edit;        /* string edit control */
 struct graph;       /* vertices connected with edges */
@@ -127,14 +126,9 @@ double camera_get_zoom(struct camera *, int, int);
 point_t camera_transform(struct camera *, vec_t);
 
 /* cmd.c */
-const char *cmd_name(struct cmd *);
-struct tokq *cmd_args(struct cmd *);
-int cmd_exec(struct cmd *, struct state *);
 struct cmdq *cmdq_from_string(const char *);
-void cmdq_free(struct cmdq *);
-int cmdq_count(struct cmdq *);
-struct cmd *cmdq_cmd(struct cmdq *, int);
 int cmdq_exec(struct cmdq *, struct state *);
+void cmdq_free(struct cmdq *);
 
 /* edit.c */
 struct edit *edit_create(void);

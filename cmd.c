@@ -26,19 +26,7 @@ struct cmdq {
 	struct cmd *data;
 };
 
-const char *
-cmd_name(struct cmd *cmd)
-{
-	return (cmd->name);
-}
-
-struct tokq *
-cmd_args(struct cmd *cmd)
-{
-	return (cmd->args);
-}
-
-int
+static int
 cmd_exec(struct cmd *cmd, struct state *state)
 {
 	return (exec_run(cmd->name, cmd->args, state));
@@ -114,42 +102,28 @@ cmdq_from_string(const char *str)
 	return (cmdq);
 }
 
+int
+cmdq_exec(struct cmdq *cmdq, struct state *state)
+{
+	int i;
+
+	for (i = 0; i < cmdq->nelts; i++)
+		if (!cmd_exec(&cmdq->data[i], state))
+			return (0);
+
+	return (1);
+}
+
 void
 cmdq_free(struct cmdq *cmdq)
 {
 	int i;
 
-	for (i = 0; i < cmdq_count(cmdq); i++) {
+	for (i = 0; i < cmdq->nelts; i++) {
 		free(cmdq->data[i].name);
 		tokq_free(cmdq->data[i].args);
 	}
 
 	free(cmdq->data);
 	free(cmdq);
-}
-
-int
-cmdq_count(struct cmdq *cmdq)
-{
-	return (cmdq->nelts);
-}
-
-struct cmd *
-cmdq_cmd(struct cmdq *cmdq, int idx)
-{
-	assert(idx >= 0 && idx < cmdq_count(cmdq));
-
-	return (&cmdq->data[idx]);
-}
-
-int
-cmdq_exec(struct cmdq *cmdq, struct state *state)
-{
-	int i;
-
-	for (i = 0; i < cmdq_count(cmdq); i++)
-		if (!cmd_exec(cmdq_cmd(cmdq, i), state))
-			return (0);
-
-	return (1);
 }
