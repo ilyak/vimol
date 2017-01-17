@@ -138,35 +138,42 @@ set_default_bindings(struct state *state)
 static void
 set_statusbar_text(struct state *state)
 {
-	struct view *view;
 	struct sys *sys;
-	const char *text;
-	char buf[256] = "";
+	char *buf, *tmp;
 
-	view = state_get_view(state);
-	sys = view_get_sys(view);
-	text = edit_get_text(state->edit);
+	sys = view_get_sys(state_get_view(state));
 
 	if (state->is_search)
-		statusbar_set_text(state->statusbar, "(search %s ):%s", text,
-		    history_get(state->history));
+		statusbar_set_text(state->statusbar, "(search %s ):%s",
+		    edit_get_text(state->edit), history_get(state->history));
 	else if (state->is_input)
-		statusbar_set_text(state->statusbar, ":%s", text);
+		statusbar_set_text(state->statusbar, ":%s",
+		    edit_get_text(state->edit));
 
+	buf = xstrdup("");
 	if (state->repeat > 0) {
-		snprintf(buf, sizeof buf, "%s%d ", buf, state->repeat);
+		tmp = buf;
+		xasprintf(&buf, "%s%d ", tmp, state->repeat);
+		free(tmp);
 	}
 	if (rec_is_recording(state->rec)) {
-		snprintf(buf, sizeof buf, "%srec[%c] ", buf,
+		tmp = buf;
+		xasprintf(&buf, "%srec[%c] ", tmp,
 		    rec_get_register(state->rec) + 'a');
+		free(tmp);
 	}
 	if (sys_is_modified(sys)) {
-		snprintf(buf, sizeof buf, "%s[+] ", buf);
+		tmp = buf;
+		xasprintf(&buf, "%s[+] ", tmp);
+		free(tmp);
 	}
-	snprintf(buf, sizeof buf, "%s%d/%d %d/%d", buf,
+	tmp = buf;
+	xasprintf(&buf, "%s%d/%d %d/%d", tmp,
 	    sys_get_frame(sys) + 1, sys_get_frame_count(sys),
 	    wnd_get_index(state->wnd) + 1, wnd_get_count(state->wnd));
+	free(tmp);
 	statusbar_set_info_text(state->statusbar, "%s", buf);
+	free(buf);
 }
 
 static void
