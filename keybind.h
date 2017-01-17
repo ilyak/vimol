@@ -43,7 +43,7 @@ static const struct {
 	{ "shift-M", "nop" },
 	{ "shift-N", "select-within 2.0" },
 	{ "shift-O", "toggle statusbar.visible" },
-	{ "shift-P", "count" },
+	{ "shift-P", "nop" },
 	{ "shift-Q", "quit!" },
 	{ "shift-R", "rec a" },
 	{ "shift-S", "unselect" },

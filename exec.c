@@ -346,21 +346,6 @@ fn_copy_selection(struct tokq *args, struct state *state)
 }
 
 static int
-fn_count(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sel *sel;
-
-	view = state_get_view(state);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
-	error_set("count is %d", sel_get_count(sel));
-
-	sel_free(sel);
-	return (1);
-}
-
-static int
 fn_delete_selection(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -1737,7 +1722,6 @@ static const struct node {
 	{ "close", fn_close },
 	{ "close!", fn_force_close },
 	{ "copy-selection", fn_copy_selection },
-	{ "count", fn_count },
 	{ "delete-selection", fn_delete_selection },
 	{ "first-window", fn_first_window },
 	{ "fullscreen", fn_fullscreen },
