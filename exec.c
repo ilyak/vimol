@@ -696,7 +696,7 @@ fn_show_filename(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_play(struct tokq *args, struct state *state)
+fn_replay(struct tokq *args, struct state *state)
 {
 	struct rec *rec;
 	int i, reg, repeat;
@@ -707,7 +707,7 @@ fn_play(struct tokq *args, struct state *state)
 		return (1);
 
 	if (rec_is_recording(rec)) {
-		error_set("cannot play during recording");
+		error_set("cannot replay during recording");
 		return (0);
 	}
 
@@ -1720,7 +1720,6 @@ static const struct node {
 	{ "next-window", fn_next_window },
 	{ "open", fn_new },
 	{ "paste", fn_paste },
-	{ "play", fn_play },
 	{ "prev-window", fn_prev_window },
 	{ "q", fn_quit },
 	{ "q!", fn_force_quit },
@@ -1731,6 +1730,7 @@ static const struct node {
 	{ "redo", fn_redo },
 	{ "reload", fn_reload },
 	{ "reload!", fn_force_reload },
+	{ "replay", fn_replay },
 	{ "reset-bonds", fn_reset_bonds },
 	{ "ring", fn_ring },
 	{ "rotate-selection", fn_rotate_selection },

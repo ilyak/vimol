@@ -19,7 +19,7 @@ static const struct {
 	{ "O", "toggle origin.visible" },
 	{ "P", "paste" },
 	{ "Q", "quit" },
-	{ "R", "play" },
+	{ "R", "replay" },
 	{ "S", "select" },
 	{ "T", "bond" },
 	{ "U", "undo" },
