@@ -452,18 +452,17 @@ static int
 fn_hide_selection(struct tokq *args, struct state *state)
 {
 	struct view *view;
-	struct sel *visible;
 	struct sel *sel;
 	int idx;
 
 	view = state_get_view(state);
-	visible = view_get_visible(view);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 
 	sel_iter_start(sel);
-
-	while (sel_iter_next(sel, &idx))
-		sel_remove(visible, idx);
+	while (sel_iter_next(sel, &idx)) {
+		sel_remove(view_get_visible(view), idx);
+		sel_remove(view_get_sel(view), idx);
+	}
 
 	sel_free(sel);
 	return (1);

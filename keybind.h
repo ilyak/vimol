@@ -23,7 +23,7 @@ static const struct {
 	{ "S", "select" },
 	{ "T", "bond" },
 	{ "U", "undo" },
-	{ "V", "hide-selection; unselect *" },
+	{ "V", "hide-selection" },
 	{ "W", "select-molecule" },
 	{ "X", "copy-selection a; delete-selection" },
 	{ "Y", "copy-selection a" },
