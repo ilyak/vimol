@@ -146,7 +146,7 @@ static const struct {
 	enum node_type type;
 	const char *default_value;
 } node_list[] = {
-	{ "atom.size", NODE_TYPE_DOUBLE, "10.0" },
+	{ "atom.size", NODE_TYPE_DOUBLE, "8.0" },
 	{ "atom.visible", NODE_TYPE_BOOL, "true" },
 	{ "bg.color", NODE_TYPE_COLOR, "0 0 0" },
 	{ "bond.size", NODE_TYPE_DOUBLE, "3.0" },

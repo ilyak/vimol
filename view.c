@@ -72,17 +72,19 @@ static void
 draw_bond(cairo_t *cairo, int type, double size, point_t p1, point_t p2,
     color_t clr1, color_t clr2)
 {
-	point_t dp, md;
+	point_t dp, mp;
 	double r;
 	int k;
+
+	assert(type > 0);
 
 	dp.x = p1.y - p2.y;
 	dp.y = p2.x - p1.x;
 
 	r = sqrt(dp.x * dp.x + dp.y * dp.y);
 
-	dp.x = 1.5 * size * dp.x / r;
-	dp.y = 1.5 * size * dp.y / r;
+	dp.x = 2.0 * size / type * dp.x / r;
+	dp.y = 2.0 * size / type * dp.y / r;
 
 	p1.x -= dp.x * (type - 1) / 2;
 	p1.y -= dp.y * (type - 1) / 2;
@@ -90,18 +92,20 @@ draw_bond(cairo_t *cairo, int type, double size, point_t p1, point_t p2,
 	p2.x -= dp.x * (type - 1) / 2;
 	p2.y -= dp.y * (type - 1) / 2;
 
+	cairo_set_line_width(cairo, size / type);
+
 	for (k = 0; k < type; k++) {
-		md.x = (p1.x + p2.x) / 2;
-		md.y = (p1.y + p2.y) / 2;
+		mp.x = (p1.x + p2.x) / 2;
+		mp.y = (p1.y + p2.y) / 2;
 
 		cairo_set_source_rgb(cairo, clr1.r, clr1.g, clr1.b);
 		cairo_move_to(cairo, p1.x, p1.y);
-		cairo_line_to(cairo, md.x, md.y);
+		cairo_line_to(cairo, mp.x, mp.y);
 		cairo_stroke(cairo);
 
 		cairo_set_source_rgb(cairo, clr2.r, clr2.g, clr2.b);
 		cairo_move_to(cairo, p2.x, p2.y);
-		cairo_line_to(cairo, md.x, md.y);
+		cairo_line_to(cairo, mp.x, mp.y);
 		cairo_stroke(cairo);
 
 		p1.x += dp.x;
@@ -129,9 +133,7 @@ render_bonds(struct view *view, cairo_t *cairo)
 	graph = view_get_graph(view);
 	visible = view_get_visible(view);
 
-	cairo_set_line_width(cairo, size);
 	sel_iter_start(visible);
-
 	while (sel_iter_next(visible, &i)) {
 		for (edge = graph_get_edges(graph, i); edge;
 		     edge = graph_edge_next(edge)) {
