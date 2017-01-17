@@ -113,7 +113,7 @@ parse_vec(struct tokq *args, int start)
 static int
 fn_about(struct tokq *args __unused, struct state *state __unused)
 {
-	error_set("vimol (c) 2013-2017 Ilya Kaliman");
+	error_set("vimol %s (c) 2013-2017 Ilya Kaliman", VIMOL_VERSION);
 
 	return (1);
 }

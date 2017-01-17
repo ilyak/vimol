@@ -17,8 +17,9 @@
 #ifndef VIMOL_VIMOL_H
 #define VIMOL_VIMOL_H
 
-#define _GNU_SOURCE /* for vasprintf on linux */
+#define VIMOL_VERSION "2.0"
 
+#define _GNU_SOURCE /* for vasprintf on linux */
 #include <assert.h>
 #include <ctype.h>
 #include <math.h>
