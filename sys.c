@@ -215,7 +215,7 @@ parse_atom_xyz(const char *buffer, struct atom *atom)
 }
 
 static int
-load_from_xyz(struct sys *sys, const char *path, int is_new)
+load_from_xyz(struct sys *sys, const char *path)
 {
 	FILE *fp;
 	char *buffer;
@@ -250,12 +250,6 @@ load_from_xyz(struct sys *sys, const char *path, int is_new)
 			goto error;
 
 		sys_add_atom(sys, atom.name, atom.xyz);
-	}
-
-	if (!is_new) {
-		free(buffer);
-		fclose(fp);
-		return (1);
 	}
 
 	while ((buffer = util_next_line(buffer, fp)) != NULL) {
@@ -297,41 +291,16 @@ error:
 }
 
 static int
-load_file(struct sys *sys, const char *path, int is_new)
+load_file(struct sys *sys, const char *path)
 {
 	if (string_has_suffix(path, ".pdb"))
 		return (load_from_pdb(sys, path));
 
 	if (string_has_suffix(path, ".xyz"))
-		return (load_from_xyz(sys, path, is_new));
+		return (load_from_xyz(sys, path));
 
 	error_set("unknown file type");
-
 	return (0);
-}
-
-static int
-read_file(struct sys *sys, const char *path, int is_new)
-{
-	struct sel *sel;
-	int i, n;
-
-	assert(path != NULL);
-
-	n = sys_get_atom_count(sys);
-
-	if (!load_file(sys, path, is_new))
-		return (0);
-
-	sel = sel_create(sys_get_atom_count(sys));
-
-	for (i = n; i < sys_get_atom_count(sys); i++)
-		sel_add(sel, i);
-
-	sys_reset_bonds(sys, sel);
-	sel_free(sel);
-
-	return (1);
 }
 
 static struct sys *
@@ -358,9 +327,12 @@ sys_create(const char *path)
 	if (path == NULL || !util_file_exists(path))
 		return (sys);
 
-	if (!read_file(sys, path, 1))
+	if (!load_file(sys, path)) {
+		sys_free(sys);
 		return (NULL);
+	}
 
+	sys_reset_bonds(sys);
 	sys->is_modified = 0;
 
 	return (sys);
@@ -416,12 +388,6 @@ struct sel *
 sys_get_visible(struct sys *sys)
 {
 	return (sys->visible);
-}
-
-int
-sys_read(struct sys *sys, const char *path)
-{
-	return (read_file(sys, path, 0));
 }
 
 int
@@ -711,32 +677,27 @@ sys_get_sel_center(struct sys *sys, struct sel *sel)
 }
 
 void
-sys_reset_bonds(struct sys *sys, struct sel *sel)
+sys_reset_bonds(struct sys *sys)
 {
-	struct spi *spi;
 	struct pair pair;
-	int i, j, k, n, *map;
+	struct spi *spi;
+	int i, j, k, n, np;
 
-	if ((n = sel_get_count(sel)) == 0)
-		return;
+	n = sys_get_atom_count(sys);
 	spi = spi_create();
-	map = xcalloc(n, sizeof(int));
 
-	sel_iter_start(sel);
-	for (k = 0; sel_iter_next(sel, &i); k++) {
+	for (i = 0; i < n; i++) {
 		graph_remove_vertex_edges(sys->graph, i);
 		spi_add_point(spi, sys_get_atom_xyz(sys, i));
-		map[k] = i;
 	}
 
 	spi_compute(spi, 1.6);
-	n = spi_get_pair_count(spi);
+	np = spi_get_pair_count(spi);
 
-	for (k = 0; k < n; k++) {
+	for (k = 0; k < np; k++) {
 		pair = spi_get_pair(spi, k);
-
-		i = map[pair.i];
-		j = map[pair.j];
+		i = pair.i;
+		j = pair.j;
 
 		/* Hydrogens */
 		if (sys_get_atom_type(sys, i) == 1 &&
@@ -747,8 +708,7 @@ sys_reset_bonds(struct sys *sys, struct sel *sel)
 			graph_edge_create(sys->graph, i, j, 1);
 	}
 
-	sel_iter_start(sel);
-	for (k = 0; sel_iter_next(sel, &i); k++) {
+	for (i = 0; i < n; i++) {
 		/* Oxygen */
 		if (sys_get_atom_type(sys, i) == 8 &&
 		    graph_get_edge_count(sys->graph, i) == 1)
@@ -756,7 +716,6 @@ sys_reset_bonds(struct sys *sys, struct sel *sel)
 	}
 
 	spi_free(spi);
-	free(map);
 }
 
 #define XYZFMT "%-4s %11.6lf %11.6lf %11.6lf"

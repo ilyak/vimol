@@ -29,7 +29,7 @@ static const struct {
 	{ "Y", "copy-selection a" },
 	{ "Z", "" },
 	{ "shift-A", "" },
-	{ "shift-B", "reset-bonds *" },
+	{ "shift-B", "reset-bonds" },
 	{ "shift-C", "view-center; view-fit" },
 	{ "shift-D", "" },
 	{ "shift-E", "" },

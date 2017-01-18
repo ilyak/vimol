@@ -298,7 +298,6 @@ void sys_free(struct sys *);
 struct graph *sys_get_graph(struct sys *);
 struct sel *sys_get_sel(struct sys *);
 struct sel *sys_get_visible(struct sys *);
-int sys_read(struct sys *, const char *);
 int sys_is_modified(struct sys *);
 int sys_get_frame(struct sys *);
 void sys_set_frame(struct sys *, int);
@@ -314,7 +313,7 @@ vec_t sys_get_atom_xyz(struct sys *, int);
 void sys_set_atom_xyz(struct sys *, int, vec_t);
 void sys_add_hydrogens(struct sys *, struct sel *);
 vec_t sys_get_sel_center(struct sys *, struct sel *);
-void sys_reset_bonds(struct sys *, struct sel *);
+void sys_reset_bonds(struct sys *);
 int sys_save_to_file(struct sys *, const char *);
 
 /* tok.c */

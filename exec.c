@@ -849,32 +849,6 @@ fn_force_quit(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_read(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sys *sys;
-	const char *path;
-
-	if (tokq_count(args) < 1) {
-		error_set("specify file path");
-		return (0);
-	}
-
-	view = state_get_view(state);
-	path = tok_string(tokq_tok(args, 0));
-
-	view_snapshot(view);
-	sys = view_get_sys(view);
-
-	if (!sys_read(sys, path)) {
-		view_undo(view);
-		return (0);
-	}
-
-	return (1);
-}
-
-static int
 fn_rec(struct tokq *args, struct state *state)
 {
 	struct rec *rec;
@@ -973,12 +947,9 @@ static int
 fn_reset_bonds(struct tokq *args, struct state *state)
 {
 	struct view *view;
-	struct sel *sel;
 
 	view = state_get_view(state);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-	sys_reset_bonds(view_get_sys(view), sel);
-	sel_free(sel);
+	sys_reset_bonds(view_get_sys(view));
 
 	return (1);
 }
@@ -1709,7 +1680,6 @@ static const struct node {
 	{ "q!", fn_force_quit },
 	{ "quit", fn_quit },
 	{ "quit!", fn_force_quit },
-	{ "read", fn_read },
 	{ "rec", fn_rec },
 	{ "redo", fn_redo },
 	{ "reload", fn_reload },
