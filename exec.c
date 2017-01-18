@@ -372,14 +372,13 @@ fn_delete_selection(struct tokq *args, struct state *state)
 }
 
 static int
-fn_view_center(struct tokq *args, struct state *state)
+fn_view_center_selection(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sel *sel;
 
 	view = state_get_view(state);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
 	view_center_sel(view, sel);
 	sel_free(sel);
 
@@ -387,14 +386,13 @@ fn_view_center(struct tokq *args, struct state *state)
 }
 
 static int
-fn_view_fit(struct tokq *args, struct state *state)
+fn_view_fit_selection(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sel *sel;
 
 	view = state_get_view(state);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
 	view_fit_sel(view, sel);
 	sel_free(sel);
 
@@ -495,19 +493,6 @@ fn_invert_selection(struct tokq *args, struct state *state)
 	}
 
 	sel_free(sel);
-
-	return (1);
-}
-
-static int
-fn_view_set_pos(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	vec_t xyz;
-
-	view = state_get_view(state);
-	xyz = parse_vec(args, 0);
-	camera_move_to(view_get_camera(view), xyz);
 
 	return (1);
 }
@@ -1704,12 +1689,11 @@ static const struct node {
 	{ "toggle", fn_toggle },
 	{ "undo", fn_undo },
 	{ "unselect", fn_unselect },
-	{ "view-center", fn_view_center },
-	{ "view-fit", fn_view_fit },
+	{ "view-center-selection", fn_view_center_selection },
+	{ "view-fit-selection", fn_view_fit_selection },
 	{ "view-move", fn_view_move },
 	{ "view-reset", fn_view_reset },
 	{ "view-rotate", fn_view_rotate },
-	{ "view-set-pos", fn_view_set_pos },
 	{ "view-zoom", fn_view_zoom },
 	{ "w", fn_save },
 	{ "wrap", fn_wrap },
