@@ -1,6 +1,15 @@
-Vimol is a powerful molecular viewer and editor inspired by vim.
-For information and tutorials on using vimol consult online documentation at
-http://www.vimol.org/.
+# Vimol
+
+![Vimol main window](screen.png)
+
+Vimol is a powerful molecular viewer and editor inspired by vim. Vimol features
+vim-like key bindings, editing in multiple windows, visualization of
+trajectories, unlimited undo/redo, and much more! Vimol does not require mouse,
+and most things can be accomplished in less than 5 keystrokes. For more
+information and tutorials consult online documentation at http://www.vimol.org/
+web site.
+
+### Compilation from sources
 
 To compile vimol from source you will need an ANSI C complaint compiler and a
 make utility. You will also need the following dependencies installed along
