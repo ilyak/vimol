@@ -47,7 +47,7 @@ static const struct {
 	{ "shift-Q", "quit!" },
 	{ "shift-R", "rec a" },
 	{ "shift-S", "unselect" },
-	{ "shift-T", "" },
+	{ "shift-T", "reset-bonds *" },
 	{ "shift-U", "" },
 	{ "shift-V", "show-selection *" },
 	{ "shift-W", "select-water" },

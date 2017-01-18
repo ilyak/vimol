@@ -717,12 +717,14 @@ sys_reset_bonds(struct sys *sys, struct sel *sel)
 	struct pair pair;
 	int i, j, k, n, *map;
 
+	if ((n = sel_get_count(sel)) == 0)
+		return;
 	spi = spi_create();
-	n = sel_get_count(sel);
 	map = xcalloc(n, sizeof(int));
 
 	sel_iter_start(sel);
 	for (k = 0; sel_iter_next(sel, &i); k++) {
+		graph_remove_vertex_edges(sys->graph, i);
 		spi_add_point(spi, sys_get_atom_xyz(sys, i));
 		map[k] = i;
 	}

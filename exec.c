@@ -977,15 +977,9 @@ fn_reset_bonds(struct tokq *args, struct state *state)
 
 	view = state_get_view(state);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
-	if (sel_get_count(sel) == 0) {
-		sel_free(sel);
-		return (1);
-	}
-
-	view_snapshot(view);
 	sys_reset_bonds(view_get_sys(view), sel);
 	sel_free(sel);
+
 	return (1);
 }
 
