@@ -7,7 +7,7 @@ vim-like key bindings, editing in multiple windows, visualization of
 trajectories, unlimited undo/redo, record/replay actions, and much more!
 Vimol does not require mouse, and most things can be accomplished in less
 than 5 keystrokes. For more information and tutorials consult online
-documentation at http://www.vimol.org/ web site.
+documentation at https://vimol.github.io/ web site.
 
 ### Compilation from sources
 
@@ -15,7 +15,7 @@ To compile vimol from source you will need an ANSI C complaint compiler and a
 make utility. You will also need the following dependencies installed along
 with their corresponding development packages:
 
- * Cairo graphics library (cairographics.org). Version 1.12.0 or
+ * Cairo graphics library (https://cairographics.org). Version 1.12.0 or
    newer is recommended.
 
   - OpenBSD: `pkg_add cairo`
@@ -23,7 +23,7 @@ with their corresponding development packages:
   - Ubuntu: `apt-get install libcairo-dev`
   - Fedora: `yum install cairo-devel`
 
- * Simple direct-media layer (libsdl.org). Version 2.0.1 or newer is
+ * Simple direct-media layer (https://libsdl.org). Version 2.0.1 or newer is
    recommended. Make sure that the video support is turned on if building SDL
    from source.
 
