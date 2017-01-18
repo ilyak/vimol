@@ -358,7 +358,6 @@ struct sel *view_get_sel(struct view *);
 struct sel *view_get_visible(struct view *);
 const char *view_get_path(struct view *);
 void view_set_path(struct view *, const char *);
-int view_is_empty(struct view *);
 int view_is_modified(struct view *);
 int view_undo(struct view *);
 int view_redo(struct view *);

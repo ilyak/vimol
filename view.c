@@ -381,12 +381,6 @@ view_set_path(struct view *view, const char *path)
 }
 
 int
-view_is_empty(struct view *view)
-{
-	return (sys_get_atom_count(view_get_sys(view)) == 0);
-}
-
-int
 view_is_modified(struct view *view)
 {
 	return (sys_is_modified(view_get_sys(view)));
