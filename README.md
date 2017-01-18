@@ -1,13 +1,11 @@
 # Vimol
 
-![Vimol main window](screen.png)
-
 Vimol is a powerful molecular viewer and editor inspired by vim. Vimol features
-vim-like key bindings, editing in multiple windows, visualization of
-trajectories, unlimited undo/redo, record/replay actions, and much more!
-Vimol does not require mouse, and most things can be accomplished in less
-than 5 keystrokes. For more information and tutorials consult online
-documentation at https://vimol.github.io/ web site.
+vim-like key bindings, fast and lightweight design, editing in multiple
+windows, visualization of trajectories, unlimited undo/redo, command
+record/replay, and much more! Vimol does not require the mouse, and most things
+can be accomplished in less than 5 keystrokes. For more information and
+tutorials consult online documentation at https://vimol.github.io/ web site.
 
 ### Compilation from sources
 
@@ -36,7 +34,7 @@ After installing all dependencies, compile vimol by typing:
 
 	make
 
-To install the vimol binary issue as root:
+To install the vimol binary, issue as root:
 
 	make install
 
