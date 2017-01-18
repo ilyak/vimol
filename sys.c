@@ -303,18 +303,48 @@ load_file(struct sys *sys, const char *path)
 	return (0);
 }
 
-static struct sys *
-sys_create_empty(void)
+static void
+save_to_xyz(struct sys *sys, FILE *fp)
 {
-	struct sys *sys;
+	struct atoms *atoms;
+	vec_t xyz;
+	const char *name;
+	int i, j;
 
-	sys = xcalloc(1, sizeof(*sys));
-	sys->graph = graph_create();
-	sys->sel = sel_create(0);
-	sys->visible = sel_create(0);
-	sys_add_frame(sys);
+	for (i = 0; i < sys_get_frame_count(sys); i++) {
+		atoms = sys->atoms[i];
+		fprintf(fp, "%d\n\n", atoms_get_count(atoms));
 
-	return (sys);
+		for (j = 0; j < atoms_get_count(atoms); j++) {
+			name = atoms_get_name(atoms, j);
+			xyz = atoms_get_xyz(atoms, j);
+#define XYZFMT "%-4s %11.6lf %11.6lf %11.6lf"
+			fprintf(fp, XYZFMT, name, xyz.x, xyz.y, xyz.z);
+			fprintf(fp, "\n");
+		}
+	}
+}
+
+static void
+save_to_pdb(struct sys *sys, FILE *fp)
+{
+	struct atoms *atoms;
+	vec_t xyz;
+	const char *name;
+	int i, j;
+
+	for (i = 0; i < sys_get_frame_count(sys); i++) {
+		atoms = sys->atoms[i];
+
+		for (j = 0; j < atoms_get_count(atoms); j++) {
+			name = atoms_get_name(atoms, j);
+			xyz = atoms_get_xyz(atoms, j);
+#define PDBFMT "ATOM  %5d%3s                %8.3lf%8.3lf%8.3lf"
+			fprintf(fp, PDBFMT, j+1, name, xyz.x, xyz.y, xyz.z);
+			fprintf(fp, "\n");
+		}
+		fprintf(fp, "END\n");
+	}
 }
 
 struct sys *
@@ -322,7 +352,11 @@ sys_create(const char *path)
 {
 	struct sys *sys;
 
-	sys = sys_create_empty();
+	sys = xcalloc(1, sizeof *sys);
+	sys->graph = graph_create();
+	sys->sel = sel_create(0);
+	sys->visible = sel_create(0);
+	sys_add_frame(sys);
 
 	if (path == NULL || !util_file_exists(path))
 		return (sys);
@@ -716,53 +750,6 @@ sys_reset_bonds(struct sys *sys)
 	}
 
 	spi_free(spi);
-}
-
-#define XYZFMT "%-4s %11.6lf %11.6lf %11.6lf"
-#define PDBFMT "ATOM  %5d%3s                %8.3lf%8.3lf%8.3lf"
-
-static void
-save_to_xyz(struct sys *sys, FILE *fp)
-{
-	struct atoms *atoms;
-	vec_t xyz;
-	const char *name;
-	int i, j;
-
-	for (i = 0; i < sys_get_frame_count(sys); i++) {
-		atoms = sys->atoms[i];
-		fprintf(fp, "%d\n\n", atoms_get_count(atoms));
-
-		for (j = 0; j < atoms_get_count(atoms); j++) {
-			name = atoms_get_name(atoms, j);
-			xyz = atoms_get_xyz(atoms, j);
-
-			fprintf(fp, XYZFMT, name, xyz.x, xyz.y, xyz.z);
-			fprintf(fp, "\n");
-		}
-	}
-}
-
-static void
-save_to_pdb(struct sys *sys, FILE *fp)
-{
-	struct atoms *atoms;
-	vec_t xyz;
-	const char *name;
-	int i, j;
-
-	for (i = 0; i < sys_get_frame_count(sys); i++) {
-		atoms = sys->atoms[i];
-
-		for (j = 0; j < atoms_get_count(atoms); j++) {
-			name = atoms_get_name(atoms, j);
-			xyz = atoms_get_xyz(atoms, j);
-
-			fprintf(fp, PDBFMT, j+1, name, xyz.x, xyz.y, xyz.z);
-			fprintf(fp, "\n");
-		}
-		fprintf(fp, "END\n");
-	}
 }
 
 int
