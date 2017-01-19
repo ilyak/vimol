@@ -22,13 +22,11 @@ struct atom {
 };
 
 struct sys {
-	int current_frame;
-	int nframes;
 	int is_modified;
 	struct graph *graph;
 	struct sel *sel;
 	struct sel *visible;
-	struct atoms **atoms; /* array of nframes atoms */
+	struct atoms *atoms;
 };
 
 static const vec_t h_table[] = {
@@ -50,20 +48,6 @@ static const vec_t h_table[] = {
 	{  1.340,  0.000,  0.000 }, /* 15 S      H-1 */
 	{ -0.447,  1.263,  0.000 }, /* 16 S      H-2 */
 };
-
-static struct atoms *
-sys_get_atoms(struct sys *sys)
-{
-	return (sys->atoms[sys->current_frame]);
-}
-
-static void
-sys_add_frame(struct sys *sys)
-{
-	sys->nframes++;
-	sys->atoms = xrealloc(sys->atoms, sys->nframes * sizeof(*sys->atoms));
-	sys->atoms[sys->nframes-1] = atoms_create();
-}
 
 static void
 add_hydrogens(struct sys *sys, int i, int j, int k, int offset, int count)
@@ -154,7 +138,6 @@ static int
 load_from_pdb(struct sys *sys, const char *path)
 {
 	FILE *fp;
-	struct atoms *atoms;
 	struct atom atom;
 	char *buffer;
 	int i, newframe = 0;
@@ -165,36 +148,28 @@ load_from_pdb(struct sys *sys, const char *path)
 	}
 
 	buffer = NULL;
+	i = 0;
 
 	while ((buffer = util_next_line(buffer, fp)) != NULL) {
 		if (strncasecmp(buffer, "ATOM  ", 6) == 0 ||
 		    strncasecmp(buffer, "HETATM", 6) == 0) {
 			if (newframe) {
-				sys_add_frame(sys);
-				sys_set_frame(sys, sys_get_frame_count(sys)-1);
+				atoms_add_frame(sys->atoms);
 				newframe = 0;
 			}
 			if (!parse_atom_pdb(buffer, &atom))
 				goto error;
 			if (sys_get_frame_count(sys) == 1)
 				sys_add_atom(sys, atom.name, atom.xyz);
-			else {
-				atoms = sys_get_atoms(sys);
-				atoms_add(atoms, atom.name, atom.xyz);
-			}
+			else
+				atoms_set_xyz(sys->atoms, i, atom.xyz);
+			i++;
 		}
-		if (strncasecmp(buffer, "END", 3) == 0)
+		if (strncasecmp(buffer, "END", 3) == 0) {
+			i = 0;
 			newframe = 1;
-	}
-
-	sys_set_frame(sys, 0);
-
-	for (i = 0; i < sys_get_frame_count(sys); i++)
-		if (atoms_get_count(sys->atoms[0]) !=
-		    atoms_get_count(sys->atoms[i])) {
-			error_set("unexpected number of atoms");
-			goto error;
 		}
+	}
 
 	fclose(fp);
 	return (1);
@@ -208,7 +183,6 @@ static int
 parse_atom_xyz(const char *buffer, struct atom *atom)
 {
 	memset(atom, 0, sizeof(struct atom));
-
 	sscanf(buffer, "%32s%lf%lf%lf", atom->name, &atom->xyz.x,
 	    &atom->xyz.y, &atom->xyz.z);
 	return (1);
@@ -219,7 +193,6 @@ load_from_xyz(struct sys *sys, const char *path)
 {
 	FILE *fp;
 	char *buffer;
-	struct atoms *atoms;
 	struct atom atom;
 	int i, n;
 
@@ -262,9 +235,7 @@ load_from_xyz(struct sys *sys, const char *path)
 			goto error;
 		}
 
-		sys_add_frame(sys);
-		sys_set_frame(sys, sys_get_frame_count(sys)-1);
-
+		atoms_add_frame(sys->atoms);
 		buffer = util_next_line(buffer, fp);
 
 		for (i = 0; i < n; i++) {
@@ -272,16 +243,12 @@ load_from_xyz(struct sys *sys, const char *path)
 				error_set("unexpected end of file");
 				goto error;
 			}
-
 			if (!parse_atom_xyz(buffer, &atom))
 				goto error;
-
-			atoms = sys_get_atoms(sys);
-			atoms_add(atoms, atom.name, atom.xyz);
+			atoms_set_xyz(sys->atoms, i, atom.xyz);
 		}
 	}
 
-	sys_set_frame(sys, 0);
 	fclose(fp);
 	return (1);
 error:
@@ -306,45 +273,47 @@ load_file(struct sys *sys, const char *path)
 static void
 save_to_xyz(struct sys *sys, FILE *fp)
 {
-	struct atoms *atoms;
 	vec_t xyz;
 	const char *name;
-	int i, j;
+	int i, j, frame;
+
+	frame = atoms_get_frame(sys->atoms);
 
 	for (i = 0; i < sys_get_frame_count(sys); i++) {
-		atoms = sys->atoms[i];
-		fprintf(fp, "%d\n\n", atoms_get_count(atoms));
-
-		for (j = 0; j < atoms_get_count(atoms); j++) {
-			name = atoms_get_name(atoms, j);
-			xyz = atoms_get_xyz(atoms, j);
+		atoms_set_frame(sys->atoms, i);
+		fprintf(fp, "%d\n\n", atoms_get_count(sys->atoms));
+		for (j = 0; j < atoms_get_count(sys->atoms); j++) {
+			name = atoms_get_name(sys->atoms, j);
+			xyz = atoms_get_xyz(sys->atoms, j);
 #define XYZFMT "%-4s %11.6lf %11.6lf %11.6lf"
 			fprintf(fp, XYZFMT, name, xyz.x, xyz.y, xyz.z);
 			fprintf(fp, "\n");
 		}
 	}
+	atoms_set_frame(sys->atoms, frame);
 }
 
 static void
 save_to_pdb(struct sys *sys, FILE *fp)
 {
-	struct atoms *atoms;
 	vec_t xyz;
 	const char *name;
-	int i, j;
+	int i, j, frame;
+
+	frame = atoms_get_frame(sys->atoms);
 
 	for (i = 0; i < sys_get_frame_count(sys); i++) {
-		atoms = sys->atoms[i];
-
-		for (j = 0; j < atoms_get_count(atoms); j++) {
-			name = atoms_get_name(atoms, j);
-			xyz = atoms_get_xyz(atoms, j);
+		atoms_set_frame(sys->atoms, i);
+		for (j = 0; j < atoms_get_count(sys->atoms); j++) {
+			name = atoms_get_name(sys->atoms, j);
+			xyz = atoms_get_xyz(sys->atoms, j);
 #define PDBFMT "ATOM  %5d%3s                %8.3lf%8.3lf%8.3lf"
 			fprintf(fp, PDBFMT, j+1, name, xyz.x, xyz.y, xyz.z);
 			fprintf(fp, "\n");
 		}
 		fprintf(fp, "END\n");
 	}
+	atoms_set_frame(sys->atoms, frame);
 }
 
 struct sys *
@@ -356,7 +325,7 @@ sys_create(const char *path)
 	sys->graph = graph_create();
 	sys->sel = sel_create(0);
 	sys->visible = sel_create(0);
-	sys_add_frame(sys);
+	sys->atoms = atoms_create();
 
 	if (path == NULL || !util_file_exists(path))
 		return (sys);
@@ -366,6 +335,7 @@ sys_create(const char *path)
 		return (NULL);
 	}
 
+	sys_set_frame(sys, 0);
 	sys_reset_bonds(sys);
 	sys->is_modified = 0;
 
@@ -376,17 +346,13 @@ struct sys *
 sys_copy(struct sys *sys)
 {
 	struct sys *copy;
-	int i;
 
-	copy = xcalloc(1, sizeof(*sys));
-	memcpy(copy, sys, sizeof(*sys));
+	copy = xcalloc(1, sizeof *sys);
+	copy->is_modified = sys->is_modified;
 	copy->graph = graph_copy(sys->graph);
 	copy->sel = sel_copy(sys->sel);
 	copy->visible = sel_copy(sys->visible);
-	copy->atoms = xcalloc(copy->nframes, sizeof(*copy->atoms));
-
-	for (i = 0; i < sys_get_frame_count(sys); i++)
-		copy->atoms[i] = atoms_copy(sys->atoms[i]);
+	copy->atoms = atoms_copy(sys->atoms);
 
 	return (copy);
 }
@@ -394,16 +360,12 @@ sys_copy(struct sys *sys)
 void
 sys_free(struct sys *sys)
 {
-	int i;
-
-	for (i = 0; i < sys_get_frame_count(sys); i++)
-		atoms_free(sys->atoms[i]);
-
-	sel_free(sys->sel);
-	sel_free(sys->visible);
-	graph_free(sys->graph);
-	free(sys->atoms);
-	free(sys);
+	if (sys) {
+		sel_free(sys->sel);
+		sel_free(sys->visible);
+		graph_free(sys->graph);
+		atoms_free(sys->atoms);
+	}
 }
 
 struct graph *
@@ -433,68 +395,53 @@ sys_is_modified(struct sys *sys)
 int
 sys_get_frame(struct sys *sys)
 {
-	return (sys->current_frame);
+	return (atoms_get_frame(sys->atoms));
 }
 
 void
 sys_set_frame(struct sys *sys, int frame)
 {
-	int nframes;
-
-	nframes = sys_get_frame_count(sys);
+	int nframes = sys_get_frame_count(sys);
 
 	if (frame < 0)
 		frame = 0;
+	if (frame > nframes-1)
+		frame = nframes-1;
 
-	if (frame > nframes - 1)
-		frame = nframes - 1;
-
-	sys->current_frame = frame;
+	atoms_set_frame(sys->atoms, frame);
 }
 
 int
 sys_get_frame_count(struct sys *sys)
 {
-	return (sys->nframes);
+	return (atoms_get_frame_count(sys->atoms));
 }
 
 void
 sys_add_atom(struct sys *sys, const char *name, vec_t xyz)
 {
-	int i;
-
-	for (i = 0; i < sys_get_frame_count(sys); i++)
-		atoms_add(sys->atoms[i], name, xyz);
-
+	atoms_add(sys->atoms, name, xyz);
 	graph_vertex_add(sys->graph);
 	sel_expand(sys->sel);
 	sel_expand(sys->visible);
-	sel_add(sys->visible, sel_get_size(sys->visible) - 1);
-
+	sel_add(sys->visible, sel_get_size(sys->visible)-1);
 	sys->is_modified = 1;
 }
 
 void
 sys_remove_atom(struct sys *sys, int idx)
 {
-	int i;
-
-	for (i = 0; i < sys_get_frame_count(sys); i++)
-		atoms_remove(sys->atoms[i], idx);
-
+	atoms_remove(sys->atoms, idx);
 	graph_vertex_remove(sys->graph, idx);
 	sel_contract(sys->sel, idx);
 	sel_contract(sys->visible, idx);
-
 	sys->is_modified = 1;
 }
 
 void
 sys_swap_atoms(struct sys *sys, int i, int j)
 {
-	struct atoms *atoms = sys_get_atoms(sys);
-
-	atoms_swap(atoms, i, j);
+	atoms_swap(sys->atoms, i, j);
 	graph_vertex_swap(sys->graph, i, j);
 	sel_swap(sys->sel, i, j);
 	sel_swap(sys->visible, i, j);
@@ -503,52 +450,38 @@ sys_swap_atoms(struct sys *sys, int i, int j)
 int
 sys_get_atom_count(struct sys *sys)
 {
-	struct atoms *atoms = sys_get_atoms(sys);
-
-	return (atoms_get_count(atoms));
+	return (atoms_get_count(sys->atoms));
 }
 
 const char *
 sys_get_atom_name(struct sys *sys, int idx)
 {
-	struct atoms *atoms = sys_get_atoms(sys);
-
-	return (atoms_get_name(atoms, idx));
+	return (atoms_get_name(sys->atoms, idx));
 }
 
 int
 sys_get_atom_type(struct sys *sys, int idx)
 {
-	struct atoms *atoms = sys_get_atoms(sys);
-
-	return (atoms_get_type(atoms, idx));
+	return (atoms_get_type(sys->atoms, idx));
 }
 
 void
 sys_set_atom_name(struct sys *sys, int idx, const char *name)
 {
-	struct atoms *atoms = sys_get_atoms(sys);
-
-	atoms_set_name(atoms, idx, name);
-
+	atoms_set_name(sys->atoms, idx, name);
 	sys->is_modified = 1;
 }
 
 vec_t
 sys_get_atom_xyz(struct sys *sys, int idx)
 {
-	struct atoms *atoms = sys_get_atoms(sys);
-
-	return (atoms_get_xyz(atoms, idx));
+	return (atoms_get_xyz(sys->atoms, idx));
 }
 
 void
 sys_set_atom_xyz(struct sys *sys, int idx, vec_t xyz)
 {
-	struct atoms *atoms = sys_get_atoms(sys);
-
-	atoms_set_xyz(atoms, idx, xyz);
-
+	atoms_set_xyz(sys->atoms, idx, xyz);
 	sys->is_modified = 1;
 }
 

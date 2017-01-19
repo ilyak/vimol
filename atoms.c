@@ -16,14 +16,9 @@
 
 #include "vimol.h"
 
-struct atom {
-	int type;
-	vec_t xyz;
-};
-
 struct atoms {
-	int nelts, nalloc;
-	struct atom *data;
+	int frame, natoms, nframes, *type;
+	vec_t *xyz;
 };
 
 static const char *elementnames[] = {
@@ -57,9 +52,8 @@ atoms_create(void)
 {
 	struct atoms *atoms;
 
-	atoms = xcalloc(1, sizeof(struct atoms));
-	atoms->nalloc = 8;
-	atoms->data = xcalloc(atoms->nalloc, sizeof(struct atom));
+	atoms = xcalloc(1, sizeof *atoms);
+	atoms->nframes = 1;
 
 	return (atoms);
 }
@@ -68,13 +62,16 @@ struct atoms *
 atoms_copy(struct atoms *atoms)
 {
 	struct atoms *copy;
-	int i;
 
-	copy = atoms_create();
-
-	for (i = 0; i < atoms_get_count(atoms); i++)
-		atoms_add(copy, atoms_get_name(atoms, i),
-		    atoms_get_xyz(atoms, i));
+	copy = xcalloc(1, sizeof *copy);
+	copy->natoms = atoms->natoms;
+	copy->nframes = atoms->nframes;
+	copy->frame = atoms->frame;
+	copy->type = xcalloc(copy->natoms, sizeof *copy->type);
+	memcpy(copy->type, atoms->type, copy->natoms * sizeof *copy->type);
+	copy->xyz = xcalloc(copy->natoms * copy->nframes, sizeof *copy->xyz);
+	memcpy(copy->xyz, atoms->xyz, copy->natoms * copy->nframes *
+	    sizeof *copy->xyz);
 
 	return (copy);
 }
@@ -82,61 +79,123 @@ atoms_copy(struct atoms *atoms)
 void
 atoms_free(struct atoms *atoms)
 {
-	atoms_clear(atoms);
-	free(atoms->data);
-	free(atoms);
+	if (atoms) {
+		free(atoms->type);
+		free(atoms->xyz);
+		free(atoms);
+	}
+}
+
+int
+atoms_get_frame(struct atoms *atoms)
+{
+	return (atoms->frame);
+}
+
+void
+atoms_set_frame(struct atoms *atoms, int frame)
+{
+	assert(frame >= 0 && frame < atoms_get_frame_count(atoms));
+
+	atoms->frame = frame;
+}
+
+int
+atoms_get_frame_count(struct atoms *atoms)
+{
+	return (atoms->nframes);
+}
+
+void
+atoms_add_frame(struct atoms *atoms)
+{
+	atoms->nframes++;
+	atoms->xyz = xrealloc(atoms->xyz,
+	    atoms->natoms * atoms->nframes * sizeof *atoms->xyz);
+
+	if (atoms->frame < atoms->nframes - 2) {
+		memmove(atoms->xyz + atoms->natoms * (atoms->frame + 2),
+		    atoms->xyz + atoms->natoms * (atoms->frame + 1),
+		    atoms->natoms * (atoms->nframes - 2 - atoms->frame) *
+		    sizeof *atoms->xyz);
+	}
+	memcpy(atoms->xyz + atoms->natoms * (atoms->frame + 1),
+	    atoms->xyz + atoms->natoms * atoms->frame,
+	    atoms->natoms * sizeof *atoms->xyz);
+	atoms->frame++;
 }
 
 void
 atoms_add(struct atoms *atoms, const char *name, vec_t xyz)
 {
-	struct atom atom;
+	int i, j;
 
-	atom.type = atoms_name_to_type(name);
-	atom.xyz = xyz;
+	atoms->natoms++;
+	atoms->type = xrealloc(atoms->type,
+	    atoms->natoms * sizeof *atoms->type);
+	atoms->type[atoms->natoms - 1] = atoms_name_to_type(name);
+	atoms->xyz = xrealloc(atoms->xyz,
+	    atoms->natoms * atoms->nframes * sizeof *atoms->xyz);
 
-	if (atoms->nelts == atoms->nalloc) {
-		atoms->nalloc *= 2;
-		atoms->data = xrealloc(atoms->data,
-		    atoms->nalloc * sizeof(struct atom));
+	i = (atoms->natoms - 1) * atoms->nframes - 1;
+	j = atoms->natoms * atoms->nframes - 1;
+	while (j >= 0) {
+		if (j % atoms->natoms == atoms->natoms - 1)
+			atoms->xyz[j--] = xyz;
+		else
+			atoms->xyz[j--] = atoms->xyz[i--];
 	}
-
-	atoms->data[atoms->nelts++] = atom;
 }
 
 void
 atoms_remove(struct atoms *atoms, int idx)
 {
+	int i, j;
+
 	assert(idx >= 0 && idx < atoms_get_count(atoms));
 
-	atoms->nelts--;
-	memmove(atoms->data + idx, atoms->data + idx + 1,
-	    (atoms->nelts - idx) * sizeof(struct atom));
+	for (i = 0, j = 0; i < atoms->natoms * atoms->nframes; i++)
+		if (i % atoms->natoms != idx)
+			atoms->xyz[j++] = atoms->xyz[i];
+	atoms->natoms--;
 }
 
 void
 atoms_swap(struct atoms *atoms, int i, int j)
 {
-	struct atom atom;
+	vec_t xyz;
+	int k, type;
 
 	assert(i >= 0 && i < atoms_get_count(atoms));
 	assert(j >= 0 && j < atoms_get_count(atoms));
 
-	atom = atoms->data[i];
-	atoms->data[i] = atoms->data[j];
-	atoms->data[j] = atom;
+	type = atoms->type[i];
+	atoms->type[i] = atoms->type[j];
+	atoms->type[j] = type;
+
+	for (k = 0; k < atoms->nframes; k++) {
+		xyz = atoms_get_xyz(atoms, i);
+		atoms_set_xyz(atoms, i, atoms_get_xyz(atoms, j));
+		atoms_set_xyz(atoms, j, xyz);
+	}
 }
 
 void
 atoms_clear(struct atoms *atoms)
 {
-	atoms->nelts = 0;
+	atoms->natoms = 0;
+	atoms->nframes = 1;
+	atoms->frame = 0;
+	free(atoms->type);
+	atoms->type = NULL;
+	free(atoms->xyz);
+	atoms->xyz = NULL;
 }
 
 int
 atoms_get_count(struct atoms *atoms)
 {
-	return (atoms->nelts);
+	return (atoms->natoms);
 }
 
 const char *
@@ -144,7 +203,7 @@ atoms_get_name(struct atoms *atoms, int idx)
 {
 	assert(idx >= 0 && idx < atoms_get_count(atoms));
 
-	return (elementnames[atoms->data[idx].type]);
+	return (elementnames[atoms->type[idx]]);
 }
 
 int
@@ -152,7 +211,7 @@ atoms_get_type(struct atoms *atoms, int idx)
 {
 	assert(idx >= 0 && idx < atoms_get_count(atoms));
 
-	return (atoms->data[idx].type);
+	return (atoms->type[idx]);
 }
 
 void
@@ -160,7 +219,7 @@ atoms_set_name(struct atoms *atoms, int idx, const char *name)
 {
 	assert(idx >= 0 && idx < atoms_get_count(atoms));
 
-	atoms->data[idx].type = atoms_name_to_type(name);
+	atoms->type[idx] = atoms_name_to_type(name);
 }
 
 vec_t
@@ -168,7 +227,7 @@ atoms_get_xyz(struct atoms *atoms, int idx)
 {
 	assert(idx >= 0 && idx < atoms_get_count(atoms));
 
-	return (atoms->data[idx].xyz);
+	return (atoms->xyz[atoms->frame * atoms->natoms + idx]);
 }
 
 void
@@ -176,5 +235,5 @@ atoms_set_xyz(struct atoms *atoms, int idx, vec_t xyz)
 {
 	assert(idx >= 0 && idx < atoms_get_count(atoms));
 
-	atoms->data[idx].xyz = xyz;
+	atoms->xyz[atoms->frame * atoms->natoms + idx] = xyz;
 }

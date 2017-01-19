@@ -94,6 +94,10 @@ struct yank;        /* copy-paste buffer */
 struct atoms *atoms_create(void);
 struct atoms *atoms_copy(struct atoms *);
 void atoms_free(struct atoms *);
+int atoms_get_frame(struct atoms *);
+void atoms_set_frame(struct atoms *, int);
+int atoms_get_frame_count(struct atoms *);
+void atoms_add_frame(struct atoms *);
 void atoms_add(struct atoms *, const char *, vec_t);
 void atoms_remove(struct atoms *, int);
 void atoms_swap(struct atoms *, int, int);
