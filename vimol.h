@@ -161,6 +161,10 @@ void error_clear(void);
 int exec_valid(const char *);
 int exec_run(const char *, struct tokq *, struct state *);
 
+/* formats.c */
+struct atoms *formats_load(const char *);
+int formats_save(struct atoms *, const char *);
+
 /* graph.c */
 struct graph *graph_create(void);
 struct graph *graph_copy(struct graph *);

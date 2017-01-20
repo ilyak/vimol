@@ -270,52 +270,6 @@ load_file(struct sys *sys, const char *path)
 	return (0);
 }
 
-static void
-save_to_xyz(struct sys *sys, FILE *fp)
-{
-	vec_t xyz;
-	const char *name;
-	int i, j, frame;
-
-	frame = atoms_get_frame(sys->atoms);
-
-	for (i = 0; i < sys_get_frame_count(sys); i++) {
-		atoms_set_frame(sys->atoms, i);
-		fprintf(fp, "%d\n\n", atoms_get_count(sys->atoms));
-		for (j = 0; j < atoms_get_count(sys->atoms); j++) {
-			name = atoms_get_name(sys->atoms, j);
-			xyz = atoms_get_xyz(sys->atoms, j);
-#define XYZFMT "%-4s %11.6lf %11.6lf %11.6lf"
-			fprintf(fp, XYZFMT, name, xyz.x, xyz.y, xyz.z);
-			fprintf(fp, "\n");
-		}
-	}
-	atoms_set_frame(sys->atoms, frame);
-}
-
-static void
-save_to_pdb(struct sys *sys, FILE *fp)
-{
-	vec_t xyz;
-	const char *name;
-	int i, j, frame;
-
-	frame = atoms_get_frame(sys->atoms);
-
-	for (i = 0; i < sys_get_frame_count(sys); i++) {
-		atoms_set_frame(sys->atoms, i);
-		for (j = 0; j < atoms_get_count(sys->atoms); j++) {
-			name = atoms_get_name(sys->atoms, j);
-			xyz = atoms_get_xyz(sys->atoms, j);
-#define PDBFMT "ATOM  %5d%3s                %8.3lf%8.3lf%8.3lf"
-			fprintf(fp, PDBFMT, j+1, name, xyz.x, xyz.y, xyz.z);
-			fprintf(fp, "\n");
-		}
-		fprintf(fp, "END\n");
-	}
-	atoms_set_frame(sys->atoms, frame);
-}
-
 struct sys *
 sys_create(const char *path)
 {
@@ -688,25 +642,5 @@ sys_reset_bonds(struct sys *sys)
 int
 sys_save_to_file(struct sys *sys, const char *path)
 {
-	FILE *fp;
-
-	if (!string_has_suffix(path, ".xyz") &&
-	    !string_has_suffix(path, ".pdb")) {
-		error_set("\"%s\": unknown file format", path);
-		return (0);
-	}
-
-	if ((fp = fopen(path, "w")) == NULL) {
-		error_set("unable to open \"%s\" for writing", path);
-		return (0);
-	}
-
-	if (string_has_suffix(path, ".xyz"))
-		save_to_xyz(sys, fp);
-	else if (string_has_suffix(path, ".pdb"))
-		save_to_pdb(sys, fp);
-
-	fclose(fp);
-	sys->is_modified = 0;
-	return (1);
+	return (formats_save(sys->atoms, path));
 }
