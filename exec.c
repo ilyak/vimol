@@ -511,31 +511,26 @@ fn_view_move(struct tokq *args, struct state *state)
 }
 
 static int
-fn_set_name(struct tokq *args, struct state *state)
+fn_set_element(struct tokq *args, struct state *state)
 {
 	struct view *view;
-	struct sys *sys;
 	struct sel *sel;
 	const char *name;
 	int idx;
 
-	view = state_get_view(state);
-
 	if (tokq_count(args) < 1) {
-		error_set("specify a name");
+		error_set("specify element name");
 		return (0);
 	}
 
+	view = state_get_view(state);
+	view_snapshot(view);
 	name = tok_string(tokq_tok(args, 0));
 	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
 
-	view_snapshot(view);
-	sys = view_get_sys(view);
-
 	sel_iter_start(sel);
-
 	while (sel_iter_next(sel, &idx))
-		sys_set_atom_name(sys, idx, name);
+		sys_set_atom_name(view_get_sys(view), idx, name);
 
 	sel_free(sel);
 	return (1);
@@ -1654,7 +1649,6 @@ static const struct node {
 	{ "last-window", fn_last_window },
 	{ "measure", fn_measure },
 	{ "move-selection", fn_move_selection },
-	{ "name", fn_set_name },
 	{ "new", fn_new },
 	{ "next-frame", fn_next_frame },
 	{ "next-window", fn_next_window },
@@ -1681,6 +1675,7 @@ static const struct node {
 	{ "select-water", fn_select_water },
 	{ "select-within", fn_select_within },
 	{ "set", fn_set },
+	{ "set-element", fn_set_element },
 	{ "set-frame", fn_set_frame },
 	{ "set-position", fn_set_position },
 	{ "show-filename", fn_show_filename },
