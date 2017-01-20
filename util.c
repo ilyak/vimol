@@ -86,6 +86,20 @@ util_file_exists(const char *path)
 	return (0);
 }
 
+const char *
+util_basename(const char *path)
+{
+	const char *ptr;
+
+	if ((ptr = strrchr(path, '/')) == NULL)
+		if ((ptr = strrchr(path, '\\')) == NULL)
+			ptr = path;
+	if (ptr != path)
+		ptr++;
+
+	return (ptr);
+}
+
 char *
 util_next_line(char *buffer, FILE *fp)
 {

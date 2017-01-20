@@ -352,6 +352,7 @@ int string_is_whitespace(const char *);
 int string_is_comment(const char *);
 int string_has_suffix(const char *, const char *);
 int util_file_exists(const char *);
+const char *util_basename(const char *);
 char *util_next_line(char *, FILE *);
 void warn(const char *, ...);
 void fatal(const char *, ...) __dead;

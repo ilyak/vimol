@@ -138,10 +138,13 @@ set_default_bindings(struct state *state)
 static void
 set_statusbar_text(struct state *state)
 {
+	struct view *view;
 	struct sys *sys;
+	const char *filename;
 	char *buf, *tmp;
 
-	sys = view_get_sys(state_get_view(state));
+	view = state_get_view(state);
+	sys = view_get_sys(view);
 
 	if (state->is_search)
 		statusbar_set_text(state->statusbar, "(search %s ):%s",
@@ -162,13 +165,12 @@ set_statusbar_text(struct state *state)
 		    rec_get_register(state->rec) + 'a');
 		free(tmp);
 	}
-	if (sys_is_modified(sys)) {
-		tmp = buf;
-		xasprintf(&buf, "%s[+] ", tmp);
-		free(tmp);
-	}
+	filename = util_basename(view_get_path(view));
+	if (filename[0] == '\0')
+		filename = "[no name]";
 	tmp = buf;
-	xasprintf(&buf, "%s%d/%d %d/%d", tmp,
+	xasprintf(&buf, "%s%s%s %d/%d %d/%d", tmp, filename,
+	    sys_is_modified(sys) ? "*" : " ",
 	    sys_get_frame(sys) + 1, sys_get_frame_count(sys),
 	    wnd_get_index(state->wnd) + 1, wnd_get_count(state->wnd));
 	free(tmp);
