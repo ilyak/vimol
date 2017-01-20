@@ -96,203 +96,32 @@ get_bond_count(struct graph *graph, int idx)
 	return (count);
 }
 
-static int
-parse_atom_pdb(const char *buf, struct atom *atom)
-{
-	size_t i, j, buflen;
-
-	if ((buflen = strlen(buf)) < 54) {
-		error_set("incorrect pdb atom record format");
-		return (0);
-	}
-
-	memset(atom, 0, sizeof(*atom));
-
-	if (buflen >= 72) {
-		for (i = 70, j = 0; i < 72; i++)
-			if (isalpha(buf[i]))
-				atom->name[j++] = buf[i];
-	}
-
-	if (atom->name[0] == '\0' && buflen >= 78) {
-		for (i = 76, j = 0; i < 78; i++)
-			if (isalpha(buf[i]))
-				atom->name[j++] = buf[i];
-	}
-
-	if (atom->name[0] == '\0') {
-		for (i = 12, j = 0; i < 14; i++)
-			if (isalpha(buf[i]))
-				atom->name[j++] = buf[i];
-	}
-
-	if (atom->name[0] == '\0')
-		atom->name[0] = 'X';
-
-	sscanf(buf+30, "%lf%lf%lf", &atom->xyz.x, &atom->xyz.y, &atom->xyz.z);
-
-	return (1);
-}
-
-static int
-load_from_pdb(struct sys *sys, const char *path)
-{
-	FILE *fp;
-	struct atom atom;
-	char *buffer;
-	int i, newframe = 0;
-
-	if ((fp = fopen(path, "r")) == NULL) {
-		error_set("unable to open %s", path);
-		return (0);
-	}
-
-	buffer = NULL;
-	i = 0;
-
-	while ((buffer = util_next_line(buffer, fp)) != NULL) {
-		if (strncasecmp(buffer, "ATOM  ", 6) == 0 ||
-		    strncasecmp(buffer, "HETATM", 6) == 0) {
-			if (newframe) {
-				atoms_add_frame(sys->atoms);
-				newframe = 0;
-			}
-			if (!parse_atom_pdb(buffer, &atom))
-				goto error;
-			if (sys_get_frame_count(sys) == 1)
-				sys_add_atom(sys, atom.name, atom.xyz);
-			else
-				atoms_set_xyz(sys->atoms, i, atom.xyz);
-			i++;
-		}
-		if (strncasecmp(buffer, "END", 3) == 0) {
-			i = 0;
-			newframe = 1;
-		}
-	}
-
-	fclose(fp);
-	return (1);
-error:
-	free(buffer);
-	fclose(fp);
-	return (0);
-}
-
-static int
-parse_atom_xyz(const char *buffer, struct atom *atom)
-{
-	memset(atom, 0, sizeof(struct atom));
-	sscanf(buffer, "%32s%lf%lf%lf", atom->name, &atom->xyz.x,
-	    &atom->xyz.y, &atom->xyz.z);
-	return (1);
-}
-
-static int
-load_from_xyz(struct sys *sys, const char *path)
-{
-	FILE *fp;
-	char *buffer;
-	struct atom atom;
-	int i, n;
-
-	if ((fp = fopen(path, "r")) == NULL) {
-		error_set("unable to open %s", path);
-		return (0);
-	}
-
-	if ((buffer = util_next_line(NULL, fp)) == NULL) {
-		error_set("unexpected end of file");
-		goto error;
-	}
-
-	if (sscanf(buffer, "%d", &n) != 1 || n < 1) {
-		error_set("unexpected number of atoms");
-		goto error;
-	}
-
-	buffer = util_next_line(buffer, fp);
-
-	for (i = 0; i < n; i++) {
-		if ((buffer = util_next_line(buffer, fp)) == NULL) {
-			error_set("unexpected end of file");
-			goto error;
-		}
-
-		if (!parse_atom_xyz(buffer, &atom))
-			goto error;
-
-		sys_add_atom(sys, atom.name, atom.xyz);
-	}
-
-	while ((buffer = util_next_line(buffer, fp)) != NULL) {
-		if (string_is_whitespace(buffer))
-			continue;
-
-		if (sscanf(buffer, "%d", &n) != 1 ||
-		    n != sys_get_atom_count(sys)) {
-			error_set("unexpected number of atoms");
-			goto error;
-		}
-
-		atoms_add_frame(sys->atoms);
-		buffer = util_next_line(buffer, fp);
-
-		for (i = 0; i < n; i++) {
-			if ((buffer = util_next_line(buffer, fp)) == NULL) {
-				error_set("unexpected end of file");
-				goto error;
-			}
-			if (!parse_atom_xyz(buffer, &atom))
-				goto error;
-			atoms_set_xyz(sys->atoms, i, atom.xyz);
-		}
-	}
-
-	fclose(fp);
-	return (1);
-error:
-	free(buffer);
-	fclose(fp);
-	return (0);
-}
-
-static int
-load_file(struct sys *sys, const char *path)
-{
-	if (string_has_suffix(path, ".pdb"))
-		return (load_from_pdb(sys, path));
-
-	if (string_has_suffix(path, ".xyz"))
-		return (load_from_xyz(sys, path));
-
-	error_set("unknown file type");
-	return (0);
-}
-
 struct sys *
 sys_create(const char *path)
 {
 	struct sys *sys;
+	int i;
 
 	sys = xcalloc(1, sizeof *sys);
 	sys->graph = graph_create();
 	sys->sel = sel_create(0);
 	sys->visible = sel_create(0);
-	sys->atoms = atoms_create();
 
-	if (path == NULL || !util_file_exists(path))
+	if (path == NULL || !util_file_exists(path)) {
+		sys->atoms = atoms_create();
 		return (sys);
-
-	if (!load_file(sys, path)) {
+	}
+	if ((sys->atoms = formats_load(path)) == NULL) {
 		sys_free(sys);
 		return (NULL);
 	}
-
-	sys_set_frame(sys, 0);
+	for (i = 0; i < sys_get_atom_count(sys); i++) {
+		graph_vertex_add(sys->graph);
+		sel_expand(sys->sel);
+		sel_expand(sys->visible);
+		sel_add(sys->visible, sel_get_size(sys->visible) - 1);
+	}
 	sys_reset_bonds(sys);
-	sys->is_modified = 0;
-
 	return (sys);
 }
 

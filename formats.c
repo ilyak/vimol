@@ -22,7 +22,62 @@
 static int
 load_from_pdb(struct atoms *atoms, FILE *fp)
 {
-	return (0);
+	vec_t xyz;
+	int i, j, k = 0, natoms = 0;
+	char *buf = NULL, name[128];
+
+	while ((buf = util_next_line(buf, fp)) != NULL) {
+		if (strncasecmp(buf, "ATOM  ", 6) == 0 ||
+		    strncasecmp(buf, "HETATM", 6) == 0) {
+			if (strlen(buf) < 54) {
+				free(buf);
+				return (0);
+			}
+			memset(name, 0, sizeof name);
+			xyz.x = 0, xyz.y = 0, xyz.z = 0;
+			if (strlen(buf) >= 72) {
+				for (i = 70, j = 0; i < 72; i++)
+					if (isalpha(buf[i]))
+						name[j++] = buf[i];
+			}
+			if (name[0] == '\0' && strlen(buf) >= 78) {
+				for (i = 76, j = 0; i < 78; i++)
+					if (isalpha(buf[i]))
+						name[j++] = buf[i];
+			}
+			if (name[0] == '\0') {
+				for (i = 12, j = 0; i < 14; i++)
+					if (isalpha(buf[i]))
+						name[j++] = buf[i];
+			}
+			if (name[0] == '\0')
+				name[0] = 'X';
+			if (sscanf(buf+30, "%lf%lf%lf",
+			    &xyz.x, &xyz.y, &xyz.z) != 3) {
+				free(buf);
+				return (0);
+			}
+			if (natoms == 0)
+				atoms_add(atoms, name, xyz);
+			else {
+				if (k >= natoms) {
+					free(buf);
+					return (0);
+				}
+				if (k == 0)
+					atoms_add_frame(atoms);
+				atoms_set_xyz(atoms, k++, xyz);
+			}
+		}
+		if (strncasecmp(buf, "END", 3) == 0) {
+			if ((natoms = atoms_get_count(atoms)) < 1) {
+				free(buf);
+				return (0);
+			}
+			k = 0;
+		}
+	}
+	return (1);
 }
 
 static void
@@ -50,7 +105,48 @@ save_to_pdb(struct atoms *atoms, FILE *fp)
 static int
 load_from_xyz(struct atoms *atoms, FILE *fp)
 {
-	return (0);
+	vec_t xyz;
+	int i, natoms;
+	char *buf = NULL, name[128];
+
+	if ((buf = util_next_line(buf, fp)) == NULL)
+		return (0);
+	if (sscanf(buf, "%d", &natoms) != 1 || natoms < 1) {
+		free(buf);
+		return (0);
+	}
+	buf = util_next_line(buf, fp);
+	for (i = 0; i < natoms; i++) {
+		if ((buf = util_next_line(buf, fp)) == NULL)
+			return (0);
+		memset(name, 0, sizeof name);
+		xyz.x = 0, xyz.y = 0, xyz.z = 0;
+		if (sscanf(buf, "%32s%lf%lf%lf", name,
+		    &xyz.x, &xyz.y, &xyz.z) != 4) {
+			free(buf);
+			return (0);
+		}
+		atoms_add(atoms, name, xyz);
+	}
+	while ((buf = util_next_line(buf, fp)) != NULL) {
+		if (string_is_whitespace(buf))
+			continue;
+		buf = util_next_line(buf, fp);
+		atoms_add_frame(atoms);
+		for (i = 0; i < natoms; i++) {
+			if ((buf = util_next_line(buf, fp)) == NULL)
+				return (0);
+			memset(name, 0, sizeof name);
+			xyz.x = 0, xyz.y = 0, xyz.z = 0;
+			if (sscanf(buf, "%32s%lf%lf%lf", name,
+			    &xyz.x, &xyz.y, &xyz.z) != 4) {
+				free(buf);
+				return (0);
+			}
+			atoms_set_xyz(atoms, i, xyz);
+		}
+	}
+	return (1);
 }
 
 static void
@@ -111,6 +207,7 @@ formats_load(const char *path)
 			} else {
 				atoms_free(atoms);
 				fclose(fp);
+				error_set("unexpected file content");
 				return (NULL);
 			}
 		}
