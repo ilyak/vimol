@@ -30,7 +30,7 @@ static const struct {
 	{ "Z", "" },
 	{ "shift-A", "" },
 	{ "shift-B", "" },
-	{ "shift-C", "view-center-selection; view-fit-selection" },
+	{ "shift-C", "view-fit-selection" },
 	{ "shift-D", "" },
 	{ "shift-E", "" },
 	{ "shift-F", "view-rotate 0 0 -10" },

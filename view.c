@@ -413,7 +413,6 @@ view_reset(struct view *view)
 
 	sel_all(all);
 	camera_reset(view->camera);
-	view_center_sel(view, all);
 	view_fit_sel(view, all);
 	sel_free(all);
 }
@@ -421,13 +420,13 @@ view_reset(struct view *view)
 void
 view_center_sel(struct view *view, struct sel *sel)
 {
-	vec_t xyz;
+	vec_t center;
 
 	if (sel_get_count(sel) == 0)
 		return;
 
-	xyz = sys_get_sel_center(view_get_sys(view), sel);
-	camera_move_to(view->camera, xyz);
+	center = sys_get_sel_center(view_get_sys(view), sel);
+	camera_move_to(view->camera, center);
 }
 
 void
@@ -443,10 +442,10 @@ view_fit_sel(struct view *view, struct sel *sel)
 
 	sys = view_get_sys(view);
 	center = sys_get_sel_center(sys, sel);
-
+	camera_move_to(view->camera, center);
 	camera_set_radius(view->camera, 1.0);
-	sel_iter_start(sel);
 
+	sel_iter_start(sel);
 	while (sel_iter_next(sel, &idx)) {
 		xyz = sys_get_atom_xyz(sys, idx);
 		radius = vec_dist(&xyz, &center);
