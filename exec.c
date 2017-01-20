@@ -1140,34 +1140,6 @@ fn_select(struct tokq *args, struct state *state)
 }
 
 static int
-fn_select_bonded(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct graph *graph;
-	struct graphedge *edge;
-	struct sel *visible;
-	struct sel *sel;
-	int i;
-
-	view = state_get_view(state);
-	graph = view_get_graph(view);
-	visible = view_get_visible(view);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
-	sel_iter_start(sel);
-
-	while (sel_iter_next(sel, &i)) {
-		for (edge = graph_get_edges(graph, i); edge;
-		    edge = graph_edge_next(edge))
-			if (sel_selected(visible, graph_edge_j(edge)))
-				sel_add(view_get_sel(view), graph_edge_j(edge));
-	}
-
-	sel_free(sel);
-	return (1);
-}
-
-static int
 fn_select_box(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -1668,7 +1640,6 @@ static const struct node {
 	{ "ring", fn_ring },
 	{ "rotate-selection", fn_rotate_selection },
 	{ "select", fn_select },
-	{ "select-bonded", fn_select_bonded },
 	{ "select-box", fn_select_box },
 	{ "select-element", fn_select_element },
 	{ "select-molecule", fn_select_molecule },
