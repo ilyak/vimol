@@ -115,7 +115,8 @@ load_from_xyz(struct atoms *atoms, FILE *fp)
 		free(buf);
 		return (0);
 	}
-	buf = util_next_line(buf, fp);
+	if ((buf = util_next_line(buf, fp)) == NULL)
+		return (0);
 	for (i = 0; i < natoms; i++) {
 		if ((buf = util_next_line(buf, fp)) == NULL)
 			return (0);
@@ -131,7 +132,8 @@ load_from_xyz(struct atoms *atoms, FILE *fp)
 	while ((buf = util_next_line(buf, fp)) != NULL) {
 		if (string_is_whitespace(buf))
 			continue;
-		buf = util_next_line(buf, fp);
+		if ((buf = util_next_line(buf, fp)) == NULL)
+			return (0);
 		atoms_add_frame(atoms);
 		for (i = 0; i < natoms; i++) {
 			if ((buf = util_next_line(buf, fp)) == NULL)
