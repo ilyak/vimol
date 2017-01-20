@@ -16,11 +16,6 @@
 
 #include "vimol.h"
 
-struct atom {
-	char name[64];
-	vec_t xyz;
-};
-
 struct sys {
 	int is_modified;
 	struct graph *graph;
