@@ -42,7 +42,7 @@ static const struct {
 	{ "shift-L", "view-move 0.1 0 0" },
 	{ "shift-M", "" },
 	{ "shift-N", "" },
-	{ "shift-O", "toggle statusbar.visible" },
+	{ "shift-O", "set-position" },
 	{ "shift-P", "" },
 	{ "shift-Q", "quit!" },
 	{ "shift-R", "rec a" },
