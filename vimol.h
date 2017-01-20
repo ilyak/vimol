@@ -22,6 +22,7 @@
 #define _GNU_SOURCE /* for vasprintf on linux */
 #include <assert.h>
 #include <ctype.h>
+#include <errno.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stddef.h>
