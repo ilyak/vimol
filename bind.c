@@ -63,13 +63,14 @@ bind_free(struct bind *bind)
 {
 	int i;
 
-	for (i = 0; i < bind->nelts; i++) {
-		free(bind->data[i].name);
-		free(bind->data[i].value);
+	if (bind) {
+		for (i = 0; i < bind->nelts; i++) {
+			free(bind->data[i].name);
+			free(bind->data[i].value);
+		}
+		free(bind->data);
+		free(bind);
 	}
-
-	free(bind->data);
-	free(bind);
 }
 
 int
