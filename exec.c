@@ -1337,23 +1337,13 @@ fn_set(struct tokq *args, struct state *state __unused)
 }
 
 static int
-fn_show_selection(struct tokq *args, struct state *state)
+fn_show_all(struct tokq *args __unused, struct state *state)
 {
 	struct view *view;
-	struct sel *visible;
-	struct sel *sel;
-	int idx;
 
 	view = state_get_view(state);
-	visible = view_get_visible(view);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
+	sel_all(view_get_visible(view));
 
-	sel_iter_start(sel);
-
-	while (sel_iter_next(sel, &idx))
-		sel_add(visible, idx);
-
-	sel_free(sel);
 	return (1);
 }
 
@@ -1624,7 +1614,7 @@ static const struct node {
 	{ "set-element", fn_set_element },
 	{ "set-frame", fn_set_frame },
 	{ "set-position", fn_set_position },
-	{ "show-selection", fn_show_selection },
+	{ "show-all", fn_show_all },
 	{ "source", fn_source },
 	{ "toggle", fn_toggle },
 	{ "undo", fn_undo },

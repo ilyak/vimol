@@ -49,7 +49,7 @@ static const struct {
 	{ "shift-S", "" },
 	{ "shift-T", "" },
 	{ "shift-U", "" },
-	{ "shift-V", "show-selection *" },
+	{ "shift-V", "show-all" },
 	{ "shift-W", "select-water" },
 	{ "shift-X", "copy-selection a; delete-selection" },
 	{ "shift-Y", "" },
