@@ -703,9 +703,8 @@ fn_measure(struct tokq *args, struct state *state)
 	struct view *view;
 	struct sys *sys;
 	struct sel *sel;
-	vec_t pa, pb, pc, pd;
-	double val;
-	int a, b, c, d;
+	vec_t p[4];
+	int a[4], i;
 
 	view = state_get_view(state);
 	sys = view_get_sys(view);
@@ -713,39 +712,32 @@ fn_measure(struct tokq *args, struct state *state)
 
 	if (sel_get_count(sel) < 1 || sel_get_count(sel) > 4) {
 		sel_free(sel);
-		error_set("specify 1, 2, 3, or 4 atoms");
+		error_set("select 1, 2, 3, or 4 atoms");
 		return (0);
 	}
-
 	sel_iter_start(sel);
-	sel_iter_next(sel, &a);
-	pa = sys_get_atom_xyz(sys, a);
-	error_set("%d position: %.3lf %.3lf %.3lf", a+1, pa.x, pa.y, pa.z);
-
-	if (sel_get_count(sel) == 1)
-		goto done;
-
-	sel_iter_next(sel, &b);
-	pb = sys_get_atom_xyz(sys, b);
-	val = vec_dist(&pa, &pb);
-	error_set("%d-%d distance: %.3lf", a+1, b+1, val);
-
-	if (sel_get_count(sel) == 2)
-		goto done;
-
-	sel_iter_next(sel, &c);
-	pc = sys_get_atom_xyz(sys, c);
-	val = vec_angle(&pa, &pb, &pc) * 180 / PI;
-	error_set("%d-%d-%d angle: %.3lf", a+1, b+1, c+1, val);
-
-	if (sel_get_count(sel) == 3)
-		goto done;
-
-	sel_iter_next(sel, &d);
-	pd = sys_get_atom_xyz(sys, d);
-	val = vec_torsion(&pa, &pb, &pc, &pd) * 180 / PI;
-	error_set("%d-%d-%d-%d torsion: %.3lf", a+1, b+1, c+1, d+1, val);
-done:
+	for (i = 0; i < sel_get_count(sel); i++) {
+		sel_iter_next(sel, &a[i]);
+		p[i] = sys_get_atom_xyz(sys, a[i]);
+	}
+	switch (sel_get_count(sel)) {
+	case 1:
+		error_set("%d position: %.3lf %.3lf %.3lf", a[0]+1,
+		    p[0].x, p[0].y, p[0].z);
+		break;
+	case 2:
+		error_set("%d-%d distance: %.3lf", a[0]+1, a[1]+1,
+		    vec_dist(&p[0], &p[1]));
+		break;
+	case 3:
+		error_set("%d-%d-%d angle: %.3lf", a[0]+1, a[1]+1, a[2]+1,
+		    vec_angle(&p[0], &p[1], &p[2]) * 180 / PI);
+		break;
+	case 4:
+		error_set("%d-%d-%d-%d torsion: %.3lf", a[0]+1, a[1]+1, a[2]+1,
+		    a[3]+1, vec_torsion(&p[0], &p[1], &p[2], &p[3]) * 180 / PI);
+		break;
+	}
 	sel_free(sel);
 	return (1);
 }
