@@ -1246,7 +1246,7 @@ fn_select_water(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_select_within(struct tokq *args, struct state *state)
+fn_select_sphere(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -1599,8 +1599,8 @@ static const struct node {
 	{ "select-box", fn_select_box },
 	{ "select-element", fn_select_element },
 	{ "select-molecule", fn_select_molecule },
+	{ "select-sphere", fn_select_sphere },
 	{ "select-water", fn_select_water },
-	{ "select-within", fn_select_within },
 	{ "set", fn_set },
 	{ "set-element", fn_set_element },
 	{ "set-frame", fn_set_frame },
