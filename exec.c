@@ -985,7 +985,7 @@ fn_view_rotate(struct tokq *args, struct state *state)
 }
 
 static int
-fn_save(struct tokq *args, struct state *state)
+fn_write(struct tokq *args, struct state *state)
 {
 	struct view *view;
 	struct sys *sys;
@@ -1492,7 +1492,8 @@ static const struct node {
 	{ "view-reset", fn_view_reset },
 	{ "view-rotate", fn_view_rotate },
 	{ "view-zoom", fn_view_zoom },
-	{ "w", fn_save },
+	{ "w", fn_write },
+	{ "write", fn_write },
 };
 static const size_t nexeclist = sizeof execlist / sizeof *execlist;
 
