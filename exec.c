@@ -493,7 +493,6 @@ fn_invert_selection(struct tokq *args, struct state *state)
 	}
 
 	sel_free(sel);
-
 	return (1);
 }
 
