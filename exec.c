@@ -838,58 +838,6 @@ fn_redo(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_reload(struct tokq *args __unused, struct state *state)
-{
-	struct wnd *wnd;
-	const char *path;
-
-	wnd = state_get_wnd(state);
-
-	if (wnd_is_modified(wnd)) {
-		error_set("save changes or add ! to override");
-		return (0);
-	}
-
-	path = view_get_path(wnd_get_view(wnd));
-
-	if (path[0] == '\0') {
-		error_set("no file name");
-		return (0);
-	}
-
-	if (!wnd_open(wnd, path))
-		return (0);
-
-	wnd_prev(wnd);
-	wnd_close(wnd);
-
-	return (1);
-}
-
-static int
-fn_force_reload(struct tokq *args __unused, struct state *state)
-{
-	struct wnd *wnd;
-	const char *path;
-
-	wnd = state_get_wnd(state);
-	path = view_get_path(wnd_get_view(wnd));
-
-	if (path[0] == '\0') {
-		error_set("no file name");
-		return (0);
-	}
-
-	if (!wnd_open(wnd, path))
-		return (0);
-
-	wnd_prev(wnd);
-	wnd_close(wnd);
-
-	return (1);
-}
-
-static int
 fn_reset_bonds(struct tokq *args, struct state *state)
 {
 	struct view *view;
@@ -1589,8 +1537,6 @@ static const struct node {
 	{ "quit!", fn_force_quit },
 	{ "rec", fn_rec },
 	{ "redo", fn_redo },
-	{ "reload", fn_reload },
-	{ "reload!", fn_force_reload },
 	{ "replay", fn_replay },
 	{ "reset-bonds", fn_reset_bonds },
 	{ "ring", fn_ring },
