@@ -1255,7 +1255,7 @@ fn_select_within(struct tokq *args, struct state *state)
 	struct spi *spi;
 	struct pair pair;
 	double radius;
-	int idx, n_pairs;
+	int idx, npairs;
 
 	if (tokq_count(args) < 1)
 		return (0);
@@ -1272,7 +1272,7 @@ fn_select_within(struct tokq *args, struct state *state)
 		spi_add_point(spi, sys_get_atom_xyz(sys, idx));
 
 	spi_compute(spi, radius);
-	n_pairs = spi_get_pair_count(spi);
+	npairs = spi_get_pair_count(spi);
 
 	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
 
@@ -1282,7 +1282,7 @@ fn_select_within(struct tokq *args, struct state *state)
 		if (sel_selected(visible, idx))
 			sel_add(view_get_sel(view), idx);
 
-	for (idx = 0; idx < n_pairs; idx++) {
+	for (idx = 0; idx < npairs; idx++) {
 		pair = spi_get_pair(spi, idx);
 
 		if (!sel_selected(visible, pair.i) ||
