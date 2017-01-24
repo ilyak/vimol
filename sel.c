@@ -63,8 +63,10 @@ sel_copy(struct sel *sel)
 void
 sel_free(struct sel *sel)
 {
-	free(sel->data);
-	free(sel);
+	if (sel) {
+		free(sel->data);
+		free(sel);
+	}
 }
 
 int

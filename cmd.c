@@ -130,11 +130,12 @@ cmdq_free(struct cmdq *cmdq)
 {
 	int i;
 
-	for (i = 0; i < cmdq->nelts; i++) {
-		free(cmdq->data[i].name);
-		tokq_free(cmdq->data[i].args);
+	if (cmdq) {
+		for (i = 0; i < cmdq->nelts; i++) {
+			free(cmdq->data[i].name);
+			tokq_free(cmdq->data[i].args);
+		}
+		free(cmdq->data);
+		free(cmdq);
 	}
-
-	free(cmdq->data);
-	free(cmdq);
 }

@@ -37,8 +37,7 @@ camera_create(void)
 void
 camera_free(struct camera *camera)
 {
-	if (camera)
-		free(camera);
+	free(camera);
 }
 
 void

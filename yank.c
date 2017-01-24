@@ -47,12 +47,13 @@ yank_free(struct yank *yank)
 {
 	int i;
 
-	for (i = 0; i < YANK_SIZE; i++) {
-		atoms_free(yank->tuple[i].atoms);
-		graph_free(yank->tuple[i].graph);
+	if (yank) {
+		for (i = 0; i < YANK_SIZE; i++) {
+			atoms_free(yank->tuple[i].atoms);
+			graph_free(yank->tuple[i].graph);
+		}
+		free(yank);
 	}
-
-	free(yank);
 }
 
 void

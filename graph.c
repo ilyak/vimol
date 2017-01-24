@@ -77,11 +77,12 @@ graph_free(struct graph *graph)
 {
 	int i;
 
-	for (i = 0; i < graph_get_vertex_count(graph); i++)
-		graph_remove_vertex_edges(graph, i);
-
-	free(graph->edges);
-	free(graph);
+	if (graph) {
+		for (i = 0; i < graph_get_vertex_count(graph); i++)
+			graph_remove_vertex_edges(graph, i);
+		free(graph->edges);
+		free(graph);
+	}
 }
 
 void

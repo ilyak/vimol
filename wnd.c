@@ -69,16 +69,17 @@ wnd_free(struct wnd *wnd)
 {
 	struct node *node;
 
-	wnd_first(wnd);
-
-	while (wnd->iter) {
-		node = wnd->iter;
-		wnd->iter = wnd->iter->next;
-		view_free(node->view);
-		free(node);
+	if (wnd) {
+		while (wnd->iter->prev)
+			wnd->iter = wnd->iter->prev;
+		while (wnd->iter) {
+			node = wnd->iter;
+			wnd->iter = wnd->iter->next;
+			view_free(node->view);
+			free(node);
+		}
+		free(wnd);
 	}
-
-	free(wnd);
 }
 
 struct view *

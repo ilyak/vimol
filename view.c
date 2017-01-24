@@ -329,10 +329,12 @@ view_create(const char *path)
 void
 view_free(struct view *view)
 {
-	camera_free(view->camera);
-	undo_free(view->undo);
-	free(view->path);
-	free(view);
+	if (view) {
+		camera_free(view->camera);
+		undo_free(view->undo);
+		free(view->path);
+		free(view);
+	}
 }
 
 struct camera *

@@ -162,11 +162,12 @@ tokq_free(struct tokq *tokq)
 {
 	int i;
 
-	for (i = 0; i < tokq_count(tokq); i++)
-		free(tokq->data[i]);
-
-	free(tokq->data);
-	free(tokq);
+	if (tokq) {
+		for (i = 0; i < tokq_count(tokq); i++)
+			free(tokq->data[i]);
+		free(tokq->data);
+		free(tokq);
+	}
 }
 
 char *

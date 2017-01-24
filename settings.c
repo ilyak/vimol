@@ -301,12 +301,13 @@ settings_free(void)
 {
 	int i;
 
-	for (i = 0; i < settings->nelts; i++)
-		if (settings->data[i].type == NODE_TYPE_STRING)
-			free(settings->data[i].data.xstring);
-
-	free(settings->data);
-	free(settings);
+	if (settings) {
+		for (i = 0; i < settings->nelts; i++)
+			if (settings->data[i].type == NODE_TYPE_STRING)
+				free(settings->data[i].data.xstring);
+		free(settings->data);
+		free(settings);
+	}
 }
 
 int

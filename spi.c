@@ -138,9 +138,11 @@ spi_create(void)
 void
 spi_free(struct spi *spi)
 {
-	pairs_free(spi->pairs);
-	free(spi->points);
-	free(spi);
+	if (spi) {
+		pairs_free(spi->pairs);
+		free(spi->points);
+		free(spi);
+	}
 }
 
 void

@@ -42,10 +42,11 @@ rec_free(struct rec *rec)
 {
 	int i;
 
-	for (i = 0; i < REC_SIZE; i++)
-		free(rec->data[i]);
-
-	free(rec);
+	if (rec) {
+		for (i = 0; i < REC_SIZE; i++)
+			free(rec->data[i]);
+		free(rec);
+	}
 }
 
 int

@@ -36,8 +36,10 @@ pairs_create(void)
 void
 pairs_free(struct pairs *pairs)
 {
-	free(pairs->data);
-	free(pairs);
+	if (pairs) {
+		free(pairs->data);
+		free(pairs);
+	}
 }
 
 void

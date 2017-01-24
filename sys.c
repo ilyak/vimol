@@ -143,6 +143,7 @@ sys_free(struct sys *sys)
 		sel_free(sys->visible);
 		graph_free(sys->graph);
 		atoms_free(sys->atoms);
+		free(sys);
 	}
 }
 

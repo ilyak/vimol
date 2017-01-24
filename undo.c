@@ -58,11 +58,12 @@ undo_create(void *data, void *(*copy)(void *), void (*free)(void *))
 void
 undo_free(struct undo *undo)
 {
-	while (undo->iter->prev)
-		undo->iter = undo->iter->prev;
-
-	free_all(undo, undo->iter);
-	free(undo);
+	if (undo) {
+		while (undo->iter->prev)
+			undo->iter = undo->iter->prev;
+		free_all(undo, undo->iter);
+		free(undo);
+	}
 }
 
 void *

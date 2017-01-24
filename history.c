@@ -37,12 +37,13 @@ history_create(void)
 void
 history_free(struct history *history)
 {
-	history_reset_current(history);
+	int i;
 
-	while (history_prev(history))
-		free(history->list[history->current]);
-
-	free(history);
+	if (history) {
+		for (i = 0; i < HIST_SIZE; i++)
+			free(history->list[history->current]);
+		free(history);
+	}
 }
 
 void
