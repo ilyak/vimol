@@ -1443,6 +1443,8 @@ static const struct node {
 	{ "bind", fn_bind },
 	{ "bond", fn_bond },
 	{ "chain", fn_chain },
+	{ "clo", fn_close },
+	{ "clo!", fn_force_close },
 	{ "close", fn_close },
 	{ "close!", fn_force_close },
 	{ "copy-selection", fn_copy_selection },
