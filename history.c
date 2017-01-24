@@ -41,7 +41,7 @@ history_free(struct history *history)
 
 	if (history) {
 		for (i = 0; i < HIST_SIZE; i++)
-			free(history->list[history->current]);
+			free(history->list[i]);
 		free(history);
 	}
 }
