@@ -459,16 +459,18 @@ state_create(void)
 void
 state_free(struct state *state)
 {
-	bind_free(state->bind);
-	edit_free(state->edit);
-	history_free(state->history);
-	rec_free(state->rec);
-	statusbar_free(state->statusbar);
-	wnd_free(state->wnd);
-	yank_free(state->yank);
-	cairo_destroy(state->cairo);
-	SDL_DestroyWindow(state->window);
-	free(state);
+	if (state) {
+		bind_free(state->bind);
+		edit_free(state->edit);
+		history_free(state->history);
+		rec_free(state->rec);
+		statusbar_free(state->statusbar);
+		wnd_free(state->wnd);
+		yank_free(state->yank);
+		cairo_destroy(state->cairo);
+		SDL_DestroyWindow(state->window);
+		free(state);
+	}
 }
 
 struct bind *
