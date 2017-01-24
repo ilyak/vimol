@@ -1430,76 +1430,6 @@ fn_view_zoom(struct tokq *args, struct state *state)
 	return (1);
 }
 
-static int
-fn_wrap(struct tokq *args, struct state *state)
-{
-	struct view *view;
-	struct sys *sys;
-	struct graph *graph;
-	struct sel *current, *wrapped;
-	vec_t p1, p2, cell, dr, xyz;
-	int i, j;
-
-	view = state_get_view(state);
-
-	if (tokq_count(args) < 1) {
-		error_set("specify cell dimensions");
-		return (0);
-	}
-
-	if (tokq_count(args) < 4) {
-		p1 = vec_zero();
-		p2 = parse_vec(args, 0);
-	} else {
-		p1 = parse_vec(args, 0);
-		p2 = parse_vec(args, 3);
-	}
-
-	cell = vec_sub(&p2, &p1);
-
-	if (cell.x <= 0 || cell.y <= 0 || cell.z <= 0) {
-		error_set("cell dimensions must be positive");
-		return (0);
-	}
-
-	view_snapshot(view);
-	sys = view_get_sys(view);
-	graph = view_get_graph(view);
-
-	current = sel_create(sys_get_atom_count(sys));
-	wrapped = sel_create(sys_get_atom_count(sys));
-
-	for (i = 0; i < sys_get_atom_count(sys); i++) {
-		if (sel_selected(wrapped, i))
-			continue;
-
-		sel_clear(current);
-		select_connected(graph, i, current);
-
-		dr = sys_get_sel_center(sys, current);
-
-		if (sel_get_count(current) > 0) {
-			dr.x = p1.x + cell.x * floor(dr.x / cell.x);
-			dr.y = p1.y + cell.y * floor(dr.y / cell.y);
-			dr.z = p1.z + cell.z * floor(dr.z / cell.z);
-		}
-
-		sel_iter_start(current);
-
-		while (sel_iter_next(current, &j)) {
-			xyz = sys_get_atom_xyz(sys, j);
-			xyz = vec_sub(&xyz, &dr);
-			sys_set_atom_xyz(sys, j, xyz);
-			sel_add(wrapped, j);
-		}
-	}
-
-	sel_free(current);
-	sel_free(wrapped);
-
-	return (1);
-}
-
 typedef int (*exec_fn_t)(struct tokq *, struct state *);
 
 /* this list MUST remain sorted */
@@ -1563,7 +1493,6 @@ static const struct node {
 	{ "view-rotate", fn_view_rotate },
 	{ "view-zoom", fn_view_zoom },
 	{ "w", fn_save },
-	{ "wrap", fn_wrap },
 };
 static const size_t nexeclist = sizeof execlist / sizeof *execlist;
 
