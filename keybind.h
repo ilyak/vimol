@@ -2,7 +2,7 @@ static const struct {
 	const char *key;
 	const char *command;
 } keys[] = {
-	{ "A", "" },
+	{ "A", "add-hydrogens" },
 	{ "B", "bond" },
 	{ "C", "view-center-selection" },
 	{ "D", "delete-selection" },
