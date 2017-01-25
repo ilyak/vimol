@@ -550,10 +550,7 @@ fn_new(struct tokq *args, struct state *state)
 static int
 fn_first_window(struct tokq *args __unused, struct state *state)
 {
-	struct wnd *wnd;
-
-	wnd = state_get_wnd(state);
-	wnd_first(wnd);
+	wnd_first(state_get_wnd(state));
 
 	return (1);
 }
@@ -561,10 +558,7 @@ fn_first_window(struct tokq *args __unused, struct state *state)
 static int
 fn_last_window(struct tokq *args __unused, struct state *state)
 {
-	struct wnd *wnd;
-
-	wnd = state_get_wnd(state);
-	wnd_last(wnd);
+	wnd_last(state_get_wnd(state));
 
 	return (1);
 }
@@ -572,30 +566,20 @@ fn_last_window(struct tokq *args __unused, struct state *state)
 static int
 fn_prev_window(struct tokq *args __unused, struct state *state)
 {
-	struct wnd *wnd;
-
-	wnd = state_get_wnd(state);
-
-	if (!wnd_prev(wnd)) {
+	if (!wnd_prev(state_get_wnd(state))) {
 		error_set("no previous window");
 		return (0);
 	}
-
 	return (1);
 }
 
 static int
 fn_next_window(struct tokq *args __unused, struct state *state)
 {
-	struct wnd *wnd;
-
-	wnd = state_get_wnd(state);
-
-	if (!wnd_next(wnd)) {
+	if (!wnd_next(state_get_wnd(state))) {
 		error_set("no next window");
 		return (0);
 	}
-
 	return (1);
 }
 
@@ -818,21 +802,6 @@ fn_rec(struct tokq *args, struct state *state)
 	}
 
 	rec_start(rec);
-
-	return (1);
-}
-
-static int
-fn_redo(struct tokq *args __unused, struct state *state)
-{
-	struct view *view;
-
-	view = state_get_view(state);
-
-	if (!view_redo(view)) {
-		error_set("already at newest change");
-		return (0);
-	}
 
 	return (1);
 }
@@ -1325,16 +1294,11 @@ fn_group(struct tokq *args, struct state *state)
 static int
 fn_source(struct tokq *args, struct state *state)
 {
-	const char *path;
-
 	if (tokq_count(args) < 1) {
 		error_set("specify a file");
 		return (0);
 	}
-
-	path = tok_string(tokq_tok(args, 0));
-
-	return (state_source(state, path));
+	return (state_source(state, tok_string(tokq_tok(args, 0))));
 }
 
 static int
@@ -1360,15 +1324,20 @@ fn_toggle(struct tokq *args, struct state *state __unused)
 static int
 fn_undo(struct tokq *args __unused, struct state *state)
 {
-	struct view *view;
-
-	view = state_get_view(state);
-
-	if (!view_undo(view)) {
+	if (!view_undo(state_get_view(state))) {
 		error_set("already at oldest change");
 		return (0);
 	}
+	return (1);
+}
 
+static int
+fn_redo(struct tokq *args __unused, struct state *state)
+{
+	if (!view_redo(state_get_view(state))) {
+		error_set("already at newest change");
+		return (0);
+	}
 	return (1);
 }
 
