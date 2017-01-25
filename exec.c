@@ -134,7 +134,6 @@ fn_add_hydrogens(struct tokq *args, struct state *state)
 
 	view_snapshot(view);
 	sys_add_hydrogens(view_get_sys(view), sel);
-
 	sel_free(sel);
 
 	return (1);
@@ -286,7 +285,6 @@ fn_close(struct tokq *args __unused, struct state *state)
 		error_set("save changes or add ! to override");
 		return (0);
 	}
-
 	return (wnd_close(wnd));
 }
 
