@@ -610,7 +610,7 @@ static int
 fn_replay(struct tokq *args, struct state *state)
 {
 	struct rec *rec;
-	int i, reg, repeat;
+	int i, repeat, reg = 0;
 
 	rec = state_get_rec(state);
 
@@ -622,18 +622,15 @@ fn_replay(struct tokq *args, struct state *state)
 		return (0);
 	}
 
-	if (tokq_count(args) > 0) {
+	if (tokq_count(args) > 0)
 		if ((reg = parse_register(tokq_tok(args, 0))) == -1)
 			return (0);
-
-		rec_set_register(rec, reg);
-	}
 
 	if ((repeat = state_get_repeat(state)) <= 0)
 		repeat = 1;
 
 	for (i = 0; i < repeat; i++)
-		if (!rec_play(rec, state))
+		if (!rec_play(rec, reg, state))
 			return (0);
 	return (1);
 }
@@ -775,7 +772,7 @@ static int
 fn_rec(struct tokq *args, struct state *state)
 {
 	struct rec *rec;
-	int reg;
+	int reg = 0;
 
 	rec = state_get_rec(state);
 
@@ -787,14 +784,11 @@ fn_rec(struct tokq *args, struct state *state)
 		return (1);
 	}
 
-	if (tokq_count(args) > 0) {
+	if (tokq_count(args) > 0)
 		if ((reg = parse_register(tokq_tok(args, 0))) == -1)
 			return (0);
 
-		rec_set_register(rec, reg);
-	}
-
-	rec_start(rec);
+	rec_start(rec, reg);
 
 	return (1);
 }

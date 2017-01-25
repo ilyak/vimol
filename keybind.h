@@ -45,7 +45,7 @@ static const struct {
 	{ "shift-O", "set-position" },
 	{ "shift-P", "" },
 	{ "shift-Q", "quit!" },
-	{ "shift-R", "rec a" },
+	{ "shift-R", "rec" },
 	{ "shift-S", "" },
 	{ "shift-T", "" },
 	{ "shift-U", "" },

@@ -213,13 +213,12 @@ void rec_free(struct rec *);
 int rec_is_playing(struct rec *);
 int rec_is_recording(struct rec *);
 int rec_get_register(struct rec *);
-void rec_set_register(struct rec *, int);
 void rec_load(struct rec *, const char *);
 void rec_save(struct rec *, const char *);
-void rec_start(struct rec *);
+void rec_start(struct rec *, int);
 void rec_add(struct rec *, const char *);
 void rec_stop(struct rec *);
-int rec_play(struct rec *, struct state *);
+int rec_play(struct rec *, int, struct state *);
 
 /* sel.c */
 struct sel *sel_create(int);

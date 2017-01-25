@@ -17,9 +17,7 @@
 #include "vimol.h"
 
 struct rec {
-	int is_playing;
-	int is_recording;
-	int reg;
+	int is_playing, reg;
 	char *data[REC_SIZE];
 };
 
@@ -29,7 +27,8 @@ rec_create(void)
 	struct rec *rec;
 	int i;
 
-	rec = xcalloc(1, sizeof(*rec));
+	rec = xcalloc(1, sizeof *rec);
+	rec->reg = -1;
 
 	for (i = 0; i < REC_SIZE; i++)
 		rec->data[i] = xstrdup("");
@@ -58,22 +57,15 @@ rec_is_playing(struct rec *rec)
 int
 rec_is_recording(struct rec *rec)
 {
-	return (rec->is_recording);
+	return (rec->reg != -1);
 }
 
 int
 rec_get_register(struct rec *rec)
 {
+	assert(rec->reg != -1);
+
 	return (rec->reg);
-}
-
-void
-rec_set_register(struct rec *rec, int reg)
-{
-	assert(reg >= 0 && reg < REC_SIZE);
-	assert(!rec->is_recording);
-
-	rec->reg = reg;
 }
 
 void
@@ -114,12 +106,13 @@ rec_save(struct rec *rec, const char *path)
 }
 
 void
-rec_start(struct rec *rec)
+rec_start(struct rec *rec, int reg)
 {
-	assert(!rec->is_recording);
+	assert(reg >= 0 && reg < REC_SIZE);
+	assert(rec->reg == -1);
 
-	rec->data[rec->reg][0] = '\0';
-	rec->is_recording = 1;
+	rec->reg = reg;
+	rec->data[reg][0] = '\0';
 }
 
 void
@@ -127,7 +120,7 @@ rec_add(struct rec *rec, const char *add)
 {
 	char *s, *p;
 
-	assert(rec->is_recording);
+	assert(rec->reg != -1);
 
 	s = rec->data[rec->reg];
 
@@ -143,19 +136,20 @@ rec_add(struct rec *rec, const char *add)
 void
 rec_stop(struct rec *rec)
 {
-	assert(rec->is_recording);
+	assert(rec->reg != -1);
 
-	rec->is_recording = 0;
+	rec->reg = -1;
 }
 
 int
-rec_play(struct rec *rec, struct state *state)
+rec_play(struct rec *rec, int reg, struct state *state)
 {
 	struct cmdq *cmdq;
 
-	assert(!rec->is_recording && !rec->is_playing);
+	assert(reg >= 0 && reg < REC_SIZE);
+	assert(rec->reg == -1 && !rec->is_playing);
 
-	if ((cmdq = cmdq_from_string(rec->data[rec->reg])) == NULL)
+	if ((cmdq = cmdq_from_string(rec->data[reg])) == NULL)
 		return (0);
 
 	rec->is_playing = 1;
