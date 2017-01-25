@@ -180,13 +180,6 @@ sys_get_frame(struct sys *sys)
 void
 sys_set_frame(struct sys *sys, int frame)
 {
-	int nframes = sys_get_frame_count(sys);
-
-	if (frame < 0)
-		frame = 0;
-	if (frame > nframes-1)
-		frame = nframes-1;
-
 	atoms_set_frame(sys->atoms, frame);
 }
 

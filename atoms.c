@@ -95,8 +95,10 @@ atoms_get_frame(struct atoms *atoms)
 void
 atoms_set_frame(struct atoms *atoms, int frame)
 {
-	assert(frame >= 0 && frame < atoms_get_frame_count(atoms));
-
+	if (frame < 0)
+		frame = 0;
+	if (frame >= atoms->nframes)
+		frame = atoms->nframes - 1;
 	atoms->frame = frame;
 }
 
