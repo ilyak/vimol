@@ -92,6 +92,17 @@ int
 wnd_open(struct wnd *wnd, const char *path)
 {
 	struct node *node;
+	struct view *view;
+
+	assert(path);
+
+	if (path[0] != '\0' && view_is_new(wnd->iter->view)) {
+		if ((view = view_create(path)) == NULL)
+			return (0);
+		view_free(wnd->iter->view);
+		wnd->iter->view = view;
+		return (1);
+	}
 
 	if ((node = create_node(path)) == NULL)
 		return (0);

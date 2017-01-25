@@ -383,6 +383,12 @@ view_set_path(struct view *view, const char *path)
 }
 
 int
+view_is_new(struct view *view)
+{
+	return (view->path[0] == '\0' && !view_is_modified(view));
+}
+
+int
 view_is_modified(struct view *view)
 {
 	return (sys_is_modified(view_get_sys(view)));

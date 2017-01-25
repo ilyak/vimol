@@ -41,8 +41,6 @@ main(int argc, char **argv)
 			    error_get());
 
 	wnd_first(wnd);
-	wnd_close(wnd);
-
 	state_source(state, settings_get_string("rc.path"));
 	state_event_loop(state);
 
