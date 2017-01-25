@@ -147,14 +147,9 @@ fn_atom(struct tokq *args, struct state *state)
 	const char *name;
 	vec_t xyz;
 
-	view = state_get_view(state);
-
-	if (tokq_count(args) < 1)
-		name = "X";
-	else
-		name = tok_string(tokq_tok(args, 0));
-
+	name = tokq_count(args) < 1 ? "X" : tok_string(tokq_tok(args, 0));
 	xyz = parse_vec(args, 1);
+	view = state_get_view(state);
 	view_snapshot(view);
 	sys_add_atom(view_get_sys(view), name, xyz);
 
