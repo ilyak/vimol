@@ -447,9 +447,6 @@ state_create(void)
 
 	set_default_bindings(state);
 
-	path = settings_get_string("rec.path");
-	rec_load(state->rec, path);
-
 	path = settings_get_string("history.path");
 	history_load(state->history, path);
 
@@ -613,7 +610,4 @@ state_save(struct state *state)
 
 	path = settings_get_string("history.path");
 	history_save(state->history, path);
-
-	path = settings_get_string("rec.path");
-	rec_save(state->rec, path);
 }
