@@ -154,6 +154,8 @@ atoms_remove(struct atoms *atoms, int idx)
 
 	assert(idx >= 0 && idx < atoms_get_count(atoms));
 
+	for (i = idx; i < atoms->natoms - 1; i++)
+		atoms->type[i] = atoms->type[i + 1];
 	for (i = 0, j = 0; i < atoms->natoms * atoms->nframes; i++)
 		if (i % atoms->natoms != idx)
 			atoms->xyz[j++] = atoms->xyz[i];
