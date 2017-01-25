@@ -26,12 +26,6 @@ struct cmdq {
 	struct cmd *data;
 };
 
-static int
-cmd_exec(struct cmd *cmd, struct state *state)
-{
-	return (exec_run(cmd->name, cmd->args, state));
-}
-
 static void
 cmdq_push_back(struct cmdq *cmdq, struct cmd cmd)
 {
@@ -116,11 +110,14 @@ cmdq_validate_string(const char *str)
 int
 cmdq_exec(struct cmdq *cmdq, struct state *state)
 {
+	struct cmd *cmd;
 	int i;
 
-	for (i = 0; i < cmdq->nelts; i++)
-		if (!cmd_exec(&cmdq->data[i], state))
+	for (i = 0; i < cmdq->nelts; i++) {
+		cmd = &cmdq->data[i];
+		if (!exec_run(cmd->name, cmd->args, state))
 			return (0);
+	}
 
 	return (1);
 }
