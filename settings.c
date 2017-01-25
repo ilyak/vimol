@@ -127,7 +127,7 @@ add_data_path(void)
 	prefix = SDL_GetPrefPath("", "vimol");
 
 	snprintf(path, sizeof path, "%svimolrc", prefix);
-	add_node("rc.path", NODE_TYPE_STRING, path);
+	add_node("vimolrc.path", NODE_TYPE_STRING, path);
 
 	snprintf(path, sizeof path, "%shistory", prefix);
 	add_node("history.path", NODE_TYPE_STRING, path);
