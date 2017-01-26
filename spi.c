@@ -46,8 +46,8 @@ calc_box(struct spi *spi, vec_t *pmin, vec_t *pmax)
 	vec_t xyz;
 	int i;
 
-	*pmin = vec_xyz( 1.0e100,  1.0e100,  1.0e100);
-	*pmax = vec_xyz(-1.0e100, -1.0e100, -1.0e100);
+	*pmin = vec_new( 1.0e100,  1.0e100,  1.0e100);
+	*pmax = vec_new(-1.0e100, -1.0e100, -1.0e100);
 
 	for (i = 0; i < spi_get_point_count(spi); i++) {
 		xyz = spi_get_point(spi, i);

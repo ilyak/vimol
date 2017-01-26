@@ -16,7 +16,7 @@ typedef struct {
 } mat_t;
 
 vec_t vec_zero(void);
-vec_t vec_xyz(double, double, double);
+vec_t vec_new(double, double, double);
 vec_t vec_random(void);
 vec_t vec_add(const vec_t *, const vec_t *);
 vec_t vec_sub(const vec_t *, const vec_t *);

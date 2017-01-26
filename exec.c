@@ -247,8 +247,8 @@ fn_chain(struct tokq *args, struct state *state)
 	rotmat = camera_get_rotation(view_get_camera(view));
 	rotmat = mat_transpose(&rotmat);
 
-	dr1 = vec_xyz(1.336, 0.0, 0.0);
-	dr2 = vec_xyz(0.0, 0.766, 0.0);
+	dr1 = vec_new(1.336, 0.0, 0.0);
+	dr2 = vec_new(0.0, 0.766, 0.0);
 	dr1 = mat_vec(&rotmat, &dr1);
 	dr2 = mat_vec(&rotmat, &dr2);
 

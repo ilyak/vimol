@@ -29,7 +29,7 @@ vec_zero(void)
 }
 
 vec_t
-vec_xyz(double x, double y, double z)
+vec_new(double x, double y, double z)
 {
 	vec_t vec;
 
