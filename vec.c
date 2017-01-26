@@ -96,11 +96,11 @@ vec_normalize(vec_t *vec)
 double
 vec_len(const vec_t *a)
 {
-	return (sqrt(vec_len_2(a)));
+	return (sqrt(vec_lensq(a)));
 }
 
 double
-vec_len_2(const vec_t *a)
+vec_lensq(const vec_t *a)
 {
 	return (a->x * a->x + a->y * a->y + a->z * a->z);
 }
@@ -108,11 +108,11 @@ vec_len_2(const vec_t *a)
 double
 vec_dist(const vec_t *a, const vec_t *b)
 {
-	return (sqrt(vec_dist_2(a, b)));
+	return (sqrt(vec_distsq(a, b)));
 }
 
 double
-vec_dist_2(const vec_t *a, const vec_t *b)
+vec_distsq(const vec_t *a, const vec_t *b)
 {
 	vec_t vec;
 
@@ -120,7 +120,7 @@ vec_dist_2(const vec_t *a, const vec_t *b)
 	vec.y = a->y - b->y;
 	vec.z = a->z - b->z;
 
-	return (vec_len_2(&vec));
+	return (vec_lensq(&vec));
 }
 
 double
@@ -147,8 +147,8 @@ vec_angle(const vec_t *a, const vec_t *b, const vec_t *c)
 	vec_t ab = vec_sub(a, b);
 	vec_t cb = vec_sub(c, b);
 
-	double r2ab = vec_len_2(&ab);
-	double r2cb = vec_len_2(&cb);
+	double r2ab = vec_lensq(&ab);
+	double r2cb = vec_lensq(&cb);
 
 	return (acos(vec_dot(&ab, &cb) / sqrt(r2ab * r2cb)));
 }
@@ -163,8 +163,8 @@ vec_torsion(const vec_t *a, const vec_t *b, const vec_t *c, const vec_t *d)
 	vec_t t = vec_cross(&ba, &cb);
 	vec_t u = vec_cross(&cb, &dc);
 
-	double r2t = vec_len_2(&t);
-	double r2u = vec_len_2(&u);
+	double r2t = vec_lensq(&t);
+	double r2u = vec_lensq(&u);
 
 	return (acos(vec_dot(&t, &u) / sqrt(r2t * r2u)));
 }

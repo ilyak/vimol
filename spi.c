@@ -96,7 +96,7 @@ calc_self(struct spi *spi, double dist, struct cell *c1)
 			xyz_i = spi_get_point(spi, c1->data[i]);
 			xyz_j = spi_get_point(spi, c1->data[j]);
 
-			if (vec_dist_2(&xyz_i, &xyz_j) < r2)
+			if (vec_distsq(&xyz_i, &xyz_j) < r2)
 				pairs_add(spi->pairs, c1->data[i], c1->data[j]);
 		}
 	}
@@ -116,7 +116,7 @@ calc_cell(struct spi *spi, double dist, struct cell *c1, struct cell *c2)
 			xyz_i = spi_get_point(spi, c1->data[i]);
 			xyz_j = spi_get_point(spi, c2->data[j]);
 
-			if (vec_dist_2(&xyz_i, &xyz_j) < r2)
+			if (vec_distsq(&xyz_i, &xyz_j) < r2)
 				pairs_add(spi->pairs, c1->data[i], c2->data[j]);
 		}
 	}
