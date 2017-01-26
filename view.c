@@ -415,14 +415,13 @@ view_snapshot(struct view *view)
 void
 view_reset(struct view *view)
 {
-	struct sel *all;
+	struct sel *sel;
 
-	all = sel_create(sys_get_atom_count(view_get_sys(view)));
-
-	sel_all(all);
+	sel = sel_create(sys_get_atom_count(view_get_sys(view)));
+	sel_all(sel);
 	camera_reset(view->camera);
-	view_fit_sel(view, all);
-	sel_free(all);
+	view_fit_sel(view, sel);
+	sel_free(sel);
 }
 
 void
