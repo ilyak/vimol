@@ -794,7 +794,7 @@ fn_rec(struct tokq *args, struct state *state)
 }
 
 static int
-fn_reset_bonds(struct tokq *args, struct state *state)
+fn_reset_bonds(struct tokq *args __unused, struct state *state)
 {
 	struct view *view;
 
