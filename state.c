@@ -57,7 +57,7 @@ create_window(struct state *state)
 }
 
 static int
-window_size_changed(struct state *state)
+window_is_resized(struct state *state)
 {
 	SDL_Surface *sdl_surface;
 	cairo_surface_t *cairo_surface;
@@ -95,7 +95,7 @@ create_cairo(struct state *state)
 	if (cairo_status(state->cairo) != CAIRO_STATUS_SUCCESS)
 		fatal("unable to create cairo object");
 
-	/* cairo_create references cairo_surface so deref here */
+	/* cairo_create references cairo_surface, so deref here */
 	cairo_surface_destroy(cairo_surface);
 }
 
@@ -106,8 +106,8 @@ state_blit(struct state *state)
 	cairo_surface_t *cairo_surface;
 	unsigned char *data;
 
-	assert(!window_size_changed(state));
-
+	if (window_is_resized(state))
+		fatal("unexpected window size");
 	if ((cairo_surface = cairo_get_target(state->cairo)) == NULL)
 		fatal("cairo_get_target");
 	if ((sdl_surface = SDL_GetWindowSurface(state->window)) == NULL)
@@ -539,7 +539,7 @@ state_render(struct state *state)
 {
 	int pos;
 
-	if (window_size_changed(state))
+	if (window_is_resized(state))
 		create_cairo(state);
 
 	if (!state->is_search && !state->is_input)
