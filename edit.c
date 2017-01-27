@@ -26,7 +26,7 @@ edit_create(void)
 {
 	struct edit *edit;
 
-	edit = xcalloc(1, sizeof(*edit));
+	edit = xcalloc(1, sizeof *edit);
 
 	return (edit);
 }
@@ -70,7 +70,7 @@ edit_set_text(struct edit *edit, const char *fmt, ...)
 	va_list ap;
 
 	va_start(ap, fmt);
-	edit->len = vsnprintf(edit->text, sizeof(edit->text), fmt, ap);
+	edit->len = vsnprintf(edit->text, sizeof edit->text, fmt, ap);
 	va_end(ap);
 
 	edit->pos = edit->len;
@@ -81,7 +81,7 @@ edit_insert_char(struct edit *edit, char ch)
 {
 	int i;
 
-	if (edit->len == sizeof(edit->text) - 1)
+	if (edit->len + 1 == sizeof edit->text)
 		return;
 
 	for (i = edit->len + 1; i > edit->pos; i--)

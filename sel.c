@@ -32,9 +32,9 @@ sel_create(int size)
 {
 	struct sel *sel;
 
-	sel = xcalloc(1, sizeof(*sel));
+	sel = xcalloc(1, sizeof *sel);
 	sel->nalloc = 8;
-	sel->data = xcalloc(sel->nalloc, sizeof(struct node));
+	sel->data = xcalloc(sel->nalloc, sizeof *sel->data);
 	sel->head = sel->tail = sel->iter = -1;
 
 	while (size > 0) {
@@ -87,7 +87,7 @@ sel_expand(struct sel *sel)
 	if (sel->nelts == sel->nalloc) {
 		sel->nalloc *= 2;
 		sel->data = xrealloc(sel->data,
-		    sel->nalloc * sizeof(struct node));
+		    sel->nalloc * sizeof *sel->data);
 	}
 	sel->data[sel->nelts].prev = -1;
 	sel->data[sel->nelts].next = -1;
@@ -107,7 +107,7 @@ sel_contract(struct sel *sel, int idx)
 	sel->nelts--;
 
 	memmove(sel->data + idx, sel->data + idx + 1,
-	    (sel->nelts - idx) * sizeof(struct node));
+	    (sel->nelts - idx) * sizeof *sel->data);
 
 	if (sel->head > idx) sel->head--;
 	if (sel->tail > idx) sel->tail--;

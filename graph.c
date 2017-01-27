@@ -46,9 +46,9 @@ graph_create(void)
 {
 	struct graph *graph;
 
-	graph = xcalloc(1, sizeof(*graph));
+	graph = xcalloc(1, sizeof *graph);
 	graph->nalloc = 8;
-	graph->edges = xcalloc(graph->nalloc, sizeof(struct graphedge *));
+	graph->edges = xcalloc(graph->nalloc, sizeof *graph->edges);
 
 	return (graph);
 }
@@ -102,7 +102,7 @@ graph_vertex_add(struct graph *graph)
 	if (graph->nelts == graph->nalloc) {
 		graph->nalloc *= 2;
 		graph->edges = xrealloc(graph->edges,
-		    graph->nalloc * sizeof(struct graphedge *));
+		    graph->nalloc * sizeof *graph->edges);
 	}
 	graph->edges[graph->nelts] = NULL;
 	graph->nelts++;
@@ -119,7 +119,7 @@ graph_vertex_remove(struct graph *graph, int idx)
 	graph->nelts--;
 
 	memmove(graph->edges + idx, graph->edges + idx + 1,
-	    (graph->nelts - idx) * sizeof(struct graphedge *));
+	    (graph->nelts - idx) * sizeof *graph->edges);
 
 	for (i = 0; i < graph_get_vertex_count(graph); i++) {
 		for (edge = graph->edges[i]; edge; edge = edge->next) {
@@ -200,8 +200,8 @@ graph_edge_create(struct graph *graph, int i, int j, int type)
 		return;
 	}
 
-	edge_i = xcalloc(1, sizeof(struct graphedge));
-	edge_j = xcalloc(1, sizeof(struct graphedge));
+	edge_i = xcalloc(1, sizeof *edge_i);
+	edge_j = xcalloc(1, sizeof *edge_j);
 
 	edge_i->i = i;
 	edge_i->j = j;

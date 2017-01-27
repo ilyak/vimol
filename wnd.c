@@ -31,7 +31,7 @@ create_node(const char *path)
 {
 	struct node *node;
 
-	node = xcalloc(1, sizeof(*node));
+	node = xcalloc(1, sizeof *node);
 
 	if ((node->view = view_create(path)) == NULL) {
 		free(node);
@@ -58,7 +58,7 @@ wnd_create(void)
 {
 	struct wnd *wnd;
 
-	wnd = xcalloc(1, sizeof(*wnd));
+	wnd = xcalloc(1, sizeof *wnd);
 	wnd->iter = create_node("");
 
 	return (wnd);

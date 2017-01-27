@@ -28,7 +28,7 @@ history_create(void)
 {
 	struct history *history;
 
-	history = xcalloc(1, sizeof(*history));
+	history = xcalloc(1, sizeof *history);
 	history_reset_current(history);
 
 	return (history);

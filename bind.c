@@ -43,7 +43,7 @@ bind_find_node(struct bind *bind, const char *name)
 	node.name = (char *)name;
 
 	return (bsearch(&node, bind->data, bind->nelts,
-	    sizeof(struct node), compare));
+	    sizeof node, compare));
 }
 
 struct bind *
@@ -51,9 +51,9 @@ bind_create(void)
 {
 	struct bind *bind;
 
-	bind = xcalloc(1, sizeof(*bind));
+	bind = xcalloc(1, sizeof *bind);
 	bind->nalloc = 8;
-	bind->data = xcalloc(bind->nalloc, sizeof(struct node));
+	bind->data = xcalloc(bind->nalloc, sizeof *bind->data);
 
 	return (bind);
 }
@@ -94,10 +94,10 @@ bind_set(struct bind *bind, const char *name, const char *value)
 		if (bind->nelts == bind->nalloc) {
 			bind->nalloc *= 2;
 			bind->data = xrealloc(bind->data,
-			    bind->nalloc * sizeof(struct node));
+			    bind->nalloc * sizeof *bind->data);
 		}
 		memmove(bind->data + i + 1, bind->data + i,
-		    (bind->nelts - i) * sizeof(struct node));
+		    (bind->nelts - i) * sizeof *bind->data);
 		bind->nelts++;
 	}
 

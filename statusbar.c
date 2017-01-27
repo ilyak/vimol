@@ -28,7 +28,7 @@ statusbar_create(void)
 {
 	struct statusbar *statusbar;
 
-	statusbar = xcalloc(1, sizeof(*statusbar));
+	statusbar = xcalloc(1, sizeof *statusbar);
 
 	return (statusbar);
 }
@@ -53,7 +53,7 @@ statusbar_set_text(struct statusbar *statusbar, const char *fmt, ...)
 	statusbar->is_error = 0;
 
 	va_start(ap, fmt);
-	vsnprintf(statusbar->text, sizeof(statusbar->text), fmt, ap);
+	vsnprintf(statusbar->text, sizeof statusbar->text, fmt, ap);
 	va_end(ap);
 }
 
@@ -65,7 +65,7 @@ statusbar_set_error(struct statusbar *statusbar, const char *fmt, ...)
 	statusbar->is_error = 1;
 
 	va_start(ap, fmt);
-	vsnprintf(statusbar->text, sizeof(statusbar->text), fmt, ap);
+	vsnprintf(statusbar->text, sizeof statusbar->text, fmt, ap);
 	va_end(ap);
 }
 
@@ -87,7 +87,7 @@ statusbar_set_info_text(struct statusbar *statusbar, const char *fmt, ...)
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsnprintf(statusbar->info, sizeof(statusbar->info), fmt, ap);
+	vsnprintf(statusbar->info, sizeof statusbar->info, fmt, ap);
 	va_end(ap);
 }
 

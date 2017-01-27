@@ -204,7 +204,7 @@ render_ids(struct view *view, cairo_t *cairo)
 	point_t pos;
 	double size;
 	int idx;
-	char buffer[32];
+	char buf[BUFSIZ];
 	const char *font;
 
 	color = settings_get_color("id.color");
@@ -226,9 +226,9 @@ render_ids(struct view *view, cairo_t *cairo)
 		    sys_get_atom_xyz(sys, idx));
 
 		if (cairo_in_clip(cairo, pos.x, pos.y)) {
-			snprintf(buffer, sizeof(buffer), "%d", idx + 1);
+			snprintf(buf, sizeof buf, "%d", idx + 1);
 			cairo_move_to(cairo, pos.x + 6, pos.y + 10);
-			cairo_show_text(cairo, buffer);
+			cairo_show_text(cairo, buf);
 		}
 	}
 }
@@ -315,7 +315,7 @@ view_create(const char *path)
 	if ((sys = sys_create(path)) == NULL)
 		return (NULL);
 
-	view = xcalloc(1, sizeof(*view));
+	view = xcalloc(1, sizeof *view);
 	view->camera = camera_create();
 	view->undo = undo_create(sys, (void *(*)(void *))sys_copy,
 	    (void (*)(void *))sys_free);

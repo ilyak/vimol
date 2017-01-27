@@ -24,7 +24,7 @@ error_set(const char *fmt, ...)
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsnprintf(error, sizeof(error), fmt, ap);
+	vsnprintf(error, sizeof error, fmt, ap);
 	va_end(ap);
 }
 

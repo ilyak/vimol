@@ -32,7 +32,7 @@ cmdq_push_back(struct cmdq *cmdq, struct cmd cmd)
 	if (cmdq->nelts == cmdq->nalloc) {
 		cmdq->nalloc *= 2;
 		cmdq->data = xrealloc(cmdq->data,
-		    cmdq->nalloc * sizeof(struct cmd));
+		    cmdq->nalloc * sizeof *cmdq->data);
 	}
 	cmdq->data[cmdq->nelts++] = cmd;
 }
@@ -82,9 +82,9 @@ cmdq_from_string(const char *str)
 	if ((tokq = tokq_create(str)) == NULL)
 		return (NULL);
 
-	cmdq = xcalloc(1, sizeof(*cmdq));
+	cmdq = xcalloc(1, sizeof *cmdq);
 	cmdq->nalloc = 8;
-	cmdq->data = xcalloc(cmdq->nalloc, sizeof(struct cmd));
+	cmdq->data = xcalloc(cmdq->nalloc, sizeof *cmdq->data);
 
 	if (!parse_tokq(cmdq, tokq)) {
 		cmdq_free(cmdq);

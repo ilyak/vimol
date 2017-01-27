@@ -1474,7 +1474,7 @@ exec_find(const char *name)
 	node.name = name;
 
 	return (bsearch(&node, execlist, nexeclist,
-	    sizeof(struct node), compare));
+	    sizeof node, compare));
 }
 
 int

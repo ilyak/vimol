@@ -26,9 +26,9 @@ pairs_create(void)
 {
 	struct pairs *pairs;
 
-	pairs = xcalloc(1, sizeof(*pairs));
+	pairs = xcalloc(1, sizeof *pairs);
 	pairs->nalloc = 8;
-	pairs->data = xcalloc(pairs->nalloc, sizeof(struct pair));
+	pairs->data = xcalloc(pairs->nalloc, sizeof *pairs->data);
 
 	return (pairs);
 }
@@ -54,7 +54,7 @@ pairs_add(struct pairs *pairs, int i, int j)
 	if (pairs->nelts == pairs->nalloc) {
 		pairs->nalloc *= 2;
 		pairs->data = xrealloc(pairs->data,
-		    pairs->nalloc * sizeof(struct pair));
+		    pairs->nalloc * sizeof *pairs->data);
 	}
 	pairs->data[pairs->nelts].i = i;
 	pairs->data[pairs->nelts].j = j;

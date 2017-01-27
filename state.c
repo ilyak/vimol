@@ -431,9 +431,7 @@ state_create(void)
 	struct state *state;
 	const char *path;
 
-	if ((state = xcalloc(1, sizeof(*state))) == NULL)
-		return (NULL);
-
+	state = xcalloc(1, sizeof *state);
 	state->bind = bind_create();
 	state->edit = edit_create();
 	state->history = history_create();
@@ -579,7 +577,7 @@ state_quit(struct state *state, int force_quit)
 {
 	SDL_Event event;
 
-	memset(&event, 0, sizeof(event));
+	memset(&event, 0, sizeof event);
 	event.type = SDL_QUIT;
 
 	SDL_PushEvent(&event);

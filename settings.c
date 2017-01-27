@@ -62,7 +62,7 @@ find_node(const char *name)
 	node.name = name;
 
 	return (bsearch(&node, settings->data, settings->nelts,
-	    sizeof(struct node), compare));
+	    sizeof node, compare));
 }
 
 static int
@@ -110,9 +110,9 @@ add_node(const char *name, enum node_type type, const char *default_value)
 	if (settings->nalloc == settings->nelts) {
 		settings->nalloc *= 2;
 		settings->data = xrealloc(settings->data,
-		    settings->nalloc * sizeof(struct node));
+		    settings->nalloc * sizeof *settings->data);
 	}
-	memset(&settings->data[settings->nelts], 0, sizeof(struct node));
+	memset(&settings->data[settings->nelts], 0, sizeof *settings->data);
 	settings->data[settings->nelts].name = name;
 	settings->data[settings->nelts].type = type;
 	set_from_string(settings->data + settings->nelts, default_value);
@@ -139,7 +139,7 @@ static const struct {
 	const char *name;
 	enum node_type type;
 	const char *default_value;
-} node_list[] = {
+} nodelist[] = {
 	{ "atom.size", NODE_TYPE_DOUBLE, "8.0" },
 	{ "atom.visible", NODE_TYPE_BOOL, "true" },
 	{ "bg.color", NODE_TYPE_COLOR, "0 0 0" },
@@ -271,23 +271,24 @@ static const struct {
 	{ "color.no", NODE_TYPE_COLOR, "189 13 135" },
 	{ "color.lr", NODE_TYPE_COLOR, "201 0 102" },
 };
+static const size_t nnodelist = sizeof nodelist / sizeof *nodelist;
 
 void
 settings_init(void)
 {
 	size_t i;
 
-	settings = xcalloc(1, sizeof(struct settings));
+	settings = xcalloc(1, sizeof *settings);
 	settings->nalloc = 8;
-	settings->data = xcalloc(settings->nalloc, sizeof(struct node));
+	settings->data = xcalloc(settings->nalloc, sizeof *settings->data);
 
 	add_data_path();
 
-	for (i = 0; i < sizeof node_list / sizeof *node_list; i++)
-		add_node(node_list[i].name, node_list[i].type,
-		    node_list[i].default_value);
+	for (i = 0; i < nnodelist; i++)
+		add_node(nodelist[i].name, nodelist[i].type,
+		    nodelist[i].default_value);
 
-	qsort(settings->data, settings->nelts, sizeof(struct node), compare);
+	qsort(settings->data, settings->nelts, sizeof *settings->data, compare);
 }
 
 void
