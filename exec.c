@@ -279,21 +279,17 @@ fn_chain(struct tokq *args, struct state *state)
 static int
 fn_close(struct tokq *args __unused, struct state *state)
 {
-	struct wnd *wnd = state_get_wnd(state);
-
-	if (wnd_is_modified(wnd)) {
+	if (wnd_is_modified(state_get_wnd(state))) {
 		error_set("save changes or add ! to override");
 		return (0);
 	}
-	return (wnd_close(wnd));
+	return (wnd_close(state_get_wnd(state)));
 }
 
 static int
 fn_force_close(struct tokq *args __unused, struct state *state)
 {
-	struct wnd *wnd = state_get_wnd(state);
-
-	return (wnd_close(wnd));
+	return (wnd_close(state_get_wnd(state)));
 }
 
 static int
@@ -1401,6 +1397,8 @@ static const struct node {
 	{ "chain", fn_chain },
 	{ "clo", fn_close },
 	{ "clo!", fn_force_close },
+	{ "clos", fn_close },
+	{ "clos!", fn_force_close },
 	{ "close", fn_close },
 	{ "close!", fn_force_close },
 	{ "copy-selection", fn_copy_selection },
