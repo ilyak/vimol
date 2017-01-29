@@ -25,10 +25,11 @@ select_connected(struct graph *graph, int idx, struct sel *sel)
 		return;
 
 	sel_add(sel, idx);
-
-	for (edge = graph_get_edges(graph, idx); edge;
-	    edge = graph_edge_next(edge))
+	edge = graph_get_edges(graph, idx);
+	while (edge) {
 		select_connected(graph, graph_edge_j(edge), sel);
+		edge = graph_edge_next(edge);
+	}
 }
 
 static struct sel *
