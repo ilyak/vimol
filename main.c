@@ -30,9 +30,7 @@ main(int argc, char **argv)
 
 	SDL_StopTextInput();
 
-	if ((state = state_create()) == NULL)
-		fatal("unable to create a program state");
-
+	state = state_create();
 	wnd = state_get_wnd(state);
 
 	for (idx = 1; idx < argc; idx++)
