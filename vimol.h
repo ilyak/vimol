@@ -381,7 +381,7 @@ struct wnd *wnd_create(void);
 void wnd_free(struct wnd *);
 struct view *wnd_get_view(struct wnd *);
 int wnd_open(struct wnd *, const char *);
-int wnd_close(struct wnd *);
+int wnd_close(struct wnd *, int);
 int wnd_is_modified(struct wnd *);
 int wnd_any_modified(struct wnd *);
 int wnd_next(struct wnd *);

@@ -280,17 +280,13 @@ fn_chain(struct tokq *args, struct state *state)
 static int
 fn_close(struct tokq *args __unused, struct state *state)
 {
-	if (wnd_is_modified(state_get_wnd(state))) {
-		error_set("save changes or add ! to override");
-		return (0);
-	}
-	return (wnd_close(state_get_wnd(state)));
+	return (wnd_close(state_get_wnd(state), 0));
 }
 
 static int
 fn_force_close(struct tokq *args __unused, struct state *state)
 {
-	return (wnd_close(state_get_wnd(state)));
+	return (wnd_close(state_get_wnd(state), 1));
 }
 
 static int

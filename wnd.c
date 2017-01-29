@@ -114,11 +114,14 @@ wnd_open(struct wnd *wnd, const char *path)
 }
 
 int
-wnd_close(struct wnd *wnd)
+wnd_close(struct wnd *wnd, int force)
 {
-	struct node *node;
+	struct node *node = wnd->iter;
 
-	node = wnd->iter;
+	if (!force && wnd_is_modified(wnd)) {
+		error_set("save changes or add ! to override");
+		return (0);
+	}
 
 	if (node->next == NULL && node->prev == NULL) {
 		error_set("cannot close last window");
