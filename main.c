@@ -25,8 +25,8 @@ main(int argc, char **argv)
 
 	settings_init();
 
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-		fatal("cannot initialize SDL");
+	if (SDL_Init(SDL_INIT_VIDEO))
+		fatal("SDL_Init: %s", SDL_GetError());
 
 	SDL_StopTextInput();
 
