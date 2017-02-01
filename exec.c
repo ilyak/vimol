@@ -364,16 +364,12 @@ static int
 fn_next_frame(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
-	struct sys *sys;
-	int n;
+	struct sys *sys = view_get_sys(view);
+	int n = 1;
 
-	sys = view_get_sys(view);
-	if (tokq_count(args) < 1)
-		return (0);
-	if ((n = tok_int(tokq_tok(args, 0))) == 0)
-		return (0);
-	n = sys_get_frame(sys) + n;
-	sys_set_frame(sys, n);
+	if (tokq_count(args) > 0)
+		n = tok_int(tokq_tok(args, 0));
+	sys_set_frame(sys, sys_get_frame(sys) + n);
 	return (1);
 }
 
