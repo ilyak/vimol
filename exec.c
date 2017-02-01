@@ -232,7 +232,7 @@ fn_chain(struct tokq *args, struct state *state)
 	int i, cnt, natoms;
 
 	if (tokq_count(args) < 1) {
-		error_set("specify number of atoms in chain");
+		error_set("specify number of atoms in the chain");
 		return (0);
 	}
 	if ((cnt = tok_int(tokq_tok(args, 0))) < 1) {
