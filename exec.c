@@ -218,15 +218,14 @@ fn_chain(struct tokq *args, struct state *state)
 	struct sys *sys;
 	mat_t rotmat;
 	vec_t u, v, xyz;
-	int i, cnt, natoms;
+	int i, natoms, nchain = 4;
 
-	if (tokq_count(args) < 1) {
-		error_set("specify number of atoms in the chain");
-		return (0);
-	}
-	if ((cnt = tok_int(tokq_tok(args, 0))) < 1) {
-		error_set("specify a positive number");
-		return (0);
+	if (tokq_count(args) > 0) {
+		nchain = tok_int(tokq_tok(args, 0));
+		if (nchain < 1) {
+			error_set("specify a positive number");
+			return (0);
+		}
 	}
 	view_snapshot(view);
 	sys = view_get_sys(view);
@@ -237,10 +236,10 @@ fn_chain(struct tokq *args, struct state *state)
 	v = vec_new(0.0, 0.766, 0.0);
 	u = mat_vec(&rotmat, &u);
 	v = mat_vec(&rotmat, &v);
-	xyz.x = -(u.x * (cnt - 1) + v.x) / 2;
-	xyz.y = -(u.y * (cnt - 1) + v.y) / 2;
-	xyz.z = -(u.z * (cnt - 1) + v.z) / 2;
-	for (i = 0; i < cnt; i++) {
+	xyz.x = -(u.x * (nchain - 1) + v.x) / 2;
+	xyz.y = -(u.y * (nchain - 1) + v.y) / 2;
+	xyz.z = -(u.z * (nchain - 1) + v.z) / 2;
+	for (i = 0; i < nchain; i++) {
 		sys_add_atom(sys, "C", xyz);
 		xyz = vec_add(&xyz, &u);
 		xyz = vec_add(&xyz, &v);
@@ -717,24 +716,23 @@ fn_ring(struct tokq *args, struct state *state)
 	mat_t rotmat;
 	vec_t xyz;
 	double angle, radius;
-	int i, cnt, natoms;
+	int i, natoms, nring = 6;
 
-	if (tokq_count(args) < 1) {
-		error_set("specify number of atoms in the ring");
-		return (0);
-	}
-	if ((cnt = tok_int(tokq_tok(args, 0))) < 3) {
-		error_set("specify at least 3 atoms");
-		return (0);
+	if (tokq_count(args) > 0) {
+		nring = tok_int(tokq_tok(args, 0));
+		if (nring < 3) {
+			error_set("specify at least 3 atoms");
+			return (0);
+		}
 	}
 	view_snapshot(view);
 	sys = view_get_sys(view);
 	graph = view_get_graph(view);
 	rotmat = camera_get_rotation(view_get_camera(view));
 	rotmat = mat_transpose(&rotmat);
-	radius = 1.54 / (2.0 * sin(PI / cnt));
-	for (i = 0; i < cnt; i++) {
-		angle = (1 + 2 * i) * PI / cnt;
+	radius = 1.54 / (2.0 * sin(PI / nring));
+	for (i = 0; i < nring; i++) {
+		angle = (1 + 2 * i) * PI / nring;
 		xyz.x = radius * cos(angle);
 		xyz.y = radius * sin(angle);
 		xyz.z = 0.0;
@@ -746,7 +744,7 @@ fn_ring(struct tokq *args, struct state *state)
 		}
 	}
 	natoms = sys_get_atom_count(sys);
-	graph_edge_create(graph, natoms-1, natoms-cnt, 1);
+	graph_edge_create(graph, natoms-1, natoms-nring, 1);
 	return (1);
 }
 
