@@ -799,55 +799,40 @@ fn_ring(struct tokq *args, struct state *state)
 	struct view *view;
 	struct graph *graph;
 	struct sys *sys;
-	struct sel *sel;
 	mat_t rotmat;
-	vec_t center, xyz;
+	vec_t xyz;
 	double angle, radius;
-	int i, j;
+	int i, cnt, natoms;
 
-	view = state_get_view(state);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
-	if (sel_get_count(sel) < 2) {
-		sel_free(sel);
-		error_set("select at least two atoms");
+	if (tokq_count(args) < 1) {
+		error_set("specify number of atoms in the ring");
 		return (0);
 	}
-
+	if ((cnt = tok_int(tokq_tok(args, 0))) < 3) {
+		error_set("specify at least 3 atoms");
+		return (0);
+	}
+	view = state_get_view(state);
 	view_snapshot(view);
 	sys = view_get_sys(view);
 	graph = view_get_graph(view);
-
 	rotmat = camera_get_rotation(view_get_camera(view));
 	rotmat = mat_transpose(&rotmat);
-	center = sys_get_sel_center(sys, sel);
-	radius = 1.54 / (2.0 * sin(PI / sel_get_count(sel)));
-	angle = PI / sel_get_count(sel);
-
-	for (sel_iter_start(sel), j = -1; sel_iter_next(sel, &i); j = i) {
+	radius = 1.54 / (2.0 * sin(PI / cnt));
+	for (i = 0; i < cnt; i++) {
+		angle = (1 + 2 * i) * PI / cnt;
 		xyz.x = radius * cos(angle);
 		xyz.y = radius * sin(angle);
 		xyz.z = 0.0;
-
 		xyz = mat_vec(&rotmat, &xyz);
-		xyz = vec_add(&xyz, &center);
-
-		sys_set_atom_xyz(sys, i, xyz);
-		graph_remove_vertex_edges(graph, i);
-
-		if (j > -1)
-			graph_edge_create(graph, i, j, 1);
-
-		angle += 2.0 * PI / sel_get_count(sel);
+		sys_add_atom(sys, "C", xyz);
+		if (i > 0) {
+			natoms = sys_get_atom_count(sys);
+			graph_edge_create(graph, natoms-2, natoms-1, 1);
+		}
 	}
-
-	/* bond last to first */
-	sel_iter_start(sel);
-	sel_iter_next(sel, &i);
-	graph_edge_create(graph, j, i, 1);
-
-	sel_free(sel);
-
+	natoms = sys_get_atom_count(sys);
+	graph_edge_create(graph, natoms-1, natoms-cnt, 1);
 	return (1);
 }
 
