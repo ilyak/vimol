@@ -122,37 +122,32 @@ fn_about(struct tokq *args __unused, struct state *state __unused)
 static int
 fn_add_hydrogens(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sel *sel;
 
-	view = state_get_view(state);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
 		return (1);
 	}
-
 	view_snapshot(view);
 	sys_add_hydrogens(view_get_sys(view), sel);
 	sel_free(sel);
-
 	return (1);
 }
 
 static int
 fn_atom(struct tokq *args, struct state *state)
 {
-	struct view *view;
-	const char *name;
+	struct view *view = state_get_view(state);
+	const char *name = "C";
 	vec_t xyz;
 
-	name = tokq_count(args) < 1 ? "C" : tok_string(tokq_tok(args, 0));
+	if (tokq_count(args) > 0)
+		name = tok_string(tokq_tok(args, 0));
 	xyz = parse_vec(args, 1);
-	view = state_get_view(state);
 	view_snapshot(view);
 	sys_add_atom(view_get_sys(view), name, xyz);
-
 	return (1);
 }
 
@@ -165,9 +160,7 @@ fn_bind(struct tokq *args, struct state *state)
 
 	if (tokq_count(args) == 0)
 		return (1);
-
 	name = tok_string(tokq_tok(args, 0));
-
 	if (tokq_count(args) == 1) {
 		if ((value = bind_get(bind, name)) != NULL)
 			error_set("\"%s\" is bound to \"%s\"", name, value);
@@ -189,26 +182,22 @@ fn_bind(struct tokq *args, struct state *state)
 static int
 fn_bond(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct graph *graph;
 	struct sel *sel;
 	struct graphedge *edge;
 	int a, b, type;
 
-	view = state_get_view(state);
 	graph = view_get_graph(view);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
 	if (sel_get_count(sel) != 2) {
 		error_set("select 2 atoms");
 		sel_free(sel);
 		return (0);
 	}
-
 	sel_iter_start(sel);
 	sel_iter_next(sel, &a);
 	sel_iter_next(sel, &b);
-
 	if ((edge = graph_edge_find(graph, a, b)) == NULL) {
 		graph_edge_create(graph, a, b, 1);
 	} else {
@@ -224,7 +213,7 @@ fn_bond(struct tokq *args, struct state *state)
 static int
 fn_chain(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct graph *graph;
 	struct sys *sys;
 	mat_t rotmat;
@@ -239,7 +228,6 @@ fn_chain(struct tokq *args, struct state *state)
 		error_set("specify a positive number");
 		return (0);
 	}
-	view = state_get_view(state);
 	view_snapshot(view);
 	sys = view_get_sys(view);
 	graph = view_get_graph(view);
@@ -280,7 +268,7 @@ fn_force_close(struct tokq *args __unused, struct state *state)
 static int
 fn_copy_selection(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sys *sys;
 	struct yank *yank;
 	struct sel *sel;
@@ -290,26 +278,19 @@ fn_copy_selection(struct tokq *args, struct state *state)
 		error_set("specify copy register");
 		return (0);
 	}
-
 	if ((reg = parse_register(tokq_tok(args, 0))) == -1)
 		return (0);
-
 	yank = state_get_yank(state);
-	view = state_get_view(state);
 	sys = view_get_sys(view);
 	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
-
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
 		return (1);
 	}
-
 	yank_set_register(yank, reg);
 	yank_copy(yank, sys, sel);
-
-	error_set("copied %d atoms to register '%c'", sel_get_count(sel),
-	    'a' + reg);
-
+	error_set("copied %d atoms to register '%c'",
+	    sel_get_count(sel), 'a' + reg);
 	sel_free(sel);
 	return (1);
 }
@@ -317,30 +298,24 @@ fn_copy_selection(struct tokq *args, struct state *state)
 static int
 fn_delete_selection(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sel *sel;
 	struct sys *sys;
 	int i;
 
-	view = state_get_view(state);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
 		return (1);
 	}
-
 	view_snapshot(view);
 	sys = view_get_sys(view);
-
 	for (i = sys_get_atom_count(sys) - 1; i >= 0; i--) {
 		if (!sel_selected(sel, i))
 			continue;
 		sys_remove_atom(sys, i);
 	}
-
 	error_set("deleted %d atoms", sel_get_count(sel));
-
 	sel_free(sel);
 	return (1);
 }
@@ -348,72 +323,58 @@ fn_delete_selection(struct tokq *args, struct state *state)
 static int
 fn_view_center_selection(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sel *sel;
 
-	view = state_get_view(state);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 	view_center_sel(view, sel);
 	sel_free(sel);
-
 	return (1);
 }
 
 static int
 fn_view_fit_selection(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sel *sel;
 
-	view = state_get_view(state);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 	view_fit_sel(view, sel);
 	sel_free(sel);
-
 	return (1);
 }
 
 static int
 fn_set_frame(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sys *sys;
 	int n;
 
-	view = state_get_view(state);
 	sys = view_get_sys(view);
-
 	if (tokq_count(args) < 1)
 		return (0);
-
 	if ((n = tok_int(tokq_tok(args, 0))) == 0)
 		return (0);
-
 	n = n < 0 ? sys_get_frame_count(sys) + n : n - 1;
 	sys_set_frame(sys, n);
-
 	return (1);
 }
 
 static int
 fn_next_frame(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sys *sys;
 	int n;
 
-	view = state_get_view(state);
 	sys = view_get_sys(view);
-
 	if (tokq_count(args) < 1)
 		return (0);
-
 	if ((n = tok_int(tokq_tok(args, 0))) == 0)
 		return (0);
-
 	n = sys_get_frame(sys) + n;
 	sys_set_frame(sys, n);
-
 	return (1);
 }
 
@@ -428,19 +389,16 @@ fn_fullscreen(struct tokq *args __unused, struct state *state)
 static int
 fn_hide_selection(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sel *sel;
 	int idx;
 
-	view = state_get_view(state);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
 	sel_iter_start(sel);
 	while (sel_iter_next(sel, &idx)) {
 		sel_remove(view_get_visible(view), idx);
 		sel_remove(view_get_sel(view), idx);
 	}
-
 	sel_free(sel);
 	return (1);
 }
@@ -448,24 +406,20 @@ fn_hide_selection(struct tokq *args, struct state *state)
 static int
 fn_invert_selection(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sel *visible;
 	struct sel *sel;
 	int idx;
 
-	view = state_get_view(state);
 	visible = view_get_visible(view);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
 	sel_iter_start(sel);
-
 	while (sel_iter_next(sel, &idx)) {
 		if (sel_selected(view_get_sel(view), idx))
 			sel_remove(view_get_sel(view), idx);
 		else if (sel_selected(visible, idx))
 			sel_add(view_get_sel(view), idx);
 	}
-
 	sel_free(sel);
 	return (1);
 }
@@ -473,20 +427,18 @@ fn_invert_selection(struct tokq *args, struct state *state)
 static int
 fn_view_move(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	vec_t xyz;
 
-	view = state_get_view(state);
 	xyz = parse_vec(args, 0);
 	camera_move(view_get_camera(view), xyz);
-
 	return (1);
 }
 
 static int
 fn_set_element(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sel *sel;
 	const char *name;
 	int idx;
@@ -495,16 +447,16 @@ fn_set_element(struct tokq *args, struct state *state)
 		error_set("specify element name");
 		return (0);
 	}
-
-	view = state_get_view(state);
-	view_snapshot(view);
 	name = tok_string(tokq_tok(args, 0));
 	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
-
+	if (sel_get_count(sel) == 0) {
+		sel_free(sel);
+		return (1);
+	}
+	view_snapshot(view);
 	sel_iter_start(sel);
 	while (sel_iter_next(sel, &idx))
 		sys_set_atom_name(view_get_sys(view), idx, name);
-
 	sel_free(sel);
 	return (1);
 }
@@ -512,13 +464,11 @@ fn_set_element(struct tokq *args, struct state *state)
 static int
 fn_new(struct tokq *args, struct state *state)
 {
-	struct wnd *wnd;
-	const char *path;
+	const char *path = "";
 
-	wnd = state_get_wnd(state);
-	path = tokq_count(args) > 0 ? tok_string(tokq_tok(args, 0)) : "";
-
-	return (wnd_open(wnd, path));
+	if (tokq_count(args) > 0)
+		path = tok_string(tokq_tok(args, 0));
+	return (wnd_open(state_get_wnd(state), path));
 }
 
 static int
@@ -560,56 +510,42 @@ fn_next_window(struct tokq *args __unused, struct state *state)
 static int
 fn_paste(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct yank *yank;
 	int count, reg;
 
-	view = state_get_view(state);
 	yank = state_get_yank(state);
-
 	if (tokq_count(args) > 0) {
 		if ((reg = parse_register(tokq_tok(args, 0))) == -1)
 			return (0);
-
 		yank_set_register(yank, reg);
 	}
-
-	count = sys_get_atom_count(view_get_sys(view));
-
 	view_snapshot(view);
+	count = sys_get_atom_count(view_get_sys(view));
 	yank_paste(yank, view_get_sys(view));
-
 	sel_clear(view_get_sel(view));
-
 	while (count < sys_get_atom_count(view_get_sys(view)))
 		sel_add(view_get_sel(view), count++);
-
 	return (1);
 }
 
 static int
 fn_replay(struct tokq *args, struct state *state)
 {
-	struct rec *rec;
+	struct rec *rec = state_get_rec(state);
 	int i, repeat, reg = 0;
-
-	rec = state_get_rec(state);
 
 	if (rec_is_playing(rec))
 		return (1);
-
 	if (rec_is_recording(rec)) {
 		error_set("cannot replay during recording");
 		return (0);
 	}
-
 	if (tokq_count(args) > 0)
 		if ((reg = parse_register(tokq_tok(args, 0))) == -1)
 			return (0);
-
 	if ((repeat = state_get_repeat(state)) <= 0)
 		repeat = 1;
-
 	for (i = 0; i < repeat; i++)
 		if (!rec_play(rec, reg, state))
 			return (0);
@@ -619,34 +555,28 @@ fn_replay(struct tokq *args, struct state *state)
 static int
 fn_set_position(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sys *sys;
 	struct sel *sel;
 	vec_t dr, xyz;
 	int idx;
 
-	view = state_get_view(state);
 	dr = parse_vec(args, 0);
 	sel = make_sel(args, 3, tokq_count(args), view_get_sel(view));
-
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
 		return (1);
 	}
-
 	view_snapshot(view);
 	sys = view_get_sys(view);
 	xyz = sys_get_sel_center(sys, sel);
 	dr = vec_sub(&dr, &xyz);
-
 	sel_iter_start(sel);
-
 	while (sel_iter_next(sel, &idx)) {
 		xyz = sys_get_atom_xyz(sys, idx);
 		xyz = vec_add(&xyz, &dr);
 		sys_set_atom_xyz(sys, idx, xyz);
 	}
-
 	sel_free(sel);
 	return (1);
 }
@@ -654,16 +584,14 @@ fn_set_position(struct tokq *args, struct state *state)
 static int
 fn_measure(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sys *sys;
 	struct sel *sel;
 	vec_t p[4];
 	int a[4], i;
 
-	view = state_get_view(state);
 	sys = view_get_sys(view);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
 	if (sel_get_count(sel) < 1 || sel_get_count(sel) > 4) {
 		sel_free(sel);
 		error_set("select 1, 2, 3, or 4 atoms");
@@ -699,36 +627,30 @@ fn_measure(struct tokq *args, struct state *state)
 static int
 fn_move_selection(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sys *sys;
 	struct sel *sel;
 	mat_t rotmat;
 	vec_t dr, xyz;
 	int idx;
 
-	view = state_get_view(state);
 	dr = parse_vec(args, 0);
 	sel = make_sel(args, 3, tokq_count(args), view_get_sel(view));
-
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
 		return (1);
 	}
-
 	view_snapshot(view);
 	sys = view_get_sys(view);
 	rotmat = camera_get_rotation(view_get_camera(view));
 	rotmat = mat_transpose(&rotmat);
 	dr = mat_vec(&rotmat, &dr);
-
 	sel_iter_start(sel);
-
 	while (sel_iter_next(sel, &idx)) {
 		xyz = sys_get_atom_xyz(sys, idx);
 		xyz = vec_add(&xyz, &dr);
 		sys_set_atom_xyz(sys, idx, xyz);
 	}
-
 	sel_free(sel);
 	return (1);
 }
@@ -752,34 +674,27 @@ fn_force_quit(struct tokq *args __unused, struct state *state)
 static int
 fn_rec(struct tokq *args, struct state *state)
 {
-	struct rec *rec;
+	struct rec *rec = state_get_rec(state);
 	int reg = 0;
-
-	rec = state_get_rec(state);
 
 	if (rec_is_playing(rec))
 		return (1);
-
 	if (rec_is_recording(rec)) {
 		rec_stop(rec);
 		return (1);
 	}
-
 	if (tokq_count(args) > 0)
 		if ((reg = parse_register(tokq_tok(args, 0))) == -1)
 			return (0);
-
 	rec_start(rec, reg);
-
 	return (1);
 }
 
 static int
 fn_reset_bonds(struct tokq *args __unused, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 
-	view = state_get_view(state);
 	sys_reset_bonds(view_get_sys(view));
 
 	return (1);
@@ -796,7 +711,7 @@ fn_view_reset(struct tokq *args __unused, struct state *state)
 static int
 fn_ring(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct graph *graph;
 	struct sys *sys;
 	mat_t rotmat;
@@ -812,7 +727,6 @@ fn_ring(struct tokq *args, struct state *state)
 		error_set("specify at least 3 atoms");
 		return (0);
 	}
-	view = state_get_view(state);
 	view_snapshot(view);
 	sys = view_get_sys(view);
 	graph = view_get_graph(view);
@@ -839,34 +753,27 @@ fn_ring(struct tokq *args, struct state *state)
 static int
 fn_rotate_selection(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sys *sys;
 	struct sel *sel;
 	mat_t matrix, rotmat;
 	vec_t abc, pos, xyz;
 	int idx;
 
-	view = state_get_view(state);
-
 	if (tokq_count(args) < 1) {
 		error_set("specify rotation angles a b c");
 		return (0);
 	}
-
 	abc = parse_vec(args, 0);
 	sel = make_sel(args, 3, tokq_count(args), view_get_sel(view));
-
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
 		return (1);
 	}
-
 	view_snapshot(view);
 	sys = view_get_sys(view);
-
 	vec_scale(&abc, PI / 180.0);
 	xyz = sys_get_sel_center(sys, sel);
-
 	matrix = camera_get_rotation(view_get_camera(view));
 	rotmat = mat_transpose(&matrix);
 	matrix = mat_rotation_z(abc.z);
@@ -877,9 +784,7 @@ fn_rotate_selection(struct tokq *args, struct state *state)
 	rotmat = mat_mat(&rotmat, &matrix);
 	matrix = camera_get_rotation(view_get_camera(view));
 	rotmat = mat_mat(&rotmat, &matrix);
-
 	sel_iter_start(sel);
-
 	while (sel_iter_next(sel, &idx)) {
 		pos = sys_get_atom_xyz(sys, idx);
 		pos = vec_sub(&pos, &xyz);
@@ -887,7 +792,6 @@ fn_rotate_selection(struct tokq *args, struct state *state)
 		pos = vec_add(&pos, &xyz);
 		sys_set_atom_xyz(sys, idx, pos);
 	}
-
 	sel_free(sel);
 	return (1);
 }
@@ -895,57 +799,47 @@ fn_rotate_selection(struct tokq *args, struct state *state)
 static int
 fn_view_rotate(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	vec_t xyz;
 
-	view = state_get_view(state);
 	xyz = parse_vec(args, 0);
 	vec_scale(&xyz, PI / 180.0);
 	camera_rotate(view_get_camera(view), xyz);
-
 	return (1);
 }
 
 static int
 fn_write(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sys *sys;
 	const char *path;
 
-	view = state_get_view(state);
 	sys = view_get_sys(view);
-
 	if (tokq_count(args) == 0) {
 		path = view_get_path(view);
-
 		if (path[0] == '\0') {
 			error_set("no file name");
 			return (0);
 		}
 	} else
 		path = tok_string(tokq_tok(args, 0));
-
 	if (!sys_save_to_file(sys, path))
 		return (0);
-
 	view_set_path(view, path);
 	error_set("saved to \"%s\"", view_get_path(view));
-
 	return (1);
 }
 
 static int
 fn_select(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sel *visible;
 	struct sel *sel;
 	int idx;
 
-	view = state_get_view(state);
 	visible = view_get_visible(view);
-
 	if (tokq_count(args) == 0) {
 		idx = state_get_repeat(state) - 1;
 		if (idx < 0) {
@@ -963,14 +857,11 @@ fn_select(struct tokq *args, struct state *state)
 				sel_add(view_get_sel(view), idx);
 		return (1);
 	}
-
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 	sel_iter_start(sel);
-
 	while (sel_iter_next(sel, &idx))
 		if (sel_selected(visible, idx))
 			sel_add(view_get_sel(view), idx);
-
 	sel_free(sel);
 	return (1);
 }
@@ -978,7 +869,7 @@ fn_select(struct tokq *args, struct state *state)
 static int
 fn_select_box(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sys *sys;
 	struct sel *visible;
 	vec_t p1, p2, xyz;
@@ -988,7 +879,6 @@ fn_select_box(struct tokq *args, struct state *state)
 		error_set("specify box dimensions");
 		return (0);
 	}
-
 	if (tokq_count(args) < 4) {
 		p1 = vec_zero();
 		p2 = parse_vec(args, 0);
@@ -996,29 +886,23 @@ fn_select_box(struct tokq *args, struct state *state)
 		p1 = parse_vec(args, 0);
 		p2 = parse_vec(args, 3);
 	}
-
-	view = state_get_view(state);
 	sys = view_get_sys(view);
 	visible = view_get_visible(view);
-
 	sel_iter_start(visible);
-
 	while (sel_iter_next(visible, &idx)) {
 		xyz = sys_get_atom_xyz(sys, idx);
-
 		if (xyz.x >= p1.x && xyz.x <= p2.x &&
 		    xyz.y >= p1.y && xyz.y <= p2.y &&
 		    xyz.z >= p1.z && xyz.z <= p2.z)
 			sel_add(view_get_sel(view), idx);
 	}
-
 	return (1);
 }
 
 static int
 fn_select_molecule(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sys *sys;
 	struct graph *graph;
 	struct sel *visible;
@@ -1026,99 +910,80 @@ fn_select_molecule(struct tokq *args, struct state *state)
 	struct sel *connected;
 	int idx;
 
-	view = state_get_view(state);
 	sys = view_get_sys(view);
 	graph = view_get_graph(view);
 	visible = view_get_visible(view);
 	selected = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 	connected = sel_create(sys_get_atom_count(sys));
-
 	sel_iter_start(selected);
-
 	while (sel_iter_next(selected, &idx))
 		select_connected(graph, idx, connected);
-
 	sel_iter_start(connected);
-
 	while (sel_iter_next(connected, &idx))
 		if (sel_selected(visible, idx))
 			sel_add(view_get_sel(view), idx);
-
 	sel_free(selected);
 	sel_free(connected);
-
 	return (1);
 }
 
 static int
 fn_select_element(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sys *sys;
 	struct sel *visible;
 	const char *name;
 	int i, k;
 
-	view = state_get_view(state);
 	sys = view_get_sys(view);
 	visible = view_get_visible(view);
-
 	for (k = 0; k < tokq_count(args); k++) {
 		name = tok_string(tokq_tok(args, k));
 		sel_iter_start(visible);
-
 		while (sel_iter_next(visible, &i))
 			if (strcasecmp(sys_get_atom_name(sys, i), name) == 0)
 				sel_add(view_get_sel(view), i);
 	}
-
 	return (1);
 }
 
 static int
 fn_select_water(struct tokq *args __unused, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sys *sys;
 	struct graph *graph;
 	struct sel *visible;
 	int i, j, k;
 
-	view = state_get_view(state);
 	sys = view_get_sys(view);
 	graph = view_get_graph(view);
 	visible = view_get_visible(view);
-
 	sel_iter_start(visible);
-
 	while (sel_iter_next(visible, &i)) {
 		if (graph_get_edge_count(graph, i) != 2)
 			continue;
-
 		j = graph_edge_j(graph_get_edges(graph, i));
 		k = graph_edge_j(graph_edge_next(graph_get_edges(graph, i)));
-
 		if (!sel_selected(visible, j) ||
 		    !sel_selected(visible, k))
 			continue;
-
 		if (sys_get_atom_type(sys, i) != 8 || /* O */
 		    sys_get_atom_type(sys, j) != 1 || /* H */
 		    sys_get_atom_type(sys, k) != 1)   /* H */
 			continue;
-
 		sel_add(view_get_sel(view), i);
 		sel_add(view_get_sel(view), j);
 		sel_add(view_get_sel(view), k);
 	}
-
 	return (1);
 }
 
 static int
 fn_select_sphere(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sys *sys;
 	struct sel *visible;
 	struct sel *sel;
@@ -1129,42 +994,30 @@ fn_select_sphere(struct tokq *args, struct state *state)
 
 	if (tokq_count(args) < 1)
 		return (0);
-
 	if ((radius = tok_double(tokq_tok(args, 0))) <= 0.0)
 		return (0);
-
-	view = state_get_view(state);
 	sys = view_get_sys(view);
 	visible = view_get_visible(view);
 	spi = spi_create();
-
 	for (idx = 0; idx < sys_get_atom_count(sys); idx++)
 		spi_add_point(spi, sys_get_atom_xyz(sys, idx));
-
 	spi_compute(spi, radius);
 	npairs = spi_get_pair_count(spi);
-
 	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
-
 	sel_iter_start(sel);
-
 	while (sel_iter_next(sel, &idx))
 		if (sel_selected(visible, idx))
 			sel_add(view_get_sel(view), idx);
-
 	for (idx = 0; idx < npairs; idx++) {
 		pair = spi_get_pair(spi, idx);
-
 		if (!sel_selected(visible, pair.i) ||
 		    !sel_selected(visible, pair.j))
 			continue;
-
 		if (sel_selected(sel, pair.i) || sel_selected(sel, pair.j)) {
 			sel_add(view_get_sel(view), pair.i);
 			sel_add(view_get_sel(view), pair.j);
 		}
 	}
-
 	sel_free(sel);
 	spi_free(spi);
 	return (1);
@@ -1173,16 +1026,14 @@ fn_select_sphere(struct tokq *args, struct state *state)
 static int
 fn_set(struct tokq *args, struct state *state __unused)
 {
-	char buf[1024];
 	const char *name, *value;
+	char buf[1024];
 
 	if (tokq_count(args) == 0) {
 		error_set("specify a setting name");
 		return (0);
 	}
-
 	name = tok_string(tokq_tok(args, 0));
-
 	if (tokq_count(args) == 1) {
 		if (!settings_has_node(name)) {
 			error_set("unknown setting \"%s\"", name);
@@ -1192,7 +1043,6 @@ fn_set(struct tokq *args, struct state *state __unused)
 		error_set("%s is %s", name, buf);
 		return (1);
 	}
-
 	value = tok_string(tokq_tok(args, 1));
 	return (settings_set(name, value));
 }
@@ -1200,9 +1050,8 @@ fn_set(struct tokq *args, struct state *state __unused)
 static int
 fn_show_all(struct tokq *args __unused, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 
-	view = state_get_view(state);
 	sel_all(view_get_visible(view));
 
 	return (1);
@@ -1211,35 +1060,28 @@ fn_show_all(struct tokq *args __unused, struct state *state)
 static int
 fn_group(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sys *sys;
 	struct sel *sel;
 	int i, j;
 
-	view = state_get_view(state);
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
 		return (1);
 	}
-
 	view_snapshot(view);
 	sys = view_get_sys(view);
-
 	for (i = sys_get_atom_count(sys) - 1; i >= 0; i--) {
 		if (!sel_selected(sel, i))
 			continue;
-
 		for (j = i + 1; j < sys_get_atom_count(sys); j++) {
 			if (sel_selected(sel, j))
 				break;
-
 			sys_swap_atoms(sys, j - 1, j);
 			sel_swap(sel, j - 1, j);
 		}
 	}
-
 	sel_free(sel);
 	return (1);
 }
@@ -1262,15 +1104,11 @@ fn_toggle(struct tokq *args, struct state *state __unused)
 
 	if (tokq_count(args) == 0)
 		return (0);
-
 	name = tok_string(tokq_tok(args, 0));
-
 	if (!settings_has_bool(name))
 		return (0);
-
 	value = settings_get_bool(name);
 	settings_set_bool(name, !value);
-
 	return (1);
 }
 
@@ -1297,11 +1135,9 @@ fn_redo(struct tokq *args __unused, struct state *state)
 static int
 fn_unselect(struct tokq *args, struct state *state)
 {
-	struct view *view;
+	struct view *view = state_get_view(state);
 	struct sel *sel;
 	int idx;
-
-	view = state_get_view(state);
 
 	if (tokq_count(args) == 0) {
 		idx = state_get_repeat(state) - 1;
@@ -1317,13 +1153,10 @@ fn_unselect(struct tokq *args, struct state *state)
 			sel_remove(view_get_sel(view), idx);
 		return (1);
 	}
-
 	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
 	sel_iter_start(sel);
-
 	while (sel_iter_next(sel, &idx))
 		sel_remove(view_get_sel(view), idx);
-
 	sel_free(sel);
 	return (1);
 }
@@ -1331,24 +1164,17 @@ fn_unselect(struct tokq *args, struct state *state)
 static int
 fn_view_zoom(struct tokq *args, struct state *state)
 {
-	struct view *view;
-	struct camera *camera;
+	struct view *view = state_get_view(state);
 	double factor, radius;
-
-	view = state_get_view(state);
-	camera = view_get_camera(view);
 
 	if (tokq_count(args) < 1)
 		return (0);
-
 	if ((factor = tok_double(tokq_tok(args, 0))) <= 0.0) {
 		error_set("zoom factor must be positive");
 		return (0);
 	}
-
-	radius = camera_get_radius(camera);
-	camera_set_radius(camera, radius / factor);
-
+	radius = camera_get_radius(view_get_camera(view));
+	camera_set_radius(view_get_camera(view), radius / factor);
 	return (1);
 }
 
