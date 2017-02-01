@@ -198,9 +198,9 @@ fn_bond(struct tokq *args, struct state *state)
 	sel_iter_start(sel);
 	sel_iter_next(sel, &a);
 	sel_iter_next(sel, &b);
-	if ((edge = graph_edge_find(graph, a, b)) == NULL) {
+	if ((edge = graph_edge_find(graph, a, b)) == NULL)
 		graph_edge_create(graph, a, b, 1);
-	} else {
+	else {
 		if ((type = graph_edge_get_type(edge)) == 3)
 			graph_edge_remove(graph, a, b);
 		else
