@@ -227,53 +227,41 @@ fn_chain(struct tokq *args, struct state *state)
 	struct view *view;
 	struct graph *graph;
 	struct sys *sys;
-	struct sel *sel;
 	mat_t rotmat;
-	vec_t dr1, dr2, xyz;
-	int i, j;
+	vec_t u, v, xyz;
+	int i, cnt, natoms;
 
-	view = state_get_view(state);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-
-	if (sel_get_count(sel) < 2) {
-		sel_free(sel);
-		error_set("select at least two atoms");
+	if (tokq_count(args) < 1) {
+		error_set("specify number of atoms in chain");
 		return (0);
 	}
-
+	if ((cnt = tok_int(tokq_tok(args, 0))) < 1) {
+		error_set("specify a positive number");
+		return (0);
+	}
+	view = state_get_view(state);
 	view_snapshot(view);
 	sys = view_get_sys(view);
 	graph = view_get_graph(view);
-
 	rotmat = camera_get_rotation(view_get_camera(view));
 	rotmat = mat_transpose(&rotmat);
-
-	dr1 = vec_new(1.336, 0.0, 0.0);
-	dr2 = vec_new(0.0, 0.766, 0.0);
-	dr1 = mat_vec(&rotmat, &dr1);
-	dr2 = mat_vec(&rotmat, &dr2);
-
-	xyz = sys_get_sel_center(sys, sel);
-
-	xyz.x -= (dr1.x * (sel_get_count(sel) - 1) + dr2.x) / 2;
-	xyz.y -= (dr1.y * (sel_get_count(sel) - 1) + dr2.y) / 2;
-	xyz.z -= (dr1.z * (sel_get_count(sel) - 1) + dr2.z) / 2;
-
-	for (sel_iter_start(sel), j = -1; sel_iter_next(sel, &i); j = i) {
-		sys_set_atom_xyz(sys, i, xyz);
-
-		xyz = vec_add(&xyz, &dr1);
-		xyz = vec_add(&xyz, &dr2);
-
-		vec_scale(&dr2, -1.0);
-
-		graph_remove_vertex_edges(graph, i);
-
-		if (j > -1)
-			graph_edge_create(graph, i, j, 1);
+	u = vec_new(1.336, 0.0, 0.0);
+	v = vec_new(0.0, 0.766, 0.0);
+	u = mat_vec(&rotmat, &u);
+	v = mat_vec(&rotmat, &v);
+	xyz.x = -(u.x * (cnt - 1) + v.x) / 2;
+	xyz.y = -(u.y * (cnt - 1) + v.y) / 2;
+	xyz.z = -(u.z * (cnt - 1) + v.z) / 2;
+	for (i = 0; i < cnt; i++) {
+		sys_add_atom(sys, "C", xyz);
+		xyz = vec_add(&xyz, &u);
+		xyz = vec_add(&xyz, &v);
+		vec_scale(&v, -1.0);
+		if (i > 0) {
+			natoms = sys_get_atom_count(sys);
+			graph_edge_create(graph, natoms-2, natoms-1, 1);
+		}
 	}
-
-	sel_free(sel);
 	return (1);
 }
 
