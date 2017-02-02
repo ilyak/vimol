@@ -983,13 +983,14 @@ fn_select_sphere(struct tokq *args, struct state *state)
 	struct sel *sel;
 	struct spi *spi;
 	struct pair pair;
-	double radius;
+	double radius = 4.0;
 	int idx, npairs;
 
-	if (tokq_count(args) < 1)
-		return (0);
-	if ((radius = tok_double(tokq_tok(args, 0))) <= 0.0)
-		return (0);
+	if (tokq_count(args) > 0) {
+		radius = tok_double(tokq_tok(args, 0));
+		if (radius <= 0.0)
+			return (0);
+	}
 	sys = view_get_sys(view);
 	visible = view_get_visible(view);
 	spi = spi_create();
