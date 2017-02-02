@@ -227,22 +227,19 @@ formats_save(struct atoms *atoms, const char *path)
 	size_t i;
 	int saveframe;
 
-	if ((fp = fopen(path, "w")) == NULL) {
-		error_set("%s", strerror(errno));
-		return (0);
-	}
-
-	saveframe = atoms_get_frame(atoms);
-
 	for (i = 0; i < nformatlist; i++)
 		if (string_has_suffix(path, formatlist[i].ext)) {
+			if ((fp = fopen(path, "w")) == NULL) {
+				error_set("%s", strerror(errno));
+				return (0);
+			}
+			saveframe = atoms_get_frame(atoms);
 			formatlist[i].savefn(atoms, fp);
-			fclose(fp);
 			atoms_set_frame(atoms, saveframe);
+			fclose(fp);
 			return (1);
 		}
 
-	fclose(fp);
 	error_set("unknown file format");
 	return (0);
 }
