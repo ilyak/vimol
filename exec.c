@@ -914,6 +914,52 @@ fn_select_box(struct tokq *args, struct state *state)
 }
 
 static int
+fn_select_sphere(struct tokq *args, struct state *state)
+{
+	struct view *view = state_get_view(state);
+	struct sys *sys;
+	struct sel *visible;
+	struct sel *sel;
+	struct spi *spi;
+	struct pair pair;
+	double radius = 4.0;
+	int idx, npairs;
+
+	if (tokq_count(args) > 0) {
+		radius = tok_double(tokq_tok(args, 0));
+		if (radius <= 0.0) {
+			error_set("specify a positive number");
+			return (0);
+		}
+	}
+	sys = view_get_sys(view);
+	visible = view_get_visible(view);
+	spi = spi_create();
+	for (idx = 0; idx < sys_get_atom_count(sys); idx++)
+		spi_add_point(spi, sys_get_atom_xyz(sys, idx));
+	spi_compute(spi, radius);
+	npairs = spi_get_pair_count(spi);
+	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
+	sel_iter_start(sel);
+	while (sel_iter_next(sel, &idx))
+		if (sel_selected(visible, idx))
+			sel_add(view_get_sel(view), idx);
+	for (idx = 0; idx < npairs; idx++) {
+		pair = spi_get_pair(spi, idx);
+		if (!sel_selected(visible, pair.i) ||
+		    !sel_selected(visible, pair.j))
+			continue;
+		if (sel_selected(sel, pair.i) || sel_selected(sel, pair.j)) {
+			sel_add(view_get_sel(view), pair.i);
+			sel_add(view_get_sel(view), pair.j);
+		}
+	}
+	sel_free(sel);
+	spi_free(spi);
+	return (1);
+}
+
+static int
 fn_select_molecule(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
@@ -991,52 +1037,6 @@ fn_select_water(struct tokq *args __unused, struct state *state)
 		sel_add(view_get_sel(view), j);
 		sel_add(view_get_sel(view), k);
 	}
-	return (1);
-}
-
-static int
-fn_select_sphere(struct tokq *args, struct state *state)
-{
-	struct view *view = state_get_view(state);
-	struct sys *sys;
-	struct sel *visible;
-	struct sel *sel;
-	struct spi *spi;
-	struct pair pair;
-	double radius = 4.0;
-	int idx, npairs;
-
-	if (tokq_count(args) > 0) {
-		radius = tok_double(tokq_tok(args, 0));
-		if (radius <= 0.0) {
-			error_set("specify a positive number");
-			return (0);
-		}
-	}
-	sys = view_get_sys(view);
-	visible = view_get_visible(view);
-	spi = spi_create();
-	for (idx = 0; idx < sys_get_atom_count(sys); idx++)
-		spi_add_point(spi, sys_get_atom_xyz(sys, idx));
-	spi_compute(spi, radius);
-	npairs = spi_get_pair_count(spi);
-	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
-	sel_iter_start(sel);
-	while (sel_iter_next(sel, &idx))
-		if (sel_selected(visible, idx))
-			sel_add(view_get_sel(view), idx);
-	for (idx = 0; idx < npairs; idx++) {
-		pair = spi_get_pair(spi, idx);
-		if (!sel_selected(visible, pair.i) ||
-		    !sel_selected(visible, pair.j))
-			continue;
-		if (sel_selected(sel, pair.i) || sel_selected(sel, pair.j)) {
-			sel_add(view_get_sel(view), pair.i);
-			sel_add(view_get_sel(view), pair.j);
-		}
-	}
-	sel_free(sel);
-	spi_free(spi);
 	return (1);
 }
 
