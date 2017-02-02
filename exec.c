@@ -506,21 +506,16 @@ static int
 fn_paste(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
-	struct yank *yank;
-	int count, reg;
+	struct yank *yank = state_get_yank(state);
+	int reg;
 
-	yank = state_get_yank(state);
 	if (tokq_count(args) > 0) {
 		if ((reg = parse_register(tokq_tok(args, 0))) == -1)
 			return (0);
 		yank_set_register(yank, reg);
 	}
 	view_snapshot(view);
-	count = sys_get_atom_count(view_get_sys(view));
 	yank_paste(yank, view_get_sys(view));
-	sel_clear(view_get_sel(view));
-	while (count < sys_get_atom_count(view_get_sys(view)))
-		sel_add(view_get_sel(view), count++);
 	return (1);
 }
 
