@@ -988,8 +988,10 @@ fn_select_sphere(struct tokq *args, struct state *state)
 
 	if (tokq_count(args) > 0) {
 		radius = tok_double(tokq_tok(args, 0));
-		if (radius <= 0.0)
+		if (radius <= 0.0) {
+			error_set("specify a positive number");
 			return (0);
+		}
 	}
 	sys = view_get_sys(view);
 	visible = view_get_visible(view);
