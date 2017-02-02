@@ -1052,35 +1052,6 @@ fn_show_all(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_group(struct tokq *args, struct state *state)
-{
-	struct view *view = state_get_view(state);
-	struct sys *sys;
-	struct sel *sel;
-	int i, j;
-
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-	if (sel_get_count(sel) == 0) {
-		sel_free(sel);
-		return (1);
-	}
-	view_snapshot(view);
-	sys = view_get_sys(view);
-	for (i = sys_get_atom_count(sys) - 1; i >= 0; i--) {
-		if (!sel_selected(sel, i))
-			continue;
-		for (j = i + 1; j < sys_get_atom_count(sys); j++) {
-			if (sel_selected(sel, j))
-				break;
-			sys_swap_atoms(sys, j - 1, j);
-			sel_swap(sel, j - 1, j);
-		}
-	}
-	sel_free(sel);
-	return (1);
-}
-
-static int
 fn_source(struct tokq *args, struct state *state)
 {
 	if (tokq_count(args) < 1) {
@@ -1196,7 +1167,6 @@ static const struct node {
 	{ "first", fn_first_window },
 	{ "first-window", fn_first_window },
 	{ "fullscreen", fn_fullscreen },
-	{ "group", fn_group },
 	{ "hide-selection", fn_hide_selection },
 	{ "invert-selection", fn_invert_selection },
 	{ "last", fn_last_window },
