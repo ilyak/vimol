@@ -866,30 +866,50 @@ fn_select_box(struct tokq *args, struct state *state)
 	struct view *view = state_get_view(state);
 	struct sys *sys;
 	struct sel *visible;
-	vec_t p1, p2, xyz;
-	int idx;
+	struct sel *sel;
+	struct spi *spi;
+	struct pair pair;
+	vec_t pi, pj;
+	double radius = 4.0;
+	int idx, npairs;
 
-	if (tokq_count(args) < 1) {
-		error_set("specify box dimensions");
-		return (0);
-	}
-	if (tokq_count(args) < 4) {
-		p1 = vec_zero();
-		p2 = parse_vec(args, 0);
-	} else {
-		p1 = parse_vec(args, 0);
-		p2 = parse_vec(args, 3);
+	if (tokq_count(args) > 0) {
+		radius = tok_double(tokq_tok(args, 0));
+		if (radius <= 0.0) {
+			error_set("specify a positive number");
+			return (0);
+		}
 	}
 	sys = view_get_sys(view);
 	visible = view_get_visible(view);
-	sel_iter_start(visible);
-	while (sel_iter_next(visible, &idx)) {
-		xyz = sys_get_atom_xyz(sys, idx);
-		if (xyz.x >= p1.x && xyz.x <= p2.x &&
-		    xyz.y >= p1.y && xyz.y <= p2.y &&
-		    xyz.z >= p1.z && xyz.z <= p2.z)
+	spi = spi_create();
+	for (idx = 0; idx < sys_get_atom_count(sys); idx++)
+		spi_add_point(spi, sys_get_atom_xyz(sys, idx));
+	spi_compute(spi, sqrt(3.0) * radius);
+	npairs = spi_get_pair_count(spi);
+	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
+	sel_iter_start(sel);
+	while (sel_iter_next(sel, &idx))
+		if (sel_selected(visible, idx))
 			sel_add(view_get_sel(view), idx);
+	for (idx = 0; idx < npairs; idx++) {
+		pair = spi_get_pair(spi, idx);
+		if (!sel_selected(visible, pair.i) ||
+		    !sel_selected(visible, pair.j))
+			continue;
+		if (sel_selected(sel, pair.i) || sel_selected(sel, pair.j)) {
+			pi = sys_get_atom_xyz(sys, pair.i);
+			pj = sys_get_atom_xyz(sys, pair.j);
+			if (fabs(pi.x-pj.x) <= radius &&
+			    fabs(pi.y-pj.y) <= radius &&
+			    fabs(pi.z-pj.z) <= radius) {
+				sel_add(view_get_sel(view), pair.i);
+				sel_add(view_get_sel(view), pair.j);
+			}
+		}
 	}
+	sel_free(sel);
+	spi_free(spi);
 	return (1);
 }
 
