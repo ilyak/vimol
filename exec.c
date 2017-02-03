@@ -306,11 +306,9 @@ fn_delete_selection(struct tokq *args, struct state *state)
 	}
 	view_snapshot(view);
 	sys = view_get_sys(view);
-	for (i = sys_get_atom_count(sys) - 1; i >= 0; i--) {
-		if (!sel_selected(sel, i))
-			continue;
-		sys_remove_atom(sys, i);
-	}
+	for (i = sys_get_atom_count(sys) - 1; i >= 0; i--)
+		if (sel_selected(sel, i))
+			sys_remove_atom(sys, i);
 	error_set("deleted %d atoms", sel_get_count(sel));
 	sel_free(sel);
 	return (1);
