@@ -55,23 +55,18 @@ make_sel(struct tokq *args, int arg_start, int arg_end, struct sel *current)
 
 		start = end = 0;
 		sscanf(str, "%d:%d", &start, &end);
-
 		start = start < 0 ? size + start : start - 1;
 		end = end < 0 ? size + end : end - 1;
 
 		if (start < 0 || start >= size)
 			continue;
-
 		if (end < 0)
 			end = start;
-
 		if (end >= size)
 			end = size - 1;
-
 		for (i = start; i <= end; i++)
 			sel_add(ret, i);
 	}
-
 	return (ret);
 }
 
