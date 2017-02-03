@@ -206,6 +206,8 @@ run_cmd(struct state *state, const char *command)
 	else
 		statusbar_set_error(state->statusbar, error_get());
 
+	/* bind dot to last executed command */
+	bind_set(state->bind, ".", command);
 	cmdq_free(cmdq);
 }
 
