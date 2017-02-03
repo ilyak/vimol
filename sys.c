@@ -18,10 +18,10 @@
 
 struct sys {
 	int is_modified;
+	struct atoms *atoms;
 	struct graph *graph;
 	struct sel *sel;
 	struct sel *visible;
-	struct atoms *atoms;
 };
 
 static const vec_t h_table[] = {
@@ -127,10 +127,10 @@ sys_copy(struct sys *sys)
 
 	copy = xcalloc(1, sizeof *sys);
 	copy->is_modified = sys->is_modified;
+	copy->atoms = atoms_copy(sys->atoms);
 	copy->graph = graph_copy(sys->graph);
 	copy->sel = sel_copy(sys->sel);
 	copy->visible = sel_copy(sys->visible);
-	copy->atoms = atoms_copy(sys->atoms);
 
 	return (copy);
 }
@@ -139,10 +139,10 @@ void
 sys_free(struct sys *sys)
 {
 	if (sys) {
+		atoms_free(sys->atoms);
+		graph_free(sys->graph);
 		sel_free(sys->sel);
 		sel_free(sys->visible);
-		graph_free(sys->graph);
-		atoms_free(sys->atoms);
 		free(sys);
 	}
 }
