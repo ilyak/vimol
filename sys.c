@@ -399,19 +399,14 @@ sys_get_sel_center(struct sys *sys, struct sel *sel)
 	int idx;
 
 	center = vec_zero();
-
 	if (sel_get_count(sel) == 0)
 		return (center);
-
 	sel_iter_start(sel);
-
 	while (sel_iter_next(sel, &idx)) {
 		xyz = sys_get_atom_xyz(sys, idx);
 		center = vec_add(&center, &xyz);
 	}
-
 	vec_scale(&center, 1.0 / sel_get_count(sel));
-
 	return (center);
 }
 
