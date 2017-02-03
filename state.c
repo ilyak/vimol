@@ -335,56 +335,25 @@ key_down_statusbar(struct state *state, SDL_Keysym keysym)
 }
 
 static void
-start_cmdline(struct state *state)
-{
-	state->is_input = 1;
-
-	edit_clear(state->edit);
-	history_reset_current(state->history);
-
-	SDL_StartTextInput();
-}
-
-static int
-keysym_ctrlaltshift(SDL_Keysym keysym)
-{
-	return (keysym.sym == SDLK_LSHIFT ||
-		keysym.sym == SDLK_RSHIFT ||
-		keysym.sym == SDLK_LCTRL ||
-		keysym.sym == SDLK_RCTRL ||
-		keysym.sym == SDLK_LALT ||
-		keysym.sym == SDLK_RALT);
-}
-
-static int
-keysym_number(SDL_Keysym keysym)
-{
-	return (keysym.sym >= SDLK_0 && keysym.sym <= SDLK_9 &&
-		keysym.mod == KMOD_NONE);
-}
-
-static int
-keysym_colon(SDL_Keysym keysym)
-{
-	return (keysym.sym == SDLK_SEMICOLON && (keysym.mod & KMOD_SHIFT));
-}
-
-static void
 key_down_view(struct state *state, SDL_Keysym keysym)
 {
 	char keystr[256];
 	const char *command;
 	int repeat;
 
-	if (keysym_ctrlaltshift(keysym))
+	if (keysym.sym == SDLK_LSHIFT || keysym.sym == SDLK_RSHIFT ||
+	    keysym.sym == SDLK_LCTRL || keysym.sym == SDLK_RCTRL ||
+	    keysym.sym == SDLK_LALT || keysym.sym == SDLK_RALT)
 		return;
-
-	if (keysym_colon(keysym)) {
-		start_cmdline(state);
+	if (keysym.sym == SDLK_SEMICOLON && (keysym.mod & KMOD_SHIFT)) {
+		state->is_input = 1;
+		edit_clear(state->edit);
+		history_reset_current(state->history);
+		SDL_StartTextInput();
 		return;
 	}
-
-	if (keysym_number(keysym)) {
+	if (keysym.sym >= SDLK_0 && keysym.sym <= SDLK_9 &&
+	    keysym.mod == KMOD_NONE) {
 		repeat = state->repeat * 10 + (keysym.sym - SDLK_0);
 		if (repeat <= 999999)
 			state->repeat = repeat;
