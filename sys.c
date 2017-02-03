@@ -433,7 +433,7 @@ sys_reset_bonds(struct sys *sys)
 		i = pair.i;
 		j = pair.j;
 
-		/* Hydrogens */
+		/* No bond between two Hydrogen atoms */
 		if (sys_get_atom_type(sys, i) == 1 &&
 		    sys_get_atom_type(sys, j) == 1)
 			continue;
@@ -443,7 +443,7 @@ sys_reset_bonds(struct sys *sys)
 	}
 
 	for (i = 0; i < n; i++) {
-		/* Oxygen */
+		/* Double bond for Oxygen */
 		if (sys_get_atom_type(sys, i) == 8 &&
 		    graph_get_edge_count(sys->graph, i) == 1)
 			graph_edge_set_type(graph_get_edges(sys->graph, i), 2);
