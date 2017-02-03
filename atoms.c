@@ -17,7 +17,10 @@
 #include "vimol.h"
 
 struct atoms {
-	int frame, natoms, nframes, *type;
+	int frame;
+	int nframes;
+	int natoms;
+	int *type;
 	vec_t *xyz;
 };
 
