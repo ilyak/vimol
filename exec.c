@@ -271,14 +271,13 @@ fn_copy_selection(struct tokq *args, struct state *state)
 	struct sys *sys;
 	struct yank *yank;
 	struct sel *sel;
-	int reg;
+	int reg = 0;
 
-	if (tokq_count(args) < 1) {
-		error_set("specify copy register");
-		return (0);
+	if (tokq_count(args) > 0) {
+		reg = parse_register(tokq_tok(args, 0));
+		if (reg == -1)
+			return (0);
 	}
-	if ((reg = parse_register(tokq_tok(args, 0))) == -1)
-		return (0);
 	yank = state_get_yank(state);
 	sys = view_get_sys(view);
 	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
@@ -286,10 +285,8 @@ fn_copy_selection(struct tokq *args, struct state *state)
 		sel_free(sel);
 		return (1);
 	}
-	yank_set_register(yank, reg);
-	yank_copy(yank, sys, sel);
-	error_set("copied %d atoms to register '%c'",
-	    sel_get_count(sel), 'a' + reg);
+	yank_copy(yank, sys, sel, reg);
+	error_set("copied %d atoms to \"%c", sel_get_count(sel), 'a'+reg);
 	sel_free(sel);
 	return (1);
 }
@@ -507,17 +504,21 @@ fn_paste(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct yank *yank = state_get_yank(state);
-	int reg;
+	int i, natoms, npaste, reg = 0;
 
 	if (tokq_count(args) > 0) {
-		if ((reg = parse_register(tokq_tok(args, 0))) == -1)
+		reg = parse_register(tokq_tok(args, 0));
+		if (reg == -1)
 			return (0);
-		yank_set_register(yank, reg);
 	}
-	if (yank_get_atom_count(yank, yank_get_register(yank)) == 0)
+	if ((npaste = yank_get_atom_count(yank, reg)) == 0)
 		return (1);
 	view_snapshot(view);
-	yank_paste(yank, view_get_sys(view));
+	yank_paste(yank, view_get_sys(view), reg);
+	natoms = sys_get_atom_count(view_get_sys(view));
+	sel_clear(view_get_sel(view));
+	for (i = 0; i < npaste; i++)
+		sel_add(view_get_sel(view), natoms-npaste+i);
 	return (1);
 }
 

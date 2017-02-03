@@ -401,10 +401,8 @@ char *xstrndup(const char *, size_t);
 /* yank.c */
 struct yank *yank_create(void);
 void yank_free(struct yank *);
-void yank_set_register(struct yank *, int);
-int yank_get_register(struct yank *);
 int yank_get_atom_count(struct yank *, int);
-void yank_copy(struct yank *, struct sys *, struct sel *);
-void yank_paste(struct yank *, struct sys *);
+void yank_copy(struct yank *, struct sys *, struct sel *, int);
+void yank_paste(struct yank *, struct sys *, int);
 
 #endif /* VIMOL_VIMOL_H */

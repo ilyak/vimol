@@ -23,7 +23,6 @@ struct tuple {
 
 struct yank {
 	struct tuple tuple[YANK_SIZE];
-	int reg;
 };
 
 struct yank *
@@ -56,28 +55,16 @@ yank_free(struct yank *yank)
 	}
 }
 
-void
-yank_set_register(struct yank *yank, int reg)
-{
-	assert(reg >= 0 && reg < YANK_SIZE);
-
-	yank->reg = reg;
-}
-
-int
-yank_get_register(struct yank *yank)
-{
-	return (yank->reg);
-}
-
 int
 yank_get_atom_count(struct yank *yank, int reg)
 {
+	if (reg < 0 || reg >= YANK_SIZE)
+		fatal("yank register is out of range");
 	return (atoms_get_count(yank->tuple[reg].atoms));
 }
 
 void
-yank_copy(struct yank *yank, struct sys *sys, struct sel *sel)
+yank_copy(struct yank *yank, struct sys *sys, struct sel *sel, int reg)
 {
 	struct atoms *atoms;
 	struct graph *graph;
@@ -86,8 +73,10 @@ yank_copy(struct yank *yank, struct sys *sys, struct sel *sel)
 	vec_t xyz;
 	int i, j, type, *map;
 
-	atoms = yank->tuple[yank->reg].atoms;
-	graph = yank->tuple[yank->reg].graph;
+	if (reg < 0 || reg >= YANK_SIZE)
+		fatal("yank register is out of range");
+	atoms = yank->tuple[reg].atoms;
+	graph = yank->tuple[reg].graph;
 
 	map = xcalloc(sys_get_atom_count(sys), sizeof *map);
 
@@ -127,7 +116,7 @@ yank_copy(struct yank *yank, struct sys *sys, struct sel *sel)
 }
 
 void
-yank_paste(struct yank *yank, struct sys *sys)
+yank_paste(struct yank *yank, struct sys *sys, int reg)
 {
 	struct atoms *atoms;
 	struct graph *graph;
@@ -136,8 +125,10 @@ yank_paste(struct yank *yank, struct sys *sys)
 	vec_t xyz;
 	int i, j, n, type;
 
-	atoms = yank->tuple[yank->reg].atoms;
-	graph = yank->tuple[yank->reg].graph;
+	if (reg < 0 || reg >= YANK_SIZE)
+		fatal("yank register is out of range");
+	atoms = yank->tuple[reg].atoms;
+	graph = yank->tuple[reg].graph;
 
 	n = sys_get_atom_count(sys);
 
