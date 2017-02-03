@@ -58,8 +58,8 @@ yank_free(struct yank *yank)
 int
 yank_get_atom_count(struct yank *yank, int reg)
 {
-	if (reg < 0 || reg >= YANK_SIZE)
-		fatal("yank register is out of range");
+	assert(reg >= 0 && reg < YANK_SIZE);
+
 	return (atoms_get_count(yank->tuple[reg].atoms));
 }
 
@@ -73,8 +73,8 @@ yank_copy(struct yank *yank, struct sys *sys, struct sel *sel, int reg)
 	vec_t xyz;
 	int i, j, type, *map;
 
-	if (reg < 0 || reg >= YANK_SIZE)
-		fatal("yank register is out of range");
+	assert(reg >= 0 && reg < YANK_SIZE);
+
 	atoms = yank->tuple[reg].atoms;
 	graph = yank->tuple[reg].graph;
 
@@ -125,8 +125,8 @@ yank_paste(struct yank *yank, struct sys *sys, int reg)
 	vec_t xyz;
 	int i, j, n, type;
 
-	if (reg < 0 || reg >= YANK_SIZE)
-		fatal("yank register is out of range");
+	assert(reg >= 0 && reg < YANK_SIZE);
+
 	atoms = yank->tuple[reg].atoms;
 	graph = yank->tuple[reg].graph;
 
