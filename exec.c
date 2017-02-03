@@ -514,6 +514,8 @@ fn_paste(struct tokq *args, struct state *state)
 			return (0);
 		yank_set_register(yank, reg);
 	}
+	if (yank_get_atom_count(yank, yank_get_register(yank)) == 0)
+		return (1);
 	view_snapshot(view);
 	yank_paste(yank, view_get_sys(view));
 	return (1);

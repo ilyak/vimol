@@ -70,6 +70,12 @@ yank_get_register(struct yank *yank)
 	return (yank->reg);
 }
 
+int
+yank_get_atom_count(struct yank *yank, int reg)
+{
+	return (atoms_get_count(yank->tuple[reg].atoms));
+}
+
 void
 yank_copy(struct yank *yank, struct sys *sys, struct sel *sel)
 {
