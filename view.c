@@ -27,7 +27,7 @@ get_atom_color(const char *name)
 {
 	char tag[BUFSIZ], *ptr;
 
-	snprintf(tag, sizeof tag, "color.%s", name);
+	snprintf(tag, sizeof tag, "color-%s", name);
 
 	for (ptr = tag + 6; *ptr; ptr++)
 		*ptr = (char)tolower(*ptr);
@@ -35,7 +35,7 @@ get_atom_color(const char *name)
 	if (settings_has_color(tag))
 		return (settings_get_color(tag));
 
-	return (settings_get_color("color.x"));
+	return (settings_get_color("color-x"));
 }
 
 static void
@@ -49,7 +49,7 @@ render_atoms(struct view *view, cairo_t *cairo)
 	double size;
 	int idx;
 
-	size = settings_get_double("atom.size") / 2;
+	size = settings_get_double("atom-size") / 2;
 	sys = view_get_sys(view);
 	visible = view_get_visible(view);
 
@@ -128,7 +128,7 @@ render_bonds(struct view *view, cairo_t *cairo)
 	double size;
 	int i, j, type;
 
-	size = settings_get_double("bond.size");
+	size = settings_get_double("bond-size");
 	sys = view_get_sys(view);
 	graph = view_get_graph(view);
 	visible = view_get_visible(view);
@@ -170,10 +170,10 @@ render_origin(struct view *view, cairo_t *cairo)
 	const char *font, *xyz[] = { "x", "y", "z" };
 	int i;
 
-	color = settings_get_color("origin.color");
-	font = settings_get_string("origin.font");
-	size = settings_get_double("origin.font.size");
-	line = settings_get_double("origin.line.width");
+	color = settings_get_color("origin-color");
+	font = settings_get_string("origin-font");
+	size = settings_get_double("origin-font-size");
+	line = settings_get_double("origin-line-width");
 
 	cairo_set_source_rgb(cairo, color.r, color.g, color.b);
 	cairo_select_font_face(cairo, font, CAIRO_FONT_SLANT_NORMAL,
@@ -207,9 +207,9 @@ render_ids(struct view *view, cairo_t *cairo)
 	char buf[BUFSIZ];
 	const char *font;
 
-	color = settings_get_color("id.color");
-	font = settings_get_string("id.font");
-	size = settings_get_double("id.font.size");
+	color = settings_get_color("id-color");
+	font = settings_get_string("id-font");
+	size = settings_get_double("id-font-size");
 
 	cairo_set_source_rgb(cairo, color.r, color.g, color.b);
 	cairo_select_font_face(cairo, font, CAIRO_FONT_SLANT_NORMAL,
@@ -244,9 +244,9 @@ render_names(struct view *view, cairo_t *cairo)
 	int idx;
 	const char *font, *name;
 
-	color = settings_get_color("name.color");
-	font = settings_get_string("name.font");
-	size = settings_get_double("name.font.size");
+	color = settings_get_color("name-color");
+	font = settings_get_string("name-font");
+	size = settings_get_double("name-font-size");
 
 	cairo_set_source_rgb(cairo, color.r, color.g, color.b);
 	cairo_select_font_face(cairo, font, CAIRO_FONT_SLANT_NORMAL,
@@ -281,8 +281,8 @@ render_sel(struct view *view, cairo_t *cairo)
 	double size;
 	int idx;
 
-	color = settings_get_color("selection.color");
-	size = settings_get_double("selection.size") / 2;
+	color = settings_get_color("selection-color");
+	size = settings_get_double("selection-size") / 2;
 
 	cairo_set_source_rgb(cairo, color.r, color.g, color.b);
 
@@ -469,7 +469,7 @@ view_render(struct view *view, cairo_t *cairo)
 	int width, height;
 	double zoom;
 
-	color = settings_get_color("bg.color");
+	color = settings_get_color("bg-color");
 	width = cairo_image_surface_get_width(cairo_get_target(cairo));
 	height = cairo_image_surface_get_height(cairo_get_target(cairo));
 	zoom = camera_get_zoom(view->camera, width, height);
@@ -483,20 +483,20 @@ view_render(struct view *view, cairo_t *cairo)
 	cairo_translate(cairo, width / 2, height / 2);
 	cairo_scale(cairo, zoom, zoom);
 
-	if (settings_get_bool("bond.visible"))
+	if (settings_get_bool("bond-visible"))
 		render_bonds(view, cairo);
 
-	if (settings_get_bool("atom.visible"))
+	if (settings_get_bool("atom-visible"))
 		render_atoms(view, cairo);
 
 	render_sel(view, cairo);
 
-	if (settings_get_bool("origin.visible"))
+	if (settings_get_bool("origin-visible"))
 		render_origin(view, cairo);
 
-	if (settings_get_bool("name.visible"))
+	if (settings_get_bool("name-visible"))
 		render_names(view, cairo);
 
-	if (settings_get_bool("id.visible"))
+	if (settings_get_bool("id-visible"))
 		render_ids(view, cairo);
 }

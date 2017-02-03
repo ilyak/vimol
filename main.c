@@ -39,7 +39,7 @@ main(int argc, char **argv)
 			    error_get());
 
 	wnd_first(wnd);
-	state_source(state, settings_get_string("vimolrc.path"));
+	state_source(state, settings_get_string("vimolrc-path"));
 	state_event_loop(state);
 
 	state_save(state);

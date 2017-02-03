@@ -445,7 +445,7 @@ state_create(void)
 
 	set_default_bindings(state);
 
-	path = settings_get_string("history.path");
+	path = settings_get_string("history-path");
 	history_load(state->history, path);
 
 	return (state);
@@ -543,7 +543,7 @@ state_render(struct state *state)
 	if (!state->is_search && !state->is_input)
 		view_render(state_get_view(state), state->cairo);
 
-	if (settings_get_bool("statusbar.visible")) {
+	if (settings_get_bool("statusbar-visible")) {
 		set_statusbar_text(state);
 		pos = edit_get_pos(state->edit);
 
@@ -606,6 +606,6 @@ state_save(struct state *state)
 {
 	const char *path;
 
-	path = settings_get_string("history.path");
+	path = settings_get_string("history-path");
 	history_save(state->history, path);
 }
