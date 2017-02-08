@@ -18,7 +18,7 @@
 
 struct rec {
 	int is_playing, reg;
-	char *data[REC_SIZE];
+	char *data[NUM_REGISTERS];
 };
 
 struct rec *
@@ -30,7 +30,7 @@ rec_create(void)
 	rec = xcalloc(1, sizeof *rec);
 	rec->reg = -1;
 
-	for (i = 0; i < REC_SIZE; i++)
+	for (i = 0; i < NUM_REGISTERS; i++)
 		rec->data[i] = xstrdup("");
 
 	return (rec);
@@ -42,7 +42,7 @@ rec_free(struct rec *rec)
 	int i;
 
 	if (rec) {
-		for (i = 0; i < REC_SIZE; i++)
+		for (i = 0; i < NUM_REGISTERS; i++)
 			free(rec->data[i]);
 		free(rec);
 	}
@@ -80,7 +80,7 @@ rec_load(struct rec *rec, const char *path)
 
 	buffer = NULL;
 
-	for (i = 0; i < REC_SIZE; i++) {
+	for (i = 0; i < NUM_REGISTERS; i++) {
 		buffer = util_next_line(buffer, fp);
 		free(rec->data[i]);
 		rec->data[i] = xstrdup(buffer ? buffer : "");
@@ -99,7 +99,7 @@ rec_save(struct rec *rec, const char *path)
 	if ((fp = fopen(path, "w")) == NULL)
 		return;
 
-	for (i = 0; i < REC_SIZE; i++)
+	for (i = 0; i < NUM_REGISTERS; i++)
 		fprintf(fp, "%s\n", rec->data[i]);
 
 	fclose(fp);
@@ -108,7 +108,7 @@ rec_save(struct rec *rec, const char *path)
 void
 rec_start(struct rec *rec, int reg)
 {
-	assert(reg >= 0 && reg < REC_SIZE);
+	assert(reg >= 0 && reg < NUM_REGISTERS);
 	assert(rec->reg == -1);
 
 	rec->reg = reg;
@@ -146,7 +146,7 @@ rec_play(struct rec *rec, int reg, struct state *state)
 {
 	struct cmdq *cmdq;
 
-	assert(reg >= 0 && reg < REC_SIZE);
+	assert(reg >= 0 && reg < NUM_REGISTERS);
 	assert(rec->reg == -1 && !rec->is_playing);
 
 	if ((cmdq = cmdq_from_string(rec->data[reg])) == NULL)

@@ -22,7 +22,7 @@ struct tuple {
 };
 
 struct yank {
-	struct tuple tuple[YANK_SIZE];
+	struct tuple tuple[NUM_REGISTERS];
 };
 
 struct yank *
@@ -33,7 +33,7 @@ yank_create(void)
 
 	yank = xcalloc(1, sizeof *yank);
 
-	for (i = 0; i < YANK_SIZE; i++) {
+	for (i = 0; i < NUM_REGISTERS; i++) {
 		yank->tuple[i].atoms = atoms_create();
 		yank->tuple[i].graph = graph_create();
 	}
@@ -47,7 +47,7 @@ yank_free(struct yank *yank)
 	int i;
 
 	if (yank) {
-		for (i = 0; i < YANK_SIZE; i++) {
+		for (i = 0; i < NUM_REGISTERS; i++) {
 			atoms_free(yank->tuple[i].atoms);
 			graph_free(yank->tuple[i].graph);
 		}
@@ -58,7 +58,7 @@ yank_free(struct yank *yank)
 int
 yank_get_atom_count(struct yank *yank, int reg)
 {
-	assert(reg >= 0 && reg < YANK_SIZE);
+	assert(reg >= 0 && reg < NUM_REGISTERS);
 
 	return (atoms_get_count(yank->tuple[reg].atoms));
 }
@@ -73,7 +73,7 @@ yank_copy(struct yank *yank, struct sys *sys, struct sel *sel, int reg)
 	vec_t xyz;
 	int i, j, type, *map;
 
-	assert(reg >= 0 && reg < YANK_SIZE);
+	assert(reg >= 0 && reg < NUM_REGISTERS);
 
 	atoms = yank->tuple[reg].atoms;
 	graph = yank->tuple[reg].graph;
@@ -125,7 +125,7 @@ yank_paste(struct yank *yank, struct sys *sys, int reg)
 	vec_t xyz;
 	int i, j, n, type;
 
-	assert(reg >= 0 && reg < YANK_SIZE);
+	assert(reg >= 0 && reg < NUM_REGISTERS);
 
 	atoms = yank->tuple[reg].atoms;
 	graph = yank->tuple[reg].graph;

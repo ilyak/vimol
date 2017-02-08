@@ -53,10 +53,8 @@
 #define VIMOL_DATA_PREFIX  "HOME"
 #endif
 
-/* number of recording registers */
-#define REC_SIZE 26
-/* number of yank registers */
-#define YANK_SIZE 26
+/* number of recording/yank registers (letters a-z) */
+#define NUM_REGISTERS 26
 
 #include "vec.h"
 
