@@ -70,29 +70,6 @@ make_sel(struct tokq *args, int arg_start, int arg_end, struct sel *current)
 	return (ret);
 }
 
-static int
-parse_register(tok_t tok)
-{
-	const char *str;
-	int reg;
-
-	str = tok_string(tok);
-
-	if (strlen(str) > 1) {
-		error_set("register must be a single letter");
-		return (-1);
-	}
-
-	reg = tolower(str[0]);
-
-	if (reg < 'a' || reg > 'z') {
-		error_set("register must be a letter from 'a' to 'z'");
-		return (-1);
-	}
-
-	return (reg - 'a');
-}
-
 static vec_t
 parse_vec(struct tokq *args, int start)
 {
@@ -266,13 +243,9 @@ fn_copy_selection(struct tokq *args, struct state *state)
 	struct sys *sys;
 	struct yank *yank;
 	struct sel *sel;
-	int reg = 0;
+	int reg;
 
-	if (tokq_count(args) > 0) {
-		reg = parse_register(tokq_tok(args, 0));
-		if (reg == -1)
-			return (0);
-	}
+	reg = state_get_register(state);
 	yank = state_get_yank(state);
 	sys = view_get_sys(view);
 	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
@@ -493,17 +466,13 @@ fn_next_window(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_paste(struct tokq *args, struct state *state)
+fn_paste(struct tokq *args __unused, struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct yank *yank = state_get_yank(state);
-	int i, natoms, npaste, reg = 0;
+	int i, natoms, npaste, reg;
 
-	if (tokq_count(args) > 0) {
-		reg = parse_register(tokq_tok(args, 0));
-		if (reg == -1)
-			return (0);
-	}
+	reg = state_get_register(state);
 	if ((npaste = yank_get_atom_count(yank, reg)) == 0)
 		return (1);
 	view_snapshot(view);
@@ -516,20 +485,18 @@ fn_paste(struct tokq *args, struct state *state)
 }
 
 static int
-fn_replay(struct tokq *args, struct state *state)
+fn_replay(struct tokq *args __unused, struct state *state)
 {
 	struct rec *rec = state_get_rec(state);
-	int i, repeat, reg = 0;
+	int i, repeat, reg;
 
+	reg = state_get_register(state);
 	if (rec_is_playing(rec))
 		return (1);
 	if (rec_is_recording(rec)) {
 		error_set("cannot replay during recording");
 		return (0);
 	}
-	if (tokq_count(args) > 0)
-		if ((reg = parse_register(tokq_tok(args, 0))) == -1)
-			return (0);
 	if ((repeat = state_get_repeat(state)) <= 0)
 		repeat = 1;
 	for (i = 0; i < repeat; i++)
@@ -658,10 +625,9 @@ fn_force_quit(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_rec(struct tokq *args, struct state *state)
+fn_rec(struct tokq *args __unused, struct state *state)
 {
 	struct rec *rec = state_get_rec(state);
-	int reg = 0;
 
 	if (rec_is_playing(rec))
 		return (1);
@@ -669,10 +635,7 @@ fn_rec(struct tokq *args, struct state *state)
 		rec_stop(rec);
 		return (1);
 	}
-	if (tokq_count(args) > 0)
-		if ((reg = parse_register(tokq_tok(args, 0))) == -1)
-			return (0);
-	rec_start(rec, reg);
+	rec_start(rec, state_get_register(state));
 	return (1);
 }
 

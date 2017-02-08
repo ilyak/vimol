@@ -20,6 +20,7 @@ struct state {
 	int is_input;
 	int is_search;
 	int force_quit;
+	int reg;
 	int repeat;
 	struct bind *bind;
 	struct edit *edit;
@@ -482,6 +483,12 @@ struct yank *
 state_get_yank(struct state *state)
 {
 	return (state->yank);
+}
+
+int
+state_get_register(struct state *state)
+{
+	return (state->reg);
 }
 
 int
