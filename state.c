@@ -269,10 +269,8 @@ key_down_statusbar(struct state *state, SDL_Keysym keysym)
 		if (keysym.mod & KMOD_CTRL) {
 			state->is_search = 1;
 			text = edit_get_text(state->edit);
-
 			if (!string_is_whitespace(text)) {
 				history_prev(state->history);
-
 				if (!history_search(state->history, text))
 					history_next(state->history);
 			}
