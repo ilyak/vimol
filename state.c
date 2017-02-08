@@ -375,11 +375,21 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 				state->repeat = repeat;
 		}
 		break;
+	case SDLK_QUOTE:
+		if (keysym.mod & KMOD_SHIFT)
+			state->reg = -1;
+		break;
 	default:
-		key_string(keystr, sizeof keystr, keysym.sym, keysym.mod);
-		if ((command = bind_get(state->bind, keystr)) != NULL)
-			run_cmd(state, command);
-		state->repeat = 0;
+		if (state->reg == -1 && keysym.sym >= 'a' && keysym.sym <= 'z')
+			state->reg = keysym.sym - 'a' + 1;
+		else {
+			key_string(keystr, sizeof keystr, keysym.sym,
+			    keysym.mod);
+			if ((command = bind_get(state->bind, keystr)) != NULL)
+				run_cmd(state, command);
+			state->repeat = 0;
+			state->reg = 0;
+		}
 		break;
 	}
 }
@@ -488,7 +498,7 @@ state_get_yank(struct state *state)
 int
 state_get_register(struct state *state)
 {
-	return (state->reg);
+	return (state->reg < 1 ? 0 : state->reg - 1);
 }
 
 int
