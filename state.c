@@ -341,31 +341,46 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 	const char *command;
 	int repeat;
 
-	if (keysym.sym == SDLK_LSHIFT || keysym.sym == SDLK_RSHIFT ||
-	    keysym.sym == SDLK_LCTRL || keysym.sym == SDLK_RCTRL ||
-	    keysym.sym == SDLK_LALT || keysym.sym == SDLK_RALT)
-		return;
-	if (keysym.sym == SDLK_SEMICOLON && (keysym.mod & KMOD_SHIFT)) {
-		state->is_input = 1;
-		edit_clear(state->edit);
-		history_reset_current(state->history);
-		SDL_StartTextInput();
-		return;
+	switch (keysym.sym) {
+	case SDLK_LSHIFT:
+	case SDLK_RSHIFT:
+	case SDLK_LCTRL:
+	case SDLK_RCTRL:
+	case SDLK_LALT:
+	case SDLK_RALT:
+		/* ignore */
+		break;
+	case SDLK_SEMICOLON:
+		if (keysym.mod & KMOD_SHIFT) {
+			state->is_input = 1;
+			edit_clear(state->edit);
+			history_reset_current(state->history);
+			SDL_StartTextInput();
+		}
+		break;
+	case SDLK_0:
+	case SDLK_1:
+	case SDLK_2:
+	case SDLK_3:
+	case SDLK_4:
+	case SDLK_5:
+	case SDLK_6:
+	case SDLK_7:
+	case SDLK_8:
+	case SDLK_9:
+		if (keysym.mod == KMOD_NONE) {
+			repeat = state->repeat * 10 + (keysym.sym - SDLK_0);
+			if (repeat <= 999999)
+				state->repeat = repeat;
+		}
+		break;
+	default:
+		key_string(keystr, sizeof keystr, keysym.sym, keysym.mod);
+		if ((command = bind_get(state->bind, keystr)) != NULL)
+			run_cmd(state, command);
+		state->repeat = 0;
+		break;
 	}
-	if (keysym.sym >= SDLK_0 && keysym.sym <= SDLK_9 &&
-	    keysym.mod == KMOD_NONE) {
-		repeat = state->repeat * 10 + (keysym.sym - SDLK_0);
-		if (repeat <= 999999)
-			state->repeat = repeat;
-		return;
-	}
-
-	key_string(keystr, sizeof keystr, keysym.sym, keysym.mod);
-
-	if ((command = bind_get(state->bind, keystr)) != NULL)
-		run_cmd(state, command);
-
-	state->repeat = 0;
 }
 
 static int
