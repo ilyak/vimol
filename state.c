@@ -34,7 +34,7 @@ struct state {
 };
 
 static void
-key_string(char *buffer, size_t size, SDL_Keycode sym, Uint16 mod)
+key_string(char **buf, SDL_Keycode sym, Uint16 mod)
 {
 	const char *ctrl, *alt, *shift, *name;
 
@@ -44,7 +44,7 @@ key_string(char *buffer, size_t size, SDL_Keycode sym, Uint16 mod)
 
 	 name = SDL_GetKeyName(sym);
 
-	snprintf(buffer, size, "%s%s%s%s", ctrl, alt, shift, name);
+	xasprintf(buf, "%s%s%s%s", ctrl, alt, shift, name);
 }
 
 static void
@@ -338,7 +338,7 @@ key_down_statusbar(struct state *state, SDL_Keysym keysym)
 static void
 key_down_view(struct state *state, SDL_Keysym keysym)
 {
-	char keystr[256];
+	char *keystr;
 	const char *command;
 	int repeat;
 
@@ -383,12 +383,12 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 		if (state->reg == -1 && keysym.sym >= 'a' && keysym.sym <= 'z')
 			state->reg = keysym.sym - 'a' + 1;
 		else {
-			key_string(keystr, sizeof keystr, keysym.sym,
-			    keysym.mod);
+			key_string(&keystr, keysym.sym, keysym.mod);
 			if ((command = bind_get(state->bind, keystr)) != NULL)
 				run_cmd(state, command);
 			state->repeat = 0;
 			state->reg = 0;
+			free(keystr);
 		}
 		break;
 	}
