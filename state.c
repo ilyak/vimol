@@ -139,13 +139,10 @@ set_default_bindings(struct state *state)
 static void
 set_statusbar_text(struct state *state)
 {
-	struct view *view;
-	struct sys *sys;
+	struct view *view = state_get_view(state);
+	struct sys *sys = view_get_sys(view);
 	const char *filename;
-	char *buf, *tmp;
-
-	view = state_get_view(state);
-	sys = view_get_sys(view);
+	char *buf;
 
 	if (state->is_search)
 		statusbar_set_text(state->statusbar, "(search %s ):%s",
@@ -155,26 +152,21 @@ set_statusbar_text(struct state *state)
 		    edit_get_text(state->edit));
 
 	buf = xstrdup("");
-	if (state->repeat > 0) {
-		tmp = buf;
-		xasprintf(&buf, "%s%d ", tmp, state->repeat);
-		free(tmp);
-	}
-	if (rec_is_recording(state->rec)) {
-		tmp = buf;
-		xasprintf(&buf, "%srec[%c] ", tmp,
-		    rec_get_register(state->rec) + 'a');
-		free(tmp);
-	}
+	if (state->repeat > 0)
+		xcatsprintf(&buf, "%d ", state->repeat);
+	if (rec_is_recording(state->rec))
+		xcatsprintf(&buf, "rec[%c] ", rec_get_register(state->rec)+'a');
+	if (state->reg == -1)
+		xcatsprintf(&buf, "\"  ");
+	else if (state->reg > 0)
+		xcatsprintf(&buf, "\"%c ", state->reg+'a'-1);
 	filename = util_basename(view_get_path(view));
 	if (filename[0] == '\0')
 		filename = "[no name]";
-	tmp = buf;
-	xasprintf(&buf, "%s%s%s %d/%d %d/%d", tmp, filename,
+	xcatsprintf(&buf, "%s%s %d/%d %d/%d", filename,
 	    sys_is_modified(sys) ? "*" : " ",
 	    sys_get_frame(sys) + 1, sys_get_frame_count(sys),
 	    wnd_get_index(state->wnd) + 1, wnd_get_count(state->wnd));
-	free(tmp);
 	statusbar_set_info_text(state->statusbar, "%s", buf);
 	free(buf);
 }
