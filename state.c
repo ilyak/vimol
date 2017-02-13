@@ -487,7 +487,6 @@ int
 state_source(struct state *state, const char *path)
 {
 	FILE *fp;
-	struct cmdq *cmdq;
 	char *buffer;
 
 	if ((fp = fopen(path, "r")) == NULL) {
@@ -500,11 +499,7 @@ state_source(struct state *state, const char *path)
 	while ((buffer = util_next_line(buffer, fp)) != NULL) {
 		if (string_is_comment(buffer))
 			continue;
-
-		if ((cmdq = cmdq_from_string(buffer))) {
-			cmdq_exec(cmdq, state);
-			cmdq_free(cmdq);
-		}
+		cmdq_exec_string(buffer, state);
 	}
 
 	fclose(fp);
