@@ -118,7 +118,6 @@ cmdq_exec(struct cmdq *cmdq, struct state *state)
 		if (!exec_run(cmd->name, cmd->args, state))
 			return (0);
 	}
-
 	return (1);
 }
 
