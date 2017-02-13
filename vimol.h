@@ -53,8 +53,8 @@
 #define VIMOL_DATA_PREFIX  "HOME"
 #endif
 
-/* number of recording/yank registers (letters a-z) */
-#define NUM_REGISTERS 26
+/* number of recording/yank registers */
+#define NUM_REGISTERS 10
 
 #include "vec.h"
 
@@ -276,8 +276,7 @@ struct rec *state_get_rec(struct state *);
 struct view *state_get_view(struct state *);
 struct wnd *state_get_wnd(struct state *);
 struct yank *state_get_yank(struct state *);
-int state_get_register(struct state *);
-int state_get_repeat(struct state *);
+int state_get_number(struct state *);
 int state_source(struct state *, const char *);
 void state_render(struct state *);
 void state_toggle_fullscreen(struct state *);

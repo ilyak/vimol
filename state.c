@@ -20,8 +20,7 @@ struct state {
 	int is_input;
 	int is_search;
 	int force_quit;
-	int reg;
-	int repeat;
+	int number;
 	struct bind *bind;
 	struct edit *edit;
 	struct history *history;
@@ -152,14 +151,10 @@ set_statusbar_text(struct state *state)
 		    edit_get_text(state->edit));
 
 	buf = xstrdup("");
-	if (state->repeat > 0)
-		xcatsprintf(&buf, "%d ", state->repeat);
+	if (state->number > 0)
+		xcatsprintf(&buf, "%d ", state->number);
 	if (rec_is_recording(state->rec))
 		xcatsprintf(&buf, "rec[%c] ", rec_get_register(state->rec)+'a');
-	if (state->reg == -1)
-		xcatsprintf(&buf, "\"  ");
-	else if (state->reg > 0)
-		xcatsprintf(&buf, "\"%c ", state->reg+'a'-1);
 	filename = util_basename(view_get_path(view));
 	if (filename[0] == '\0')
 		filename = "[no name]";
@@ -330,7 +325,7 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 {
 	char *keystr;
 	const char *command;
-	int repeat;
+	int number;
 
 	switch (keysym.sym) {
 	case SDLK_LSHIFT:
@@ -360,26 +355,17 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 	case SDLK_8:
 	case SDLK_9:
 		if (keysym.mod == KMOD_NONE) {
-			repeat = state->repeat * 10 + (keysym.sym - SDLK_0);
-			if (repeat <= 999999)
-				state->repeat = repeat;
+			number = state->number * 10 + (keysym.sym - SDLK_0);
+			if (number <= 999999)
+				state->number = number;
 		}
-		break;
-	case SDLK_QUOTE:
-		if (keysym.mod & KMOD_SHIFT)
-			state->reg = -1;
 		break;
 	default:
-		if (state->reg == -1 && keysym.sym >= 'a' && keysym.sym <= 'z')
-			state->reg = keysym.sym - 'a' + 1;
-		else {
-			key_string(&keystr, keysym.sym, keysym.mod);
-			if ((command = bind_get(state->bind, keystr)) != NULL)
-				run_cmd(state, command);
-			state->repeat = 0;
-			state->reg = 0;
-			free(keystr);
-		}
+		key_string(&keystr, keysym.sym, keysym.mod);
+		if ((command = bind_get(state->bind, keystr)) != NULL)
+			run_cmd(state, command);
+		state->number = 0;
+		free(keystr);
 		break;
 	}
 }
@@ -486,15 +472,9 @@ state_get_yank(struct state *state)
 }
 
 int
-state_get_register(struct state *state)
+state_get_number(struct state *state)
 {
-	return (state->reg < 1 ? 0 : state->reg - 1);
-}
-
-int
-state_get_repeat(struct state *state)
-{
-	return (state->repeat);
+	return (state->number);
 }
 
 int

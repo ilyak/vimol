@@ -84,6 +84,16 @@ parse_vec(struct tokq *args, int start)
 }
 
 static int
+get_register(struct state *state)
+{
+	int reg = state_get_number(state);
+
+	if (reg < 0 || reg >= NUM_REGISTERS)
+		reg = 0;
+	return (reg);
+}
+
+static int
 fn_about(struct tokq *args __unused, struct state *state __unused)
 {
 	error_set("vimol %s (c) 2013-2017 Ilya Kaliman", VIMOL_VERSION);
@@ -245,7 +255,7 @@ fn_copy_selection(struct tokq *args, struct state *state)
 	struct sel *sel;
 	int reg;
 
-	reg = state_get_register(state);
+	reg = get_register(state);
 	yank = state_get_yank(state);
 	sys = view_get_sys(view);
 	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
@@ -254,7 +264,7 @@ fn_copy_selection(struct tokq *args, struct state *state)
 		return (1);
 	}
 	yank_copy(yank, sys, sel, reg);
-	error_set("copied %d atoms to \"%c", sel_get_count(sel), 'a'+reg);
+	error_set("copied %d atoms", sel_get_count(sel));
 	sel_free(sel);
 	return (1);
 }
@@ -472,7 +482,7 @@ fn_paste(struct tokq *args __unused, struct state *state)
 	struct yank *yank = state_get_yank(state);
 	int i, natoms, npaste, reg;
 
-	reg = state_get_register(state);
+	reg = get_register(state);
 	if ((npaste = yank_get_atom_count(yank, reg)) == 0)
 		return (1);
 	view_snapshot(view);
@@ -488,20 +498,17 @@ static int
 fn_replay(struct tokq *args __unused, struct state *state)
 {
 	struct rec *rec = state_get_rec(state);
-	int i, repeat, reg;
+	int reg;
 
-	reg = state_get_register(state);
+	reg = get_register(state);
 	if (rec_is_playing(rec))
 		return (1);
 	if (rec_is_recording(rec)) {
 		error_set("cannot replay during recording");
 		return (0);
 	}
-	if ((repeat = state_get_repeat(state)) <= 0)
-		repeat = 1;
-	for (i = 0; i < repeat; i++)
-		if (!rec_play(rec, reg, state))
-			return (0);
+	if (!rec_play(rec, reg, state))
+		return (0);
 	return (1);
 }
 
@@ -635,7 +642,7 @@ fn_rec(struct tokq *args __unused, struct state *state)
 		rec_stop(rec);
 		return (1);
 	}
-	rec_start(rec, state_get_register(state));
+	rec_start(rec, get_register(state));
 	return (1);
 }
 
@@ -789,7 +796,7 @@ fn_select(struct tokq *args, struct state *state)
 
 	visible = view_get_visible(view);
 	if (tokq_count(args) == 0) {
-		idx = state_get_repeat(state) - 1;
+		idx = state_get_number(state) - 1;
 		if (idx < 0) {
 			sel_iter_start(visible);
 			while (sel_iter_next(visible, &idx)) {
@@ -1082,7 +1089,7 @@ fn_unselect(struct tokq *args, struct state *state)
 	int idx;
 
 	if (tokq_count(args) == 0) {
-		idx = state_get_repeat(state) - 1;
+		idx = state_get_number(state) - 1;
 		if (idx < 0) {
 			sel_iter_start(view_get_sel(view));
 			while (sel_iter_next(view_get_sel(view), &idx))
