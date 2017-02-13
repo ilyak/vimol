@@ -325,7 +325,7 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 {
 	char *keystr;
 	const char *command;
-	int number;
+	int i, number;
 
 	switch (keysym.sym) {
 	case SDLK_LSHIFT:
@@ -362,8 +362,14 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 		break;
 	default:
 		key_string(&keystr, keysym.sym, keysym.mod);
-		if ((command = bind_get(state->bind, keystr)) != NULL)
-			run_cmd(state, command);
+		if ((command = bind_get(state->bind, keystr)) != NULL) {
+			if (keysym.sym == SDLK_PERIOD && state->number > 0) {
+				for (i = 0; i < state->number; i++)
+					if (!cmdq_exec_string(command, state))
+						break;
+			} else
+				run_cmd(state, command);
+		}
 		state->number = 0;
 		free(keystr);
 		break;
