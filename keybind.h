@@ -51,7 +51,7 @@ static const struct {
 	{ "shift-U", "" },
 	{ "shift-V", "show-all" },
 	{ "shift-W", "select-water" },
-	{ "shift-X", "copy-selection; delete-selection" },
+	{ "shift-X", "" },
 	{ "shift-Y", "" },
 	{ "shift-Z", "" },
 	{ "ctrl-A", "select *" },
