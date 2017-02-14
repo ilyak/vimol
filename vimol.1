@@ -1,0 +1,58 @@
+.TH VIMOL 1 "February 13, 2017"
+
+.SH NAME
+vimol \- vimol is a fast and functional molecular viewer and editor
+
+.SH SYNOPSIS
+.B vimol
+.RI [ file... ]
+
+.SH DESCRIPTION
+.B vimol
+is a fast and functional molecular viewer and editor with vim-like
+key bindings.
+.B vimol
+supports viewing and editing
+.B .PDB
+and
+.B .XYZ
+file formats.
+
+.SH OPTIONS
+A description of the supported options is included below.
+
+.SH KEY BINDINGS
+.PP
+Navigation
+.TP
+.B h, j, k, l
+Rotate view.
+.TP
+.B shift-h, shift-j, shift-k, shift-l
+Pan view.
+.TP
+.B a
+Add hydrogen atoms.
+.TP
+.B b
+Make bond between selected atoms.
+.TP
+.B c
+Center selection.
+.TP
+.B q
+Quit
+.B vimol
+checking for unsaved changes.
+.TP
+.B 123u
+Unselect atom 123.
+.TP
+.B [0-9]y
+Copy (yank) selection to register [0-9].
+.TP
+.B x
+Cut selection.
+
+.SH AUTHOR
+Vimol is (c) 2013-2017 Ilya Kaliman
