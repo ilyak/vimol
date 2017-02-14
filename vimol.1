@@ -26,17 +26,27 @@ key bindings. Viewing and editing of
 .B .PDB
 and
 .B .XYZ
-file formats is supported.
+file formats is supported. Multiframe file support is implemented for
+both formats.
 .SH KEY BINDINGS
+In the description of key bindings below the
+.B S\-
+prefix means
+.B Shift
+key and the
+.B C\-
+prefix means
+.B Ctrl
+key.
 .TP
 .B a
-Add hydrogen atoms to selection.
+Fill unsatisfied valencies with hydrogen atoms.
 .TP
 .B b
-Make bond between selected atoms.
+Toggle a bond between two selected atoms.
 .TP
 .B B
-Reset bonds in current window.
+Reset all bonds.
 .TP
 .B c
 Center selection.
@@ -50,23 +60,17 @@ Delete selection.
 .B e
 Clear selection.
 .TP
-.B f
-Zoom in.
+.B f, g
+Zoom in, zoom out.
 .TP
-.B F
-Rotate camera along the view axis in a counterclockwise direction.
+.B F, G
+Rotate camera along the view axis.
 .TP
-.B g
-Zoom out.
+.B h, j, k, l, Left, Down, Up, Right
+Rotate view.
 .TP
-.B G
-Rotate camera along the view axis in a clockwise direction.
-.TP
-.B h/Left
-Rotate view left.
-.TP
-.B H/Shift-Left
-Pan view left.
+.B H, J, K, L, S-Left, S-Down, S-Up, S-Right
+Move view.
 .TP
 .B i
 Toggle display of atom indices.
@@ -74,36 +78,18 @@ Toggle display of atom indices.
 .B I
 Toggle display of atom symbols.
 .TP
-.B j/Down
-Rotate view down.
-.TP
-.B J/Shift-Down
-Move view down.
-.TP
-.B k/Up
-Rotate view up.
-.TP
-.B K/Shift-Up
-Move view up.
-.TP
-.B l/Right
-Rotate view right.
-.TP
-.B L/Shift-Right
-Move view right.
-.TP
 .B m
-Measure position/distance/angle/torsion depending on the number of
+Measure position/distance/angle/torsion for corresponding one/two/three/four
 selected atoms.
 .TP
 .B o
-Toggle display of the coordinate system origin/axes.
+Toggle display of the coordinate system origin and axes.
 .TP
 .B O
-Move selection to coordinate origin.
+Move selection to the coordinate system origin.
 .TP
-.B [0-9]p
-Paste atoms to current window.
+.B [0-9]p, [0-9]C-v
+Paste atoms to current window. An optional copy-register can be specified.
 .TP
 .B q
 Quit
@@ -116,13 +102,13 @@ Quit
 discarding unsaved changes.
 .TP
 .B [0-9]r
-Start recording in register 0-9.
+Start recording. An optional record-register can be specified.
 .TP
 .B 123s
 Select atom 123.
 .TP
 .B [0-9]t
-Replay recording. A register from 0 to 9 can optionally be specified.
+Replay recording. An optional record-register can be specified.
 .TP
 .B 123u
 Unselect atom 123.
@@ -139,11 +125,58 @@ Select whole molecule.
 .B W
 Select all water molecules.
 .TP
-.B x
+.B x, C-x
 Cut selection.
 .TP
-.B [0-9]y
-Copy (yank) selection. Yank register from 0 to 9 can
-optionally be specified.
+.B [0-9]y, [0-9]C-c
+Copy selection. An optional copy-register can be specified.
+.TP
+.B C-f, C-g
+Rotate selected atoms along view axis.
+.TP
+.B C-h, C-j, C-k, C-l, C-Left, C-Down, C-Up, C-Right
+Rotate selected atoms.
+.TP
+.B C-H, C-J, C-K, C-L, CS-Left, CS-Down, CS-Up, CS-Right
+Move selected atoms.
+.TP
+.B C-r
+Redo last change.
+.TP
+.B C-z
+Undo last change.
+.TP
+.B Delete
+Delete selection.
+.TP
+.B =
+Invert selection.
+.TP
+.B Space
+Toggle fullscreen mode.
+.TP
+.B 123.
+Repeat last command 123 times.
+.TP
+.B `
+Reset view.
+.TP
+.B [
+Switch to previous frame.
+.TP
+.B ]
+Switch to next frame.
+.TP
+.B {
+Go 100 frames backward.
+.TP
+.B }
+Go 100 frames forward.
+.TP
+.B <
+Switch to previous window.
+.TP
+.B >
+Switch to next window.
 .SH AUTHOR
 Vimol is (c) 2013-2017 Ilya Kaliman
