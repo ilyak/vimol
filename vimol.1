@@ -36,17 +36,47 @@ Center and fit selection to window.
 .B d
 Delete selection.
 .TP
-.B h/j/k/l
-Rotate view.
+.B e
+Clear selection.
 .TP
-.B H/J/K/L
-Pan view.
+.B h/Left
+Rotate view left.
+.TP
+.B H/Shift-Left
+Pan view left.
 .TP
 .B i
 Toggle display of indices.
 .TP
 .B I
 Toggle display of atom symbols.
+.TP
+.B j/Down
+Rotate view down.
+.TP
+.B J/Shift-Down
+Pan view down.
+.TP
+.B k/Up
+Rotate view up.
+.TP
+.B K/Shift-Up
+Pan view up.
+.TP
+.B l/Right
+Rotate view right.
+.TP
+.B L/Shift-Right
+Pan view right.
+.TP
+.B o
+Toggle display of the coordinate (o)rigin/axes.
+.TP
+.B O
+Move selection to coordinate origin.
+.TP
+.B [0-9]p
+Paste atoms to current window.
 .TP
 .B q
 Quit
@@ -60,6 +90,9 @@ discarding unsaved changes.
 .TP
 .B [0-9]r
 Start recording in register 0-9.
+.TP
+.B [0-9]t
+Replay recording from register 0-9.
 .TP
 .B 123s
 Select atom 123.
