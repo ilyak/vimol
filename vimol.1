@@ -14,14 +14,11 @@
 .\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 .\"
 .TH VIMOL 1 "February 13, 2017"
-
 .SH NAME
 vimol \- vimol is a fast and functional molecular viewer and editor
-
 .SH SYNOPSIS
 .B vimol
 .RI [ file... ]
-
 .SH DESCRIPTION
 .B vimol
 is a fast and functional molecular viewer and editor with vim-like
@@ -30,10 +27,6 @@ key bindings. Viewing and editing of
 and
 .B .XYZ
 file formats is supported.
-
-.SH OPTIONS
-A description of the supported options is included below.
-
 .SH KEY BINDINGS
 .TP
 .B a
@@ -53,6 +46,12 @@ Delete selection.
 .TP
 .B e
 Clear selection.
+.TP
+.B f
+Zoom in.
+.TP
+.B g
+Zoom out.
 .TP
 .B h/Left
 Rotate view left.
@@ -84,6 +83,10 @@ Rotate view right.
 .B L/Shift-Right
 Pan view right.
 .TP
+.B m
+Show position/distance/angle/torsion depending on the number of selected
+atoms.
+.TP
 .B o
 Toggle display of the coordinate (o)rigin/axes.
 .TP
@@ -106,23 +109,28 @@ discarding unsaved changes.
 .B [0-9]r
 Start recording in register 0-9.
 .TP
-.B [0-9]t
-Replay recording from register 0-9.
-.TP
 .B 123s
 Select atom 123.
+.TP
+.B [0-9]t
+Replay recording from register 0-9.
 .TP
 .B 123u
 Unselect atom 123.
 .TP
+.B v
+Hide selection.
+.TP
+.B V
+Show all atoms.
+.TP
 .B w
 Select (w)hole molecule.
 .TP
-.B [0-9]y
-Copy (yank) selection to register 0-9.
-.TP
 .B x
 Cut selection.
-
+.TP
+.B [0-9]y
+Copy (yank) selection to register 0-9.
 .SH AUTHOR
 Vimol is (c) 2013-2017 Ilya Kaliman
