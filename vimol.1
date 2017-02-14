@@ -30,10 +30,13 @@ file formats is supported.
 .SH KEY BINDINGS
 .TP
 .B a
-Add hydrogen atoms.
+Add hydrogen atoms to selection.
 .TP
 .B b
 Make bond between selected atoms.
+.TP
+.B B
+Reset bonds in current window.
 .TP
 .B c
 Center selection.
@@ -50,8 +53,14 @@ Clear selection.
 .B f
 Zoom in.
 .TP
+.B F
+Rotate camera along the view axis in a counterclockwise direction.
+.TP
 .B g
 Zoom out.
+.TP
+.B G
+Rotate camera along the view axis in a clockwise direction.
 .TP
 .B h/Left
 Rotate view left.
@@ -60,7 +69,7 @@ Rotate view left.
 Pan view left.
 .TP
 .B i
-Toggle display of indices.
+Toggle display of atom indices.
 .TP
 .B I
 Toggle display of atom symbols.
@@ -69,26 +78,26 @@ Toggle display of atom symbols.
 Rotate view down.
 .TP
 .B J/Shift-Down
-Pan view down.
+Move view down.
 .TP
 .B k/Up
 Rotate view up.
 .TP
 .B K/Shift-Up
-Pan view up.
+Move view up.
 .TP
 .B l/Right
 Rotate view right.
 .TP
 .B L/Shift-Right
-Pan view right.
+Move view right.
 .TP
 .B m
-Show position/distance/angle/torsion depending on the number of selected
-atoms.
+Measure position/distance/angle/torsion depending on the number of
+selected atoms.
 .TP
 .B o
-Toggle display of the coordinate (o)rigin/axes.
+Toggle display of the coordinate system origin/axes.
 .TP
 .B O
 Move selection to coordinate origin.
@@ -99,7 +108,7 @@ Paste atoms to current window.
 .B q
 Quit
 .B vimol
-checking for unsaved changes.
+prompting if there are unsaved changes.
 .TP
 .B Q
 Quit
@@ -113,7 +122,7 @@ Start recording in register 0-9.
 Select atom 123.
 .TP
 .B [0-9]t
-Replay recording from register 0-9.
+Replay recording. A register from 0 to 9 can optionally be specified.
 .TP
 .B 123u
 Unselect atom 123.
@@ -125,12 +134,16 @@ Hide selection.
 Show all atoms.
 .TP
 .B w
-Select (w)hole molecule.
+Select whole molecule.
+.TP
+.B W
+Select all water molecules.
 .TP
 .B x
 Cut selection.
 .TP
 .B [0-9]y
-Copy (yank) selection to register 0-9.
+Copy (yank) selection. Yank register from 0 to 9 can
+optionally be specified.
 .SH AUTHOR
 Vimol is (c) 2013-2017 Ilya Kaliman
