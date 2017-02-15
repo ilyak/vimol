@@ -160,7 +160,7 @@ set_statusbar_text(struct state *state)
 	if (state->number > 0)
 		xcatsprintf(&buf, "%d ", state->number);
 	if (rec_is_recording(state->rec))
-		xcatsprintf(&buf, "rec[%c] ", rec_get_register(state->rec)+'a');
+		xcatsprintf(&buf, "rec[%d] ", rec_get_register(state->rec));
 	filename = util_basename(view_get_path(view));
 	if (filename[0] == '\0')
 		filename = "[no name]";
