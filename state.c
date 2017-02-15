@@ -146,8 +146,8 @@ set_statusbar_text(struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct sys *sys = view_get_sys(view);
+	char buf[BUFSIZ];
 	const char *filename;
-	char *buf;
 
 	if (state->is_search)
 		statusbar_set_text(state->statusbar, "(search %s ):%s",
@@ -156,20 +156,22 @@ set_statusbar_text(struct state *state)
 		statusbar_set_text(state->statusbar, ":%s",
 		    edit_get_text(state->edit));
 
-	buf = xstrdup("");
+	memset(buf, 0, sizeof buf);
 	if (state->number > 0)
-		xcatsprintf(&buf, "%d ", state->number);
+		snprintf(buf, sizeof buf, "%d ", state->number);
 	if (rec_is_recording(state->rec))
-		xcatsprintf(&buf, "rec[%d] ", rec_get_register(state->rec));
+		snprintf(buf + strlen(buf), sizeof buf - strlen(buf),
+		    "rec[%d] ", rec_get_register(state->rec));
+	if (sys_is_modified(sys))
+		snprintf(buf + strlen(buf), sizeof buf - strlen(buf), "*");
 	filename = util_basename(view_get_path(view));
 	if (filename[0] == '\0')
 		filename = "[no name]";
-	xcatsprintf(&buf, "%s%s %d/%d %d/%d", filename,
-	    sys_is_modified(sys) ? "*" : " ",
+	snprintf(buf + strlen(buf), sizeof buf - strlen(buf),
+	    "%s %d/%d %d/%d", filename,
 	    sys_get_frame(sys) + 1, sys_get_frame_count(sys),
 	    wnd_get_index(state->wnd) + 1, wnd_get_count(state->wnd));
 	statusbar_set_info_text(state->statusbar, "%s", buf);
-	free(buf);
 }
 
 static void
