@@ -17,9 +17,11 @@ $(PROG): $(ALL_O)
 
 install:
 	install -m 0755 $(PROG) $(PREFIX)/bin
+	install -m 0644 $(PROG).1 $(PREFIX)/man/man1
 
 uninstall:
 	rm -f $(PREFIX)/bin/$(PROG)
+	rm -f $(PREFIX)/man/man1/$(PROG).1
 
 clean:
 	rm -f $(PROG) $(PROG).core gmon.out $(ALL_O)
