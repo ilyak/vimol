@@ -51,24 +51,6 @@ xasprintf(char **ret, const char *fmt, ...)
 	return (i);
 }
 
-int
-xcatsprintf(char **ret, const char *fmt, ...)
-{
-	va_list ap;
-	int i;
-	char *s = *ret, *t;
-
-	va_start(ap, fmt);
-	i = vasprintf(&t, fmt, ap);
-	va_end(ap);
-	if (i < 0 || t == NULL)
-		fatal("xcatsprintf");
-	i = xasprintf(ret, "%s%s", s, t);
-	free(s);
-	free(t);
-	return (i);
-}
-
 char *
 xstrdup(const char *s)
 {

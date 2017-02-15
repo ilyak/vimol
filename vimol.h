@@ -394,7 +394,6 @@ int wnd_get_count(struct wnd *);
 void *xcalloc(size_t, size_t);
 void *xrealloc(void *, size_t);
 int xasprintf(char **, const char *, ...);
-int xcatsprintf(char **, const char *, ...);
 char *xstrdup(const char *);
 char *xstrndup(const char *, size_t);
 
