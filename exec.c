@@ -372,23 +372,20 @@ fn_hide_selection(struct tokq *args, struct state *state)
 }
 
 static int
-fn_invert_selection(struct tokq *args, struct state *state)
+fn_invert_selection(struct tokq *args __unused, struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct sel *visible;
-	struct sel *sel;
 	int idx;
 
 	visible = view_get_visible(view);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
-	sel_iter_start(sel);
-	while (sel_iter_next(sel, &idx)) {
+	sel_iter_start(visible);
+	while (sel_iter_next(visible, &idx)) {
 		if (sel_selected(view_get_sel(view), idx))
 			sel_remove(view_get_sel(view), idx);
-		else if (sel_selected(visible, idx))
+		else
 			sel_add(view_get_sel(view), idx);
 	}
-	sel_free(sel);
 	return (1);
 }
 
