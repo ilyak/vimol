@@ -101,7 +101,7 @@ static const struct {
 	{ "C-Right", "rotate-selection 0 -10 0" },
 	{ "CS-Right", "move-selection 0.1 0 0" },
 	{ "Delete", "delete-selection" },
-	{ "=", "invert-selection *" },
+	{ "=", "invert-selection" },
 	{ "Space", "fullscreen" },
 	{ "`", "view-reset" },
 	{ "[", "next-frame -1" },
