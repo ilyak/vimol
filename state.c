@@ -35,15 +35,21 @@ struct state {
 static void
 key_string(char **buf, SDL_Keycode sym, Uint16 mod)
 {
-	const char *ctrl, *alt, *shift, *name;
+	char cms[5]; /* CMS- */
+	const char *key;
+	int i = 0;
 
-	 ctrl = mod & KMOD_CTRL  ?  "ctrl-" : "";
-	  alt = mod & KMOD_ALT   ?   "alt-" : "";
-	shift = mod & KMOD_SHIFT ? "shift-" : "";
-
-	 name = SDL_GetKeyName(sym);
-
-	xasprintf(buf, "%s%s%s%s", ctrl, alt, shift, name);
+	memset(cms, 0, sizeof cms);
+	if (mod & KMOD_CTRL)
+		cms[i++] = 'C';
+	if (mod & KMOD_ALT)
+		cms[i++] = 'M';
+	if (mod & KMOD_SHIFT)
+		cms[i++] = 'S';
+	if (i > 0)
+		cms[i] = '-';
+	key = SDL_GetKeyName(sym);
+	xasprintf(buf, "%s%s", cms, key);
 }
 
 static void
