@@ -317,7 +317,7 @@ fn_view_fit_selection(struct tokq *args, struct state *state)
 }
 
 static int
-fn_set_frame(struct tokq *args, struct state *state)
+fn_frame(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct sys *sys;
@@ -1147,6 +1147,7 @@ static const struct node {
 	{ "delete-selection", fn_delete_selection },
 	{ "first", fn_first_window },
 	{ "first-window", fn_first_window },
+	{ "frame", fn_frame },
 	{ "fullscreen", fn_fullscreen },
 	{ "hide-selection", fn_hide_selection },
 	{ "invert-selection", fn_invert_selection },
@@ -1178,7 +1179,6 @@ static const struct node {
 	{ "select-water", fn_select_water },
 	{ "set", fn_set },
 	{ "set-element", fn_set_element },
-	{ "set-frame", fn_set_frame },
 	{ "set-position", fn_set_position },
 	{ "show-all", fn_show_all },
 	{ "source", fn_source },
