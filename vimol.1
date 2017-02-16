@@ -79,8 +79,8 @@ Toggle display of atom indices.
 Toggle display of atom symbols.
 .TP
 .B m
-Measure position/distance/angle/torsion for corresponding one/two/three/four
-selected atoms.
+Measure position, distance, angle, torsion. The measured quantity depends on
+the number of selected atoms.
 .TP
 .B o
 Toggle display of the coordinate system origin and axes.
@@ -178,6 +178,8 @@ Switch to previous window.
 .TP
 .B >
 Switch to next window.
+.SH SELECTIONS
+Selections
 .SH COMMANDS
 Below is the list of available commands. The command mode is started using
 \fB:\fR (colon) key.
@@ -189,7 +191,7 @@ Display version information.
 Add hydrogens to the selected atoms.
 .TP
 .B atom \fR[\fIelement\fR] [\fIx y z\fR]
-Create an atom at the specified coordinates.
+Create an atom with coordinates \fIx y z\fR.
 .TP
 .B bind \fIkey \fR[\fIcommand\fR]
 Bind key to command. Displays current binding if command is not specified.
@@ -205,13 +207,13 @@ Create a chain of carbon atoms of length \fIn\fR. The default \fIn\fR is 6.
 Close current window.
 .TP
 .B clo[se]!
-Close current window regardless of unsaved changes.
+Close current window discarding unsaved changes.
 .TP
 .B copy-selection \fR[\fIsel\fR]
-Description
+Copy atoms specified by selection \fIsel\fR.
 .TP
 .B delete-selection \fR[\fIsel\fR]
-Description
+Delete atoms specified by selection \fIsel\fR.
 .TP
 .B first\fR, \fBfirst-window
 Switch to the first window.
@@ -233,20 +235,22 @@ Invert current selection.
 Switch to the last window.
 .TP
 .B measure \fR[\fIsel\fR]
-Description
+Measure position, distance, angle, torsion. The measured quantity depends on
+the number of selected atoms.
 .TP
-.B move-selection \fR[\fIx y z\fR] [\fIsel\fR]
-Description
+.B move-selection \fIx y z \fR[\fIsel\fR]
+Move selection by the specified amount. The \fIx y z\fR vector is relative
+to the camera coordinate system.
+.TP
+.B move-selection-to \fIx y z \fR[\fIsel\fR]
+Move selection to the specified position.
 .TP
 .B new \fR[\fIpath\fR], \fBopen \fR[\fIpath\fR]
-Description
+Open file in a new window.
 .TP
 .B next-frame \fR[\fIn\fR]
-Switch to next frame. Number of frames to advance
-.B n
-can optionally be specified.
-.B n
-can be nagative.
+Switch to the next frame. Number of frames to advance is specified by \fIn\fR.
+The number can be nagative.
 .TP
 .B next-window
 Switch to next window.
@@ -258,17 +262,13 @@ Paste atoms from a register.
 Switch to previous window.
 .TP
 .B q\fR, \fBquit
-Quit
-.B vimol
-prompting if there are unsaved changes.
+Quit \fBvimol\fR.
 .TP
 .B q!\fR, \fBquit!
-Quit
-.B vimol
-discarding unsaved changes.
+Quit \fBvimol\fR discarding unsaved changes.
 .TP
 .B rec
-Description
+Start recording mode.
 .TP
 .B redo
 Redo last change.
@@ -277,28 +277,30 @@ Redo last change.
 Replay recording from a register.
 .TP
 .B reset-bonds
-Description
+Reset all bonds.
 .TP
 .B ring \fR[\fIn\fR]
 Create a ring of carbon atoms of size n. The default n is 6.
 .TP
-.B rotate-selection
-Description
+.B rotate-selection \fIa b c\fR [\fIsel\fR]
+Rotate selected atoms. \fIa b c\fR specify rotation angles. Rotation is
+relative to camera coordinate system.
 .TP
 .B select \fR[\fIsel\fR]
-Description
+Add atoms specified by \fIsel\fR to the current selection. Selects first
+unselected atom if the argument is omitted.
 .TP
-.B select-box
-Description
+.B select-box \fR[\fIsize\fR] [\fIsel\fR]
+Select a box around selection.
 .TP
-.B select-element
-Description
+.B select-element \fIelement...
+Select atoms with name matching any of the specified elements.
 .TP
 .B select-molecule \fR[\fIsel\fR]
 For all atoms in selection, select whole containing molecule.
 .TP
-.B select-sphere
-Description
+.B select-sphere \fR[\fIradius\fR] [\fIsel\fR]
+Select a sphere around selection.
 .TP
 .B select-water
 Select all water molecules.
@@ -309,9 +311,6 @@ not specified.
 .TP
 .B set-element \fIelement \fR[\fIsel\fR]
 Set element for all atoms in specified selection.
-.TP
-.B set-position \fR[\fIx y z\fR] [\fIsel\fR]
-Move selection to the specified position. The default is coordinate origin.
 .TP
 .B show-all
 Show all atoms.
@@ -326,25 +325,26 @@ Toggle a boolean setting.
 Undo last change.
 .TP
 .B unselect \fR[\fIsel\fR]
-Description
+Unselect atoms specified by \fIsel\fR. Unselects last selected atom if
+the argument is omitted.
 .TP
-.B view-center-selection
-Description
+.B view-center-selection \fR[\fIsel\fR]
+Center selection.
 .TP
-.B view-fit-selection
-Description
+.B view-fit-selection \fR[\fIsel\fR]
+Center and fit selection to window.
 .TP
-.B view-move
-Description
+.B view-move \fIx y z
+Move the camera. \fIx y z\fR specify the displacement.
 .TP
 .B view-reset
 Reset the view.
 .TP
-.B view-rotate
-Description
+.B view-rotate \fIa b c
+Rotate the camera. \fIa b c\fR specify the rotation angles.
 .TP
-.B view-zoom
-Description
+.B view-zoom \fIfactor
+Change zoom.
 .TP
 .B w \fR[\fIpath\fR], \fBwrite \fR[\fIpath\fR]
 Write changes to file. Saves to current file if path is not specified.
