@@ -13,7 +13,7 @@
 .\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 .\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 .\"
-.TH VIMOL 1 "February 13, 2017"
+.TH VIMOL 1 "February 15, 2017"
 .SH NAME
 vimol \- vimol is a fast and functional molecular viewer and editor
 .SH SYNOPSIS
@@ -180,127 +180,112 @@ Switch to previous window.
 Switch to next window.
 .SH COMMANDS
 Below is the list of available commands. The command mode is started using
-.B :
-(colon) key.
+\fB:\fR (colon) key.
 .TP
 .B ?
+Display version information.
+.TP
+.B add-hydrogens \fR[\fIsel\fR]
+Add hydrogens to the selected atoms.
+.TP
+.B atom \fR[\fIelement\fR] [\fIx y z\fR]
+Create an atom at the specified coordinates.
+.TP
+.B bind \fIkey \fR[\fIcommand\fR]
+Bind key to command. Displays current binding if command is not specified.
+.TP
+.B bond \fR[\fIsel\fR]
+Toggle bond between atoms in the selection. The selection must contain
+exactly two atoms.
+.TP
+.B chain \fR[\fIn\fR]
+Create a chain of carbon atoms of length \fIn\fR. The default \fIn\fR is 6.
+.TP
+.B clo[se]
+Close current window.
+.TP
+.B clo[se]!
+Close current window regardless of unsaved changes.
+.TP
+.B copy-selection \fR[\fIsel\fR]
 Description
 .TP
-.B add-hydrogens
+.B delete-selection \fR[\fIsel\fR]
 Description
 .TP
-.B atom
-Description
+.B first\fR, \fBfirst-window
+Switch to the first window.
 .TP
-.B bind
-Description
-.TP
-.B bond
-Description
-.TP
-.B chain
-Description
-.TP
-.B clo
-Description
-.TP
-.B clo!
-Description
-.TP
-.B clos
-Description
-.TP
-.B clos!
-Description
-.TP
-.B close
-Description
-.TP
-.B close!
-Description
-.TP
-.B copy-selection
-Description
-.TP
-.B delete-selection
-Description
-.TP
-.B first
-Description
-.TP
-.B first-window
-Description
+.B frame \fIn\fR
+Go to a specific frame. If \fIn\fR is negative, count backwards starting
+from the last frame.
 .TP
 .B fullscreen
-Description
+Toggle fullscreen mode.
 .TP
-.B hide-selection
-Description
+.B hide-selection \fR[\fIsel\fR]
+Hide specified atoms.
 .TP
 .B invert-selection
+Invert current selection.
+.TP
+.B last\fR, \fBlast-window
+Switch to the last window.
+.TP
+.B measure \fR[\fIsel\fR]
 Description
 .TP
-.B last
+.B move-selection \fR[\fIx y z\fR] [\fIsel\fR]
 Description
 .TP
-.B last-window
+.B new \fR[\fIpath\fR], \fBopen \fR[\fIpath\fR]
 Description
 .TP
-.B measure
-Description
-.TP
-.B move-selection
-Description
-.TP
-.B new
-Description
-.TP
-.B next-frame
-Description
+.B next-frame \fR[\fIn\fR]
+Switch to next frame. Number of frames to advance
+.B n
+can optionally be specified.
+.B n
+can be nagative.
 .TP
 .B next-window
-Description
-.TP
-.B open
-Description
+Switch to next window.
 .TP
 .B paste
-Description
+Paste atoms from a register.
 .TP
 .B prev-window
-Description
+Switch to previous window.
 .TP
-.B q
-Description
+.B q\fR, \fBquit
+Quit
+.B vimol
+prompting if there are unsaved changes.
 .TP
-.B q!
-Description
-.TP
-.B quit
-Description
-.TP
-.B quit!
-Description
+.B q!\fR, \fBquit!
+Quit
+.B vimol
+discarding unsaved changes.
 .TP
 .B rec
 Description
 .TP
 .B redo
-Description
+Redo last change.
 .TP
 .B replay
-Description
+Replay recording from a register.
 .TP
 .B reset-bonds
 Description
 .TP
-.B ring
-Description
+.B ring \fR[\fIn\fR]
+Create a ring of carbon atoms of size n. The default n is 6.
 .TP
 .B rotate-selection
 Description
 .TP
-.B select
+.B select \fR[\fIsel\fR]
 Description
 .TP
 .B select-box
@@ -309,40 +294,38 @@ Description
 .B select-element
 Description
 .TP
-.B select-molecule
-Description
+.B select-molecule \fR[\fIsel\fR]
+For all atoms in selection, select whole containing molecule.
 .TP
 .B select-sphere
 Description
 .TP
 .B select-water
-Description
+Select all water molecules.
 .TP
-.B set
-Description
+.B set \fIsetting \fR[\fIvalue\fR]
+Set setting to a new value. Displays current value if second argument is
+not specified.
 .TP
-.B set-element
-Description
+.B set-element \fIelement \fR[\fIsel\fR]
+Set element for all atoms in specified selection.
 .TP
-.B set-frame
-Description
-.TP
-.B set-position
-Description
+.B set-position \fR[\fIx y z\fR] [\fIsel\fR]
+Move selection to the specified position. The default is coordinate origin.
 .TP
 .B show-all
-Description
+Show all atoms.
 .TP
-.B source
-Description
+.B source \fIpath\fR
+Execute commands from a file.
 .TP
-.B toggle
-Description
+.B toggle \fIsetting\fR
+Toggle a boolean setting.
 .TP
 .B undo
-Description
+Undo last change.
 .TP
-.B unselect
+.B unselect \fR[\fIsel\fR]
 Description
 .TP
 .B view-center-selection
@@ -355,7 +338,7 @@ Description
 Description
 .TP
 .B view-reset
-Description
+Reset the view.
 .TP
 .B view-rotate
 Description
@@ -363,10 +346,7 @@ Description
 .B view-zoom
 Description
 .TP
-.B w
-Description
-.TP
-.B write
-Description
+.B w \fR[\fIpath\fR], \fBwrite \fR[\fIpath\fR]
+Write changes to file. Saves to current file if path is not specified.
 .SH AUTHOR
 Vimol is (c) 2013-2017 Ilya Kaliman
