@@ -510,35 +510,6 @@ fn_replay(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_set_position(struct tokq *args, struct state *state)
-{
-	struct view *view = state_get_view(state);
-	struct sys *sys;
-	struct sel *sel;
-	vec_t dr, xyz;
-	int idx;
-
-	dr = parse_vec(args, 0);
-	sel = make_sel(args, 3, tokq_count(args), view_get_sel(view));
-	if (sel_get_count(sel) == 0) {
-		sel_free(sel);
-		return (1);
-	}
-	view_snapshot(view);
-	sys = view_get_sys(view);
-	xyz = sys_get_sel_center(sys, sel);
-	dr = vec_sub(&dr, &xyz);
-	sel_iter_start(sel);
-	while (sel_iter_next(sel, &idx)) {
-		xyz = sys_get_atom_xyz(sys, idx);
-		xyz = vec_add(&xyz, &dr);
-		sys_set_atom_xyz(sys, idx, xyz);
-	}
-	sel_free(sel);
-	return (1);
-}
-
-static int
 fn_measure(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
@@ -602,6 +573,35 @@ fn_move_selection(struct tokq *args, struct state *state)
 	rotmat = camera_get_rotation(view_get_camera(view));
 	rotmat = mat_transpose(&rotmat);
 	dr = mat_vec(&rotmat, &dr);
+	sel_iter_start(sel);
+	while (sel_iter_next(sel, &idx)) {
+		xyz = sys_get_atom_xyz(sys, idx);
+		xyz = vec_add(&xyz, &dr);
+		sys_set_atom_xyz(sys, idx, xyz);
+	}
+	sel_free(sel);
+	return (1);
+}
+
+static int
+fn_move_selection_to(struct tokq *args, struct state *state)
+{
+	struct view *view = state_get_view(state);
+	struct sys *sys;
+	struct sel *sel;
+	vec_t dr, xyz;
+	int idx;
+
+	dr = parse_vec(args, 0);
+	sel = make_sel(args, 3, tokq_count(args), view_get_sel(view));
+	if (sel_get_count(sel) == 0) {
+		sel_free(sel);
+		return (1);
+	}
+	view_snapshot(view);
+	sys = view_get_sys(view);
+	xyz = sys_get_sel_center(sys, sel);
+	dr = vec_sub(&dr, &xyz);
 	sel_iter_start(sel);
 	while (sel_iter_next(sel, &idx)) {
 		xyz = sys_get_atom_xyz(sys, idx);
@@ -1155,6 +1155,7 @@ static const struct node {
 	{ "last-window", fn_last_window },
 	{ "measure", fn_measure },
 	{ "move-selection", fn_move_selection },
+	{ "move-selection-to", fn_move_selection_to },
 	{ "new", fn_new },
 	{ "next-frame", fn_next_frame },
 	{ "next-window", fn_next_window },
@@ -1179,7 +1180,6 @@ static const struct node {
 	{ "select-water", fn_select_water },
 	{ "set", fn_set },
 	{ "set-element", fn_set_element },
-	{ "set-position", fn_set_position },
 	{ "show-all", fn_show_all },
 	{ "source", fn_source },
 	{ "toggle", fn_toggle },

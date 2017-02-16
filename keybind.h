@@ -42,7 +42,7 @@ static const struct {
 	{ "S-L", "view-move 0.1 0 0" },
 	{ "S-M", "" },
 	{ "S-N", "" },
-	{ "S-O", "set-position" },
+	{ "S-O", "move-selection-to" },
 	{ "S-P", "" },
 	{ "S-Q", "quit!" },
 	{ "S-R", "" },
