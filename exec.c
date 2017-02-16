@@ -33,12 +33,19 @@ select_connected(struct graph *graph, int idx, struct sel *sel)
 }
 
 static struct sel *
-make_sel(struct tokq *args, int arg_start, int arg_end, struct sel *current)
+make_sel(struct tokq *args, int arg_start, int arg_end, struct state *state)
 {
-	struct sel *ret;
-	int i, k, size, start, end;
+	struct sel *ret, *current;
+	int i, k, size, start, end, number;
 	const char *str;
 
+	current = view_get_sel(state_get_view(state));
+	if ((number = state_get_number(state)) > 0) {
+		size = sel_get_size(current);
+		ret = sel_create(size);
+		sel_add(ret, number - 1);
+		return (ret);
+	}
 	if (arg_start >= arg_end)
 		return (sel_copy(current));
 
@@ -107,7 +114,7 @@ fn_add_hydrogens(struct tokq *args, struct state *state)
 	struct view *view = state_get_view(state);
 	struct sel *sel;
 
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 0, tokq_count(args), state);
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
 		return (1);
@@ -171,7 +178,7 @@ fn_bond(struct tokq *args, struct state *state)
 	int a, b, type;
 
 	graph = view_get_graph(view);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 0, tokq_count(args), state);
 	if (sel_get_count(sel) != 2) {
 		error_set("select 2 atoms");
 		sel_free(sel);
@@ -258,7 +265,7 @@ fn_copy_selection(struct tokq *args, struct state *state)
 	reg = get_register(state);
 	yank = state_get_yank(state);
 	sys = view_get_sys(view);
-	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 1, tokq_count(args), state);
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
 		return (1);
@@ -277,7 +284,7 @@ fn_delete_selection(struct tokq *args, struct state *state)
 	struct sys *sys;
 	int i;
 
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 0, tokq_count(args), state);
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
 		return (1);
@@ -298,7 +305,7 @@ fn_view_center_selection(struct tokq *args, struct state *state)
 	struct view *view = state_get_view(state);
 	struct sel *sel;
 
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 0, tokq_count(args), state);
 	view_center_sel(view, sel);
 	sel_free(sel);
 	return (1);
@@ -310,7 +317,7 @@ fn_view_fit_selection(struct tokq *args, struct state *state)
 	struct view *view = state_get_view(state);
 	struct sel *sel;
 
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 0, tokq_count(args), state);
 	view_fit_sel(view, sel);
 	sel_free(sel);
 	return (1);
@@ -361,7 +368,7 @@ fn_hide_selection(struct tokq *args, struct state *state)
 	struct sel *sel;
 	int idx;
 
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 0, tokq_count(args), state);
 	sel_iter_start(sel);
 	while (sel_iter_next(sel, &idx)) {
 		sel_remove(view_get_visible(view), idx);
@@ -413,7 +420,7 @@ fn_set_element(struct tokq *args, struct state *state)
 		return (0);
 	}
 	name = tok_string(tokq_tok(args, 0));
-	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 1, tokq_count(args), state);
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
 		return (1);
@@ -519,7 +526,7 @@ fn_measure(struct tokq *args, struct state *state)
 	int a[4], i;
 
 	sys = view_get_sys(view);
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 0, tokq_count(args), state);
 	if (sel_get_count(sel) < 1 || sel_get_count(sel) > 4) {
 		sel_free(sel);
 		error_set("select 1, 2, 3, or 4 atoms");
@@ -563,7 +570,7 @@ fn_move_selection(struct tokq *args, struct state *state)
 	int idx;
 
 	dr = parse_vec(args, 0);
-	sel = make_sel(args, 3, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 3, tokq_count(args), state);
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
 		return (1);
@@ -593,7 +600,7 @@ fn_move_selection_to(struct tokq *args, struct state *state)
 	int idx;
 
 	dr = parse_vec(args, 0);
-	sel = make_sel(args, 3, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 3, tokq_count(args), state);
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
 		return (1);
@@ -717,7 +724,7 @@ fn_rotate_selection(struct tokq *args, struct state *state)
 		return (0);
 	}
 	abc = parse_vec(args, 0);
-	sel = make_sel(args, 3, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 3, tokq_count(args), state);
 	if (sel_get_count(sel) == 0) {
 		sel_free(sel);
 		return (1);
@@ -793,8 +800,7 @@ fn_select(struct tokq *args, struct state *state)
 
 	visible = view_get_visible(view);
 	if (tokq_count(args) == 0) {
-		idx = state_get_number(state) - 1;
-		if (idx < 0) {
+		if (state_get_number(state) == 0) {
 			sel_iter_start(visible);
 			while (sel_iter_next(visible, &idx)) {
 				if (!sel_selected(view_get_sel(view), idx)) {
@@ -804,12 +810,8 @@ fn_select(struct tokq *args, struct state *state)
 			}
 			return (1);
 		}
-		if (idx < sel_get_size(view_get_sel(view)))
-			if (sel_selected(visible, idx))
-				sel_add(view_get_sel(view), idx);
-		return (1);
 	}
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 0, tokq_count(args), state);
 	sel_iter_start(sel);
 	while (sel_iter_next(sel, &idx))
 		if (sel_selected(visible, idx))
@@ -845,7 +847,7 @@ fn_select_box(struct tokq *args, struct state *state)
 		spi_add_point(spi, sys_get_atom_xyz(sys, idx));
 	spi_compute(spi, sqrt(3.0) * radius);
 	npairs = spi_get_pair_count(spi);
-	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 1, tokq_count(args), state);
 	sel_iter_start(sel);
 	while (sel_iter_next(sel, &idx))
 		if (sel_selected(visible, idx))
@@ -897,7 +899,7 @@ fn_select_sphere(struct tokq *args, struct state *state)
 		spi_add_point(spi, sys_get_atom_xyz(sys, idx));
 	spi_compute(spi, radius);
 	npairs = spi_get_pair_count(spi);
-	sel = make_sel(args, 1, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 1, tokq_count(args), state);
 	sel_iter_start(sel);
 	while (sel_iter_next(sel, &idx))
 		if (sel_selected(visible, idx))
@@ -931,7 +933,7 @@ fn_select_molecule(struct tokq *args, struct state *state)
 	sys = view_get_sys(view);
 	graph = view_get_graph(view);
 	visible = view_get_visible(view);
-	selected = make_sel(args, 0, tokq_count(args), view_get_sel(view));
+	selected = make_sel(args, 0, tokq_count(args), state);
 	connected = sel_create(sys_get_atom_count(sys));
 	sel_iter_start(selected);
 	while (sel_iter_next(selected, &idx))
@@ -1086,20 +1088,17 @@ fn_unselect(struct tokq *args, struct state *state)
 	int idx;
 
 	if (tokq_count(args) == 0) {
-		idx = state_get_number(state) - 1;
-		if (idx < 0) {
+		if (state_get_number(state) == 0) {
+			if (sel_get_count(view_get_sel(view)) == 0)
+				return (1);
 			sel_iter_start(view_get_sel(view));
 			while (sel_iter_next(view_get_sel(view), &idx))
 				continue;
-			if (idx >= 0)
-				sel_remove(view_get_sel(view), idx);
+			sel_remove(view_get_sel(view), idx);
 			return (1);
 		}
-		if (idx < sel_get_size(view_get_sel(view)))
-			sel_remove(view_get_sel(view), idx);
-		return (1);
 	}
-	sel = make_sel(args, 0, tokq_count(args), view_get_sel(view));
+	sel = make_sel(args, 0, tokq_count(args), state);
 	sel_iter_start(sel);
 	while (sel_iter_next(sel, &idx))
 		sel_remove(view_get_sel(view), idx);
