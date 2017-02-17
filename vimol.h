@@ -54,7 +54,7 @@
 #endif
 
 /* number of recording/yank registers */
-#define NUM_REGISTERS 10
+#define NUM_REGISTERS 1
 
 #include "vec.h"
 

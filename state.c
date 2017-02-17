@@ -160,8 +160,7 @@ set_statusbar_text(struct state *state)
 	if (state->number > 0)
 		snprintf(buf, sizeof buf, "%d ", state->number);
 	if (rec_is_recording(state->rec))
-		snprintf(buf + strlen(buf), sizeof buf - strlen(buf),
-		    "rec[%d] ", rec_get_register(state->rec));
+		snprintf(buf + strlen(buf), sizeof buf - strlen(buf), "rec ");
 	if (sys_is_modified(sys))
 		snprintf(buf + strlen(buf), sizeof buf - strlen(buf), "*");
 	filename = util_basename(view_get_path(view));

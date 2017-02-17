@@ -91,16 +91,6 @@ parse_vec(struct tokq *args, int start)
 }
 
 static int
-get_register(struct state *state)
-{
-	int reg = state_get_number(state);
-
-	if (reg < 0 || reg >= NUM_REGISTERS)
-		reg = 0;
-	return (reg);
-}
-
-static int
 fn_about(struct tokq *args __unused, struct state *state __unused)
 {
 	error_set("vimol %s (c) 2013-2017 Ilya Kaliman", VIMOL_VERSION);
@@ -260,9 +250,8 @@ fn_copy_selection(struct tokq *args, struct state *state)
 	struct sys *sys;
 	struct yank *yank;
 	struct sel *sel;
-	int reg;
+	int reg = 0;
 
-	reg = get_register(state);
 	yank = state_get_yank(state);
 	sys = view_get_sys(view);
 	sel = make_sel(args, 1, tokq_count(args), state);
@@ -484,9 +473,8 @@ fn_paste(struct tokq *args __unused, struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct yank *yank = state_get_yank(state);
-	int i, natoms, npaste, reg;
+	int i, natoms, npaste, reg = 0;
 
-	reg = get_register(state);
 	if ((npaste = yank_get_atom_count(yank, reg)) == 0)
 		return (1);
 	view_snapshot(view);
@@ -502,9 +490,8 @@ static int
 fn_replay(struct tokq *args __unused, struct state *state)
 {
 	struct rec *rec = state_get_rec(state);
-	int reg;
+	int reg = 0;
 
-	reg = get_register(state);
 	if (rec_is_playing(rec))
 		return (1);
 	if (rec_is_recording(rec)) {
@@ -639,6 +626,7 @@ static int
 fn_rec(struct tokq *args __unused, struct state *state)
 {
 	struct rec *rec = state_get_rec(state);
+	int reg = 0;
 
 	if (rec_is_playing(rec))
 		return (1);
@@ -646,7 +634,7 @@ fn_rec(struct tokq *args __unused, struct state *state)
 		rec_stop(rec);
 		return (1);
 	}
-	rec_start(rec, get_register(state));
+	rec_start(rec, reg);
 	return (1);
 }
 
