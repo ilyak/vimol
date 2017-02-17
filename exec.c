@@ -397,7 +397,7 @@ fn_view_move(struct tokq *args, struct state *state)
 }
 
 static int
-fn_set_element(struct tokq *args, struct state *state)
+fn_element(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct sel *sel;
@@ -1132,6 +1132,7 @@ static const struct node {
 	{ "close!", fn_force_close },
 	{ "copy-selection", fn_copy_selection },
 	{ "delete-selection", fn_delete_selection },
+	{ "element", fn_element },
 	{ "first", fn_first_window },
 	{ "first-window", fn_first_window },
 	{ "frame", fn_frame },
@@ -1166,7 +1167,6 @@ static const struct node {
 	{ "select-sphere", fn_select_sphere },
 	{ "select-water", fn_select_water },
 	{ "set", fn_set },
-	{ "set-element", fn_set_element },
 	{ "show-all", fn_show_all },
 	{ "source", fn_source },
 	{ "toggle", fn_toggle },
