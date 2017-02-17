@@ -397,7 +397,7 @@ fn_view_move(struct tokq *args, struct state *state)
 }
 
 static int
-fn_element(struct tokq *args, struct state *state)
+fn_set_name(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct sel *sel;
@@ -405,7 +405,7 @@ fn_element(struct tokq *args, struct state *state)
 	int idx;
 
 	if (tokq_count(args) < 1) {
-		error_set("specify element name");
+		error_set("specify atom name");
 		return (0);
 	}
 	name = tok_string(tokq_tok(args, 0));
@@ -936,7 +936,7 @@ fn_select_molecule(struct tokq *args, struct state *state)
 }
 
 static int
-fn_select_element(struct tokq *args, struct state *state)
+fn_select_name(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct sys *sys;
@@ -1132,7 +1132,6 @@ static const struct node {
 	{ "close!", fn_force_close },
 	{ "copy-selection", fn_copy_selection },
 	{ "delete-selection", fn_delete_selection },
-	{ "element", fn_element },
 	{ "first", fn_first_window },
 	{ "first-window", fn_first_window },
 	{ "frame", fn_frame },
@@ -1162,11 +1161,12 @@ static const struct node {
 	{ "rotate-selection", fn_rotate_selection },
 	{ "select", fn_select },
 	{ "select-box", fn_select_box },
-	{ "select-element", fn_select_element },
 	{ "select-molecule", fn_select_molecule },
+	{ "select-name", fn_select_name },
 	{ "select-sphere", fn_select_sphere },
 	{ "select-water", fn_select_water },
 	{ "set", fn_set },
+	{ "set-name", fn_set_name },
 	{ "show-all", fn_show_all },
 	{ "source", fn_source },
 	{ "toggle", fn_toggle },
