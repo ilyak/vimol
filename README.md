@@ -4,10 +4,10 @@ Vimol is a powerful molecular viewer and editor inspired by vim. Vimol features
 vim-like key bindings, fast and lightweight design, editing in multiple
 windows, visualization of trajectories, unlimited undo/redo, command
 record/replay, and much more! Vimol does not require the mouse, and most things
-can be accomplished in less than 5 keystrokes. Use h/j/k/l keys to rotate the
-molecule and q to exit the program. Viewing and editing of multi-frame _XYZ_
-and _PDB_ files is supported. For more information and tutorials consult online
-documentation at https://vimol.github.io web site.
+can be accomplished in less than 5 keystrokes. Use **h**/**j**/**k**/**l** keys
+to rotate the molecule and **q** to exit the program. Viewing and editing of
+multi-frame **.XYZ** and **.PDB** files is supported. For more information and
+tutorials consult online documentation at https://vimol.github.io web site.
 
 ### Compilation from sources
 
@@ -40,4 +40,5 @@ To install the vimol binary, issue as root:
 
 	make install
 
-The binary is installed in `/usr/local/bin` by default.
+By default, the binary is installed in `/usr/local/bin` and the man page
+is installed in `/usr/local/man/man1`.

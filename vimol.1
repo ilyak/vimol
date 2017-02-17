@@ -13,7 +13,7 @@
 .\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 .\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 .\"
-.TH VIMOL 1 "February 15, 2017"
+.TH VIMOL 1 "February 17, 2017"
 .SH NAME
 vimol \- vimol is a molecular viewer and editor with vi-like controls.
 .SH SYNOPSIS
@@ -22,12 +22,9 @@ vimol \- vimol is a molecular viewer and editor with vi-like controls.
 .SH DESCRIPTION
 .B vimol
 is a fast and functional molecular viewer and editor with vi-like
-controls. Viewing and editing of
-.B .PDB
-and
-.B .XYZ
+controls. Viewing and editing of \fB.PDB\fR and \fB.XYZ\fR
 file formats is supported. Multiframe support is implemented for
-both file formats.
+both \fB.PDB\fR and \fB.XYZ\fR files.
 .SH KEY BINDINGS
 The key bindings are described below. The
 .B S\-
@@ -40,7 +37,7 @@ prefix means
 key.
 .TP
 .B a
-Fill unsatisfied valencies of selected atoms with hydrogens.
+Fill unsatisfied valencies of selected atoms with hydrogen atoms.
 .TP
 .B b
 Toggle a bond between two selected atoms.
@@ -54,7 +51,7 @@ Center selection.
 .B C
 Center and fit selection to window.
 .TP
-.B d
+.B d, Delete
 Delete selected atoms.
 .TP
 .B e
@@ -83,10 +80,10 @@ Measure position, distance, angle, torsion. The measured quantity depends on
 the number of selected atoms.
 .TP
 .B n
-Select sphere with 4A radius surrounding the selected atoms.
+Select atoms within 4 angstrom sphere of the selected atoms.
 .TP
 .B N
-Select box with 4A side surrounding the selected atoms.
+Select atoms within 4 angstrom box of the selected atoms.
 .TP
 .B o
 Toggle display of the coordinate system origin and axes.
@@ -104,16 +101,18 @@ Quit \fBvimol\fR.
 Quit \fBvimol\fR discarding unsaved changes.
 .TP
 .B r
-Start recording.
+Start recording of issued commands.
 .TP
 .B 123s
-Select atom 123. Selects first unselected atom if no index is specified.
+Select atom with index \fI123\fR. Selects first unselected atom if no index
+is specified.
 .TP
 .B t
-Replay recording.
+Replay last recording.
 .TP
 .B 123u
-Unselect atom 123. Unselects last selected atom if no index is specified.
+Unselect atom with index \fI123\fR. Unselects last selected atom if no index
+is specified.
 .TP
 .B v
 Hide selected atoms. Atoms can be made visible again using \fBz\fR key.
@@ -125,10 +124,10 @@ Select whole molecule.
 Select all water molecules.
 .TP
 .B x, C-x
-Cut selection.
+Cut selected atoms.
 .TP
 .B y, C-c
-Copy selection.
+Copy selected atoms.
 .TP
 .B z
 Show all hidden atoms.
@@ -145,17 +144,14 @@ Redo last change.
 .B C-z
 Undo last change.
 .TP
-.B Delete
-Delete selection.
-.TP
 .B =
-Invert selection.
+Invert current selection.
 .TP
 .B Space
 Toggle fullscreen mode.
 .TP
 .B 123.
-Repeat last command 123 times.
+Repeat last command \fI123\fR times.
 .TP
 .B `
 Reset view.
@@ -178,30 +174,31 @@ Switch to previous window.
 .B >
 Switch to next window.
 .SH SELECTIONS
-Selections
+Description of selections
 .SH COMMANDS
 Below is the list of available commands. The command mode is started using
-\fB:\fR (colon) key. Most of these commands have a key binding.
+\fB:\fR (colon) key. Most of these commands have a key binding (see
+.B KEY BINDINGS
+section).
 .TP
 .B ?
 Display version information.
 .TP
 .B add-hydrogens \fR[\fIsel\fR]
-Add hydrogens to atoms in \fIsel\fR.
+Fill unsatisfied valencies of atoms in selection \fIsel\fR with hydrogen atoms.
 .TP
 .B atom \fR[\fIname\fR] [\fIx y z\fR]
 Create an atom with coordinates \fIx y z\fR.
 .TP
 .B bind \fIkey \fR[\fIcommand\fR]
-Bind key to command. Displays current binding if command is not specified.
+Bind key to command. Display current binding if \fIcommand\fR is not specified.
 .TP
 .B bond \fR[\fIsel\fR]
 Toggle bond between atoms in selection. The selection must contain
 exactly two atoms.
 .TP
 .B chain \fR[\fIn\fR]
-Create a chain of carbon atoms of length \fIn\fR. The default \fIn\fR
-is \fB6\fR.
+Create a carbon chain of length \fIn\fR. The default \fIn\fR is \fB6\fR.
 .TP
 .B clo[se]
 Close current window.
@@ -248,8 +245,8 @@ Move selection to the specified position.
 Open file in a new window.
 .TP
 .B next-frame \fR[\fIn\fR]
-Switch to the next frame. Number of frames to advance is specified by \fIn\fR.
-The number can be nagative.
+Switch to the next frame. Number of frames to advance \fIn\fR can optionally
+be specified. \fIn\fR can be negative.
 .TP
 .B next-window
 Switch to next window.
@@ -267,19 +264,19 @@ Quit \fBvimol\fR.
 Quit \fBvimol\fR discarding unsaved changes.
 .TP
 .B rec
-Start recording mode.
+Start recording of issued commands.
 .TP
 .B redo
 Redo last change.
 .TP
 .B replay
-Replay a recording.
+Replay last recording.
 .TP
 .B reset-bonds
 Reset all bonds.
 .TP
 .B ring \fR[\fIn\fR]
-Create a ring of carbon atoms of size \fIn\fR. The default \fIn\fR is \fB6\fR.
+Create a carbon ring of size \fIn\fR. The default \fIn\fR is \fB6\fR.
 .TP
 .B rotate-selection \fIa b c\fR [\fIsel\fR]
 Rotate selected atoms. \fIa b c\fR specify rotation angles. Rotation is
@@ -293,7 +290,7 @@ unselected atom if the argument is omitted.
 Select a box around selection.
 .TP
 .B select-molecule \fR[\fIsel\fR]
-For all atoms in selection, select whole containing molecule.
+Select whole containing molecule for all atoms in selection.
 .TP
 .B select-name \fIname...
 Select all atoms with specific names.
@@ -305,11 +302,11 @@ Select a sphere around selection.
 Select all water molecules.
 .TP
 .B set \fIsetting \fR[\fIvalue\fR]
-Set setting to a new value. Displays current value if second argument is
-not specified.
+Set \fIsetting\fR to a new value. Displays current value if the second
+argument is omitted.
 .TP
 .B set-name \fIname \fR[\fIsel\fR]
-Set a new name for all atoms in selection \fIsel\fR.
+Set a new \fIname\fR for all atoms in selection \fIsel\fR.
 .TP
 .B show-all
 Show all hidden atoms.
