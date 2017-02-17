@@ -15,21 +15,21 @@
 .\"
 .TH VIMOL 1 "February 15, 2017"
 .SH NAME
-vimol \- vimol is a fast and functional molecular viewer and editor
+vimol \- vimol is a molecular viewer and editor with vi-like controls.
 .SH SYNOPSIS
 .B vimol
 .RI [ file... ]
 .SH DESCRIPTION
 .B vimol
-is a fast and functional molecular viewer and editor with vim-like
-key bindings. Viewing and editing of
+is a fast and functional molecular viewer and editor with vi-like
+controls. Viewing and editing of
 .B .PDB
 and
 .B .XYZ
-file formats is supported. Multiframe file support is implemented for
-both formats.
+file formats is supported. Multiframe support is implemented for
+both file formats.
 .SH KEY BINDINGS
-In the description of key bindings below the
+The key bindings are described below. The
 .B S\-
 prefix means
 .B Shift
@@ -40,7 +40,7 @@ prefix means
 key.
 .TP
 .B a
-Fill unsatisfied valencies with hydrogen atoms.
+Fill unsatisfied valencies of selected atoms with hydrogens.
 .TP
 .B b
 Toggle a bond between two selected atoms.
@@ -55,38 +55,38 @@ Center selection.
 Center and fit selection to window.
 .TP
 .B d
-Delete selection.
+Delete selected atoms.
 .TP
 .B e
 Clear selection.
 .TP
-.B f, g
-Zoom in, zoom out.
+.B f
+Zoom in.
 .TP
-.B F, G
-Rotate camera along the view axis.
+.B g
+Zoom out.
 .TP
-.B h, j, k, l, Left, Down, Up, Right
-Rotate view.
+.B h, j, k, l, Left, Down, Up, Right, F, G
+Rotate the camera.
 .TP
 .B H, J, K, L, S-Left, S-Down, S-Up, S-Right
-Move view.
+Move the camera.
 .TP
 .B i
 Toggle display of atom indices.
 .TP
 .B I
-Toggle display of atom symbols.
+Toggle display of atom names.
 .TP
 .B m
 Measure position, distance, angle, torsion. The measured quantity depends on
 the number of selected atoms.
 .TP
 .B n
-Select surrounding sphere.
+Select sphere with 4A radius surrounding the selected atoms.
 .TP
 .B N
-Select surrounding box.
+Select box with 4A side surrounding the selected atoms.
 .TP
 .B o
 Toggle display of the coordinate system origin and axes.
@@ -95,35 +95,28 @@ Toggle display of the coordinate system origin and axes.
 Move selection to the coordinate system origin.
 .TP
 .B p, C-v
-Paste atoms to current window.
+Paste atoms to the current window.
 .TP
 .B q
-Quit
-.B vimol
-prompting if there are unsaved changes.
+Quit \fBvimol\fR.
 .TP
 .B Q
-Quit
-.B vimol
-discarding unsaved changes.
+Quit \fBvimol\fR discarding unsaved changes.
 .TP
 .B r
 Start recording.
 .TP
 .B 123s
-Select atom 123.
+Select atom 123. Selects first unselected atom if no index is specified.
 .TP
 .B t
 Replay recording.
 .TP
 .B 123u
-Unselect atom 123.
+Unselect atom 123. Unselects last selected atom if no index is specified.
 .TP
 .B v
-Hide selection.
-.TP
-.B V
-Show all atoms.
+Hide selected atoms. Atoms can be made visible again using \fBz\fR key.
 .TP
 .B w
 Select whole molecule.
@@ -137,10 +130,10 @@ Cut selection.
 .B y, C-c
 Copy selection.
 .TP
-.B C-f, C-g
-Rotate selected atoms along view axis.
+.B z
+Show all hidden atoms.
 .TP
-.B C-h, C-j, C-k, C-l, C-Left, C-Down, C-Up, C-Right
+.B C-h, C-j, C-k, C-l, C-Left, C-Down, C-Up, C-Right, C-f, C-g
 Rotate selected atoms.
 .TP
 .B C-H, C-J, C-K, C-L, CS-Left, CS-Down, CS-Up, CS-Right
@@ -168,10 +161,10 @@ Repeat last command 123 times.
 Reset view.
 .TP
 .B [
-Switch to previous frame.
+Go to previous frame.
 .TP
 .B ]
-Switch to next frame.
+Go to next frame.
 .TP
 .B {
 Go 100 frames backward.
@@ -188,13 +181,13 @@ Switch to next window.
 Selections
 .SH COMMANDS
 Below is the list of available commands. The command mode is started using
-\fB:\fR (colon) key.
+\fB:\fR (colon) key. Most of these commands have a key binding.
 .TP
 .B ?
 Display version information.
 .TP
 .B add-hydrogens \fR[\fIsel\fR]
-Add hydrogens to the selected atoms.
+Add hydrogens to atoms in \fIsel\fR.
 .TP
 .B atom \fR[\fIname\fR] [\fIx y z\fR]
 Create an atom with coordinates \fIx y z\fR.
@@ -203,11 +196,12 @@ Create an atom with coordinates \fIx y z\fR.
 Bind key to command. Displays current binding if command is not specified.
 .TP
 .B bond \fR[\fIsel\fR]
-Toggle bond between atoms in the selection. The selection must contain
+Toggle bond between atoms in selection. The selection must contain
 exactly two atoms.
 .TP
 .B chain \fR[\fIn\fR]
-Create a chain of carbon atoms of length \fIn\fR. The default \fIn\fR is 6.
+Create a chain of carbon atoms of length \fIn\fR. The default \fIn\fR
+is \fB6\fR.
 .TP
 .B clo[se]
 Close current window.
@@ -221,15 +215,11 @@ Copy atoms specified by selection \fIsel\fR.
 .B delete-selection \fR[\fIsel\fR]
 Delete atoms specified by selection \fIsel\fR.
 .TP
-.B element \fIname \fR[\fIsel\fR]
-Convert all atoms in selection to the specified element.
-.TP
 .B first\fR, \fBfirst-window
 Switch to the first window.
 .TP
 .B frame \fIn\fR
-Go to a specific frame. If \fIn\fR is negative, count backwards starting
-from the last frame.
+Go to a specific frame. Count from the end if \fIn\fR is negative.
 .TP
 .B fullscreen
 Toggle fullscreen mode.
@@ -289,11 +279,11 @@ Replay a recording.
 Reset all bonds.
 .TP
 .B ring \fR[\fIn\fR]
-Create a ring of carbon atoms of size n. The default n is 6.
+Create a ring of carbon atoms of size \fIn\fR. The default \fIn\fR is \fB6\fR.
 .TP
 .B rotate-selection \fIa b c\fR [\fIsel\fR]
 Rotate selected atoms. \fIa b c\fR specify rotation angles. Rotation is
-relative to camera coordinate system.
+relative to the coordinate system of a camera.
 .TP
 .B select \fR[\fIsel\fR]
 Add atoms specified by \fIsel\fR to the current selection. Selects first
@@ -302,11 +292,11 @@ unselected atom if the argument is omitted.
 .B select-box \fR[\fIsize\fR] [\fIsel\fR]
 Select a box around selection.
 .TP
-.B select-element \fIname...
-Select atoms with name matching any of the specified elements.
-.TP
 .B select-molecule \fR[\fIsel\fR]
 For all atoms in selection, select whole containing molecule.
+.TP
+.B select-name \fIname...
+Select all atoms with specific names.
 .TP
 .B select-sphere \fR[\fIradius\fR] [\fIsel\fR]
 Select a sphere around selection.
@@ -318,8 +308,11 @@ Select all water molecules.
 Set setting to a new value. Displays current value if second argument is
 not specified.
 .TP
+.B set-name \fIname \fR[\fIsel\fR]
+Set a new name for all atoms in selection \fIsel\fR.
+.TP
 .B show-all
-Show all atoms.
+Show all hidden atoms.
 .TP
 .B source \fIpath\fR
 Execute commands from a file.
@@ -341,7 +334,7 @@ Center selection.
 Center and fit selection to window.
 .TP
 .B view-move \fIx y z
-Move the camera. \fIx y z\fR specify the displacement.
+Move the camera. \fIx y z\fR specify a displacement.
 .TP
 .B view-reset
 Reset the view.
