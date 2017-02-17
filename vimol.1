@@ -88,8 +88,8 @@ Toggle display of the coordinate system origin and axes.
 .B O
 Move selection to the coordinate system origin.
 .TP
-.B [0-9]p, [0-9]C-v
-Paste atoms to current window. An optional copy-register can be specified.
+.B p, C-v
+Paste atoms to current window.
 .TP
 .B q
 Quit
@@ -101,14 +101,14 @@ Quit
 .B vimol
 discarding unsaved changes.
 .TP
-.B [0-9]r
-Start recording. An optional record-register can be specified.
+.B r
+Start recording.
 .TP
 .B 123s
 Select atom 123.
 .TP
-.B [0-9]t
-Replay recording. An optional record-register can be specified.
+.B t
+Replay recording.
 .TP
 .B 123u
 Unselect atom 123.
@@ -128,8 +128,8 @@ Select all water molecules.
 .B x, C-x
 Cut selection.
 .TP
-.B [0-9]y, [0-9]C-c
-Copy selection. An optional copy-register can be specified.
+.B y, C-c
+Copy selection.
 .TP
 .B C-f, C-g
 Rotate selected atoms along view axis.
@@ -190,7 +190,7 @@ Display version information.
 .B add-hydrogens \fR[\fIsel\fR]
 Add hydrogens to the selected atoms.
 .TP
-.B atom \fR[\fIelement\fR] [\fIx y z\fR]
+.B atom \fR[\fIname\fR] [\fIx y z\fR]
 Create an atom with coordinates \fIx y z\fR.
 .TP
 .B bind \fIkey \fR[\fIcommand\fR]
@@ -214,6 +214,9 @@ Copy atoms specified by selection \fIsel\fR.
 .TP
 .B delete-selection \fR[\fIsel\fR]
 Delete atoms specified by selection \fIsel\fR.
+.TP
+.B element \fIname \fR[\fIsel\fR]
+Convert all atoms in selection to the specified element.
 .TP
 .B first\fR, \fBfirst-window
 Switch to the first window.
@@ -256,7 +259,7 @@ The number can be nagative.
 Switch to next window.
 .TP
 .B paste
-Paste atoms from a register.
+Paste atoms.
 .TP
 .B prev-window
 Switch to previous window.
@@ -274,7 +277,7 @@ Start recording mode.
 Redo last change.
 .TP
 .B replay
-Replay recording from a register.
+Replay a recording.
 .TP
 .B reset-bonds
 Reset all bonds.
@@ -293,7 +296,7 @@ unselected atom if the argument is omitted.
 .B select-box \fR[\fIsize\fR] [\fIsel\fR]
 Select a box around selection.
 .TP
-.B select-element \fIelement...
+.B select-element \fIname...
 Select atoms with name matching any of the specified elements.
 .TP
 .B select-molecule \fR[\fIsel\fR]
@@ -308,9 +311,6 @@ Select all water molecules.
 .B set \fIsetting \fR[\fIvalue\fR]
 Set setting to a new value. Displays current value if second argument is
 not specified.
-.TP
-.B set-element \fIelement \fR[\fIsel\fR]
-Set element for all atoms in specified selection.
 .TP
 .B show-all
 Show all atoms.
