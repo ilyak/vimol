@@ -6,7 +6,7 @@ windows, visualization of trajectories, unlimited undo/redo, command
 record/replay, and much more! Vimol does not require the mouse, and most things
 can be accomplished in less than 5 keystrokes. Use **h**/**j**/**k**/**l** keys
 to rotate the molecule and **q** to exit the program. Viewing and editing of
-multi-frame **.XYZ** and **.PDB** files is supported. For more information and
+multi-frame **.xyz** and **.pdb** files is supported. For more information and
 tutorials consult online documentation at https://vimol.github.io web site.
 
 ### Compilation from sources
@@ -32,13 +32,10 @@ with their corresponding development packages:
   - Ubuntu: `apt-get install libsdl2-dev`
   - Fedora: `yum install SDL2-devel`
 
-After installing all dependencies, compile vimol by typing:
+After installing all dependencies, compile vimol by issuing:
 
 	make
 
-To install the vimol binary, issue as root:
+To install vimol, issue as root:
 
 	make install
-
-By default, the binary is installed in `/usr/local/bin` and the man page
-is installed in `/usr/local/man/man1`.

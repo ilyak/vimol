@@ -398,7 +398,7 @@ fn_view_move(struct tokq *args, struct state *state)
 }
 
 static int
-fn_set_name(struct tokq *args, struct state *state)
+fn_rename_atoms(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct sel *sel;
@@ -624,7 +624,7 @@ fn_force_quit(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_rec(struct tokq *args __unused, struct state *state)
+fn_record(struct tokq *args __unused, struct state *state)
 {
 	struct rec *rec = state_get_rec(state);
 	int reg = 0;
@@ -937,7 +937,7 @@ fn_select_molecule(struct tokq *args, struct state *state)
 }
 
 static int
-fn_select_name(struct tokq *args, struct state *state)
+fn_select_elements(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct sys *sys;
@@ -1154,20 +1154,20 @@ static const struct node {
 	{ "q!", fn_force_quit },
 	{ "quit", fn_quit },
 	{ "quit!", fn_force_quit },
-	{ "rec", fn_rec },
+	{ "record", fn_record },
 	{ "redo", fn_redo },
+	{ "rename-atoms", fn_rename_atoms },
 	{ "replay", fn_replay },
 	{ "reset-bonds", fn_reset_bonds },
 	{ "ring", fn_ring },
 	{ "rotate-selection", fn_rotate_selection },
 	{ "select", fn_select },
 	{ "select-box", fn_select_box },
+	{ "select-elements", fn_select_elements },
 	{ "select-molecule", fn_select_molecule },
-	{ "select-name", fn_select_name },
 	{ "select-sphere", fn_select_sphere },
 	{ "select-water", fn_select_water },
 	{ "set", fn_set },
-	{ "set-name", fn_set_name },
 	{ "show-all", fn_show_all },
 	{ "source", fn_source },
 	{ "toggle", fn_toggle },
