@@ -42,15 +42,15 @@ make_sel(struct tokq *args, int arg_start, int arg_end, struct state *state)
 	current = view_get_sel(state_get_view(state));
 	size = sel_get_size(current);
 
-	if ((idx = state_get_index(state)) > 0 && idx <= size) {
+	if ((idx = state_get_index(state)) > 0) {
 		ret = sel_create(size);
-		sel_add(ret, idx-1);
+		if (idx <= size)
+			sel_add(ret, idx-1);
 		return (ret);
 	}
 	if (arg_start >= arg_end)
 		return (sel_copy(current));
 
-	size = sel_get_size(current);
 	ret = sel_create(size);
 
 	for (k = arg_start; k < arg_end; k++) {
