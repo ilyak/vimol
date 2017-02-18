@@ -41,7 +41,7 @@ static const struct {
 	{ "S-K", "view-move 0 -0.1 0" },
 	{ "S-L", "view-move 0.1 0 0" },
 	{ "S-M", "" },
-	{ "S-N", "select-box" },
+	{ "S-N", "" },
 	{ "S-O", "move-selection-to" },
 	{ "S-P", "" },
 	{ "S-Q", "quit!" },

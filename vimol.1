@@ -82,9 +82,6 @@ selected atoms.
 .B n
 Select atoms within 4 angstrom sphere of current selection.
 .TP
-.B N
-Select atoms within 4 angstrom box of current selection.
-.TP
 .B o
 Toggle display of the coordinate system origin and axes.
 .TP
@@ -294,9 +291,6 @@ relative to camera coordinate system.
 Add atoms specified by \fIsel\fR to the current selection. Selects first
 unselected atom if the argument is omitted.
 .TP
-.B select-box \fIsize\fR [\fIsel\fR]
-Select a box around selection.
-.TP
 .B select-elements \fIname...
 Select atoms of a particular kind.
 .TP
@@ -308,6 +302,21 @@ Select a sphere around selection.
 .TP
 .B select-water
 Select all water molecules.
+.TP
+.B select-x \fR[\fIx\fR]
+Select atoms with \fIx\fR coordinate grater than \fIx\fR. Invert selection
+to get complementary set of atoms. This is useful for making
+solvation boxes.
+.TP
+.B select-y \fR[\fIy\fR]
+Select atoms with \fIy\fR coordinate grater than \fIy\fR. Invert selection
+to get complementary set of atoms. This is useful for making
+solvation boxes.
+.TP
+.B select-z \fR[\fIz\fR]
+Select atoms with \fIz\fR coordinate grater than \fIz\fR. Invert selection
+to get complementary set of atoms. This is useful for making
+solvation boxes.
 .TP
 .B set \fIsetting \fR[\fIvalue\fR]
 Set \fIsetting\fR to a new value. Displays current value if the second

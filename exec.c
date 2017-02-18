@@ -808,59 +808,6 @@ fn_select(struct tokq *args, struct state *state)
 }
 
 static int
-fn_select_box(struct tokq *args, struct state *state)
-{
-	struct view *view = state_get_view(state);
-	struct sys *sys;
-	struct sel *visible;
-	struct sel *sel;
-	struct spi *spi;
-	struct pair pair;
-	vec_t pi, pj;
-	double radius = 4.0;
-	int idx, npairs;
-
-	if (tokq_count(args) > 0) {
-		radius = tok_double(tokq_tok(args, 0));
-		if (radius <= 0.0) {
-			error_set("specify a positive number");
-			return (0);
-		}
-	}
-	sys = view_get_sys(view);
-	visible = view_get_visible(view);
-	spi = spi_create();
-	for (idx = 0; idx < sys_get_atom_count(sys); idx++)
-		spi_add_point(spi, sys_get_atom_xyz(sys, idx));
-	spi_compute(spi, sqrt(3.0) * radius);
-	npairs = spi_get_pair_count(spi);
-	sel = make_sel(args, 1, tokq_count(args), state);
-	sel_iter_start(sel);
-	while (sel_iter_next(sel, &idx))
-		if (sel_selected(visible, idx))
-			sel_add(view_get_sel(view), idx);
-	for (idx = 0; idx < npairs; idx++) {
-		pair = spi_get_pair(spi, idx);
-		if (!sel_selected(visible, pair.i) ||
-		    !sel_selected(visible, pair.j))
-			continue;
-		if (sel_selected(sel, pair.i) || sel_selected(sel, pair.j)) {
-			pi = sys_get_atom_xyz(sys, pair.i);
-			pj = sys_get_atom_xyz(sys, pair.j);
-			if (fabs(pi.x-pj.x) <= radius &&
-			    fabs(pi.y-pj.y) <= radius &&
-			    fabs(pi.z-pj.z) <= radius) {
-				sel_add(view_get_sel(view), pair.i);
-				sel_add(view_get_sel(view), pair.j);
-			}
-		}
-	}
-	sel_free(sel);
-	spi_free(spi);
-	return (1);
-}
-
-static int
 fn_select_sphere(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
@@ -983,6 +930,66 @@ fn_select_water(struct tokq *args __unused, struct state *state)
 		sel_add(view_get_sel(view), i);
 		sel_add(view_get_sel(view), j);
 		sel_add(view_get_sel(view), k);
+	}
+	return (1);
+}
+
+static int
+fn_select_x(struct tokq *args, struct state *state)
+{
+	struct view *view = state_get_view(state);
+	struct sel *visible = view_get_visible(view);
+	vec_t xyz;
+	double x = 0.0;
+	int idx;
+
+	if (tokq_count(args) > 0)
+		x = tok_double(tokq_tok(args, 0));
+	sel_iter_start(visible);
+	while (sel_iter_next(visible, &idx)) {
+		xyz = sys_get_atom_xyz(view_get_sys(view), idx);
+		if (xyz.x > x)
+			sel_add(view_get_sel(view), idx);
+	}
+	return (1);
+}
+
+static int
+fn_select_y(struct tokq *args, struct state *state)
+{
+	struct view *view = state_get_view(state);
+	struct sel *visible = view_get_visible(view);
+	vec_t xyz;
+	double y = 0.0;
+	int idx;
+
+	if (tokq_count(args) > 0)
+		y = tok_double(tokq_tok(args, 0));
+	sel_iter_start(visible);
+	while (sel_iter_next(visible, &idx)) {
+		xyz = sys_get_atom_xyz(view_get_sys(view), idx);
+		if (xyz.y > y)
+			sel_add(view_get_sel(view), idx);
+	}
+	return (1);
+}
+
+static int
+fn_select_z(struct tokq *args, struct state *state)
+{
+	struct view *view = state_get_view(state);
+	struct sel *visible = view_get_visible(view);
+	vec_t xyz;
+	double z = 0.0;
+	int idx;
+
+	if (tokq_count(args) > 0)
+		z = tok_double(tokq_tok(args, 0));
+	sel_iter_start(visible);
+	while (sel_iter_next(visible, &idx)) {
+		xyz = sys_get_atom_xyz(view_get_sys(view), idx);
+		if (xyz.z > z)
+			sel_add(view_get_sel(view), idx);
 	}
 	return (1);
 }
@@ -1160,11 +1167,13 @@ static const struct node {
 	{ "ring", fn_ring },
 	{ "rotate-selection", fn_rotate_selection },
 	{ "select", fn_select },
-	{ "select-box", fn_select_box },
 	{ "select-elements", fn_select_elements },
 	{ "select-molecule", fn_select_molecule },
 	{ "select-sphere", fn_select_sphere },
 	{ "select-water", fn_select_water },
+	{ "select-x", fn_select_x },
+	{ "select-y", fn_select_y },
+	{ "select-z", fn_select_z },
 	{ "set", fn_set },
 	{ "show-all", fn_show_all },
 	{ "source", fn_source },
