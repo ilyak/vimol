@@ -309,31 +309,30 @@ int
 settings_printf(char *buf, size_t size, const char *name)
 {
 	struct node *node;
-	int ret = 0;
+	int rc = 0;
 
 	node = find_node(name);
 	assert(node != NULL);
 
 	switch (node->type) {
 	case NODE_TYPE_INT:
-		ret = snprintf(buf, size, "%d", node->data.xint);
+		rc = snprintf(buf, size, "%d", node->data.xint);
 		break;
 	case NODE_TYPE_DOUBLE:
-		ret = snprintf(buf, size, "%.3lf", node->data.xdouble);
+		rc = snprintf(buf, size, "%.3lf", node->data.xdouble);
 		break;
 	case NODE_TYPE_BOOL:
-		ret = snprintf(buf, size, "%s",
+		rc = snprintf(buf, size, "%s",
 		    node->data.xbool ? "true" : "false");
 		break;
 	case NODE_TYPE_STRING:
-		ret = snprintf(buf, size, "%s", node->data.xstring);
+		rc = snprintf(buf, size, "%s", node->data.xstring);
 		break;
 	case NODE_TYPE_COLOR:
-		ret = color_to_string(buf, size, node->data.xcolor);
+		rc = color_to_string(buf, size, node->data.xcolor);
 		break;
 	}
-
-	return (ret);
+	return (rc);
 }
 
 int

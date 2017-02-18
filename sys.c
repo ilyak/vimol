@@ -455,9 +455,9 @@ sys_reset_bonds(struct sys *sys)
 int
 sys_save_to_file(struct sys *sys, const char *path)
 {
-	int ret;
+	int rc;
 
-	if ((ret = formats_save(sys->atoms, path)))
+	if ((rc = formats_save(sys->atoms, path)))
 		sys->is_modified = 0;
-	return (ret);
+	return (rc);
 }
