@@ -20,7 +20,7 @@ struct state {
 	int is_input;
 	int is_search;
 	int force_quit;
-	int number;
+	int index;
 	struct bind *bind;
 	struct edit *edit;
 	struct history *history;
@@ -157,8 +157,8 @@ set_statusbar_text(struct state *state)
 		    edit_get_text(state->edit));
 
 	memset(buf, 0, sizeof buf);
-	if (state->number > 0)
-		snprintf(buf, sizeof buf, "%d ", state->number);
+	if (state->index > 0)
+		snprintf(buf, sizeof buf, "%d ", state->index);
 	if (rec_is_recording(state->rec))
 		snprintf(buf + strlen(buf), sizeof buf - strlen(buf), "rec ");
 	if (sys_is_modified(sys))
@@ -332,7 +332,7 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 {
 	char *keystr;
 	const char *command;
-	int i, number;
+	int i, index;
 
 	switch (keysym.sym) {
 	case SDLK_LSHIFT:
@@ -362,22 +362,22 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 	case SDLK_8:
 	case SDLK_9:
 		if (keysym.mod == KMOD_NONE) {
-			number = state->number * 10 + (keysym.sym - SDLK_0);
-			if (number <= 999999)
-				state->number = number;
+			index = state->index * 10 + (keysym.sym - SDLK_0);
+			if (index <= 999999)
+				state->index = index;
 		}
 		break;
 	default:
 		key_string(&keystr, keysym.sym, keysym.mod);
 		if ((command = bind_get(state->bind, keystr)) != NULL) {
-			if (keysym.sym == SDLK_PERIOD && state->number > 0) {
-				for (i = 0; i < state->number; i++)
+			if (keysym.sym == SDLK_PERIOD && state->index > 0) {
+				for (i = 0; i < state->index; i++)
 					if (!cmdq_exec_string(command, state))
 						break;
 			} else
 				run_cmd(state, command);
 		}
-		state->number = 0;
+		state->index = 0;
 		free(keystr);
 		break;
 	}
@@ -485,9 +485,9 @@ state_get_yank(struct state *state)
 }
 
 int
-state_get_number(struct state *state)
+state_get_index(struct state *state)
 {
-	return (state->number);
+	return (state->index);
 }
 
 int

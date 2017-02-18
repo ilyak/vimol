@@ -42,7 +42,7 @@ make_sel(struct tokq *args, int arg_start, int arg_end, struct state *state)
 	current = view_get_sel(state_get_view(state));
 	size = sel_get_size(current);
 
-	if ((idx = state_get_number(state)) > 0 && idx <= size) {
+	if ((idx = state_get_index(state)) > 0 && idx <= size) {
 		ret = sel_create(size);
 		sel_add(ret, idx-1);
 		return (ret);
@@ -789,7 +789,7 @@ fn_select(struct tokq *args, struct state *state)
 
 	visible = view_get_visible(view);
 	if (tokq_count(args) == 0) {
-		if (state_get_number(state) == 0) {
+		if (state_get_index(state) == 0) {
 			sel_iter_start(visible);
 			while (sel_iter_next(visible, &idx)) {
 				if (!sel_selected(view_get_sel(view), idx)) {
@@ -1077,7 +1077,7 @@ fn_unselect(struct tokq *args, struct state *state)
 	int idx;
 
 	if (tokq_count(args) == 0) {
-		if (state_get_number(state) == 0) {
+		if (state_get_index(state) == 0) {
 			if (sel_get_count(view_get_sel(view)) == 0)
 				return (1);
 			sel_iter_start(view_get_sel(view));
