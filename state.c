@@ -371,7 +371,9 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 		key_string(&keystr, keysym.sym, keysym.mod);
 		if ((command = bind_get(state->bind, keystr)) != NULL) {
 			if (keysym.sym == SDLK_PERIOD && state->index > 0) {
-				for (i = 0; i < state->index; i++)
+				index = state->index;
+				state->index = 0;
+				for (i = 0; i < index; i++)
 					if (!cmdq_exec_string(command, state))
 						break;
 			} else
