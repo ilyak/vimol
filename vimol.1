@@ -13,7 +13,7 @@
 .\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 .\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 .\"
-.TH VIMOL 1 "February 17, 2017"
+.TH VIMOL 1 "February 18, 2017"
 .SH NAME
 vimol \- vimol is a molecular viewer and editor with vi-like controls.
 .SH SYNOPSIS
@@ -36,22 +36,22 @@ prefix means
 .B Ctrl
 key.
 .TP
-.B a
+.B [sel]a
 Fill unsatisfied valencies of selected atoms with hydrogen atoms.
 .TP
-.B b
+.B [sel]b
 Toggle a bond between two selected atoms.
 .TP
 .B B
 Reset all bonds.
 .TP
-.B c
+.B [sel]c
 Center selection.
 .TP
-.B C
+.B [sel]C
 Center and fit selection to window.
 .TP
-.B d, Delete
+.B [sel]d, [sel]Delete
 Delete selected atoms.
 .TP
 .B e
@@ -75,17 +75,17 @@ Toggle display of atom indices.
 .B I
 Toggle display of atom names.
 .TP
-.B m
-Measure position, distance, angle, torsion depending on the number of
+.B [sel]m
+Measure position, distance, angle, or torsion depending on the number of
 selected atoms.
 .TP
-.B n
-Select atoms within 4 angstrom sphere of current selection.
+.B [sel]n
+Select atoms within 4 angstrom sphere of selection.
 .TP
 .B o
 Toggle display of the coordinate system origin and axes.
 .TP
-.B O
+.B [sel]O
 Move selection to the coordinate system origin.
 .TP
 .B p, C-v
@@ -111,19 +111,19 @@ Replay last recording.
 Unselect atom with index \fI123\fR. Unselects last selected atom if no index
 is specified.
 .TP
-.B v
+.B [sel]v
 Hide selected atoms. Atoms can be made visible again by pressing \fBz\fR.
 .TP
-.B w
+.B [sel]w
 Select whole molecule containing selected atoms.
 .TP
 .B W
 Select all water molecules.
 .TP
-.B x, C-x
+.B [sel]x, [sel]C-x
 Cut selected atoms.
 .TP
-.B y, C-c
+.B [sel]y, [sel]C-c
 Copy selected atoms.
 .TP
 .B z
@@ -232,7 +232,7 @@ Invert current selection.
 Switch to the last window.
 .TP
 .B measure \fR[\fIsel\fR]
-Measure position, distance, angle, torsion depending on the number of
+Measure position, distance, angle, or torsion depending on the number of
 atoms in selection \fIsel\fR.
 .TP
 .B move-selection \fIx y z \fR[\fIsel\fR]
@@ -271,7 +271,7 @@ Start recording of issued commands. A recording can be replayed using
 .B redo
 Redo last change.
 .TP
-.B rename-atoms \fIname \fR[\fIsel\fR]
+.B rename \fIname \fR[\fIsel\fR]
 Set a new \fIname\fR for all atoms in selection \fIsel\fR.
 .TP
 .B replay

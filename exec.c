@@ -396,7 +396,7 @@ fn_view_move(struct tokq *args, struct state *state)
 }
 
 static int
-fn_rename_atoms(struct tokq *args, struct state *state)
+fn_rename(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct sel *sel;
@@ -1161,7 +1161,7 @@ static const struct node {
 	{ "quit!", fn_force_quit },
 	{ "record", fn_record },
 	{ "redo", fn_redo },
-	{ "rename-atoms", fn_rename_atoms },
+	{ "rename", fn_rename },
 	{ "replay", fn_replay },
 	{ "reset-bonds", fn_reset_bonds },
 	{ "ring", fn_ring },
