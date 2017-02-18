@@ -106,12 +106,10 @@ fn_add_hydrogens(struct tokq *args, struct state *state)
 	struct sel *sel;
 
 	sel = make_sel(args, 0, tokq_count(args), state);
-	if (sel_get_count(sel) == 0) {
-		sel_free(sel);
-		return (1);
+	if (sel_get_count(sel) > 0) {
+		view_snapshot(view);
+		sys_add_hydrogens(view_get_sys(view), sel);
 	}
-	view_snapshot(view);
-	sys_add_hydrogens(view_get_sys(view), sel);
 	sel_free(sel);
 	return (1);
 }
