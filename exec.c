@@ -36,14 +36,15 @@ static struct sel *
 make_sel(struct tokq *args, int arg_start, int arg_end, struct state *state)
 {
 	struct sel *ret, *current;
-	int i, k, size, start, end, number;
+	int i, k, size, start, end, idx;
 	const char *str;
 
 	current = view_get_sel(state_get_view(state));
-	if ((number = state_get_number(state)) > 0) {
-		size = sel_get_size(current);
+	size = sel_get_size(current);
+
+	if ((idx = state_get_number(state)) > 0 && idx <= size) {
 		ret = sel_create(size);
-		sel_add(ret, number - 1);
+		sel_add(ret, idx-1);
 		return (ret);
 	}
 	if (arg_start >= arg_end)
