@@ -243,7 +243,7 @@ fn_force_close(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_copy_selection(struct tokq *args, struct state *state)
+fn_copy(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct sys *sys;
@@ -265,7 +265,7 @@ fn_copy_selection(struct tokq *args, struct state *state)
 }
 
 static int
-fn_delete_selection(struct tokq *args, struct state *state)
+fn_delete(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct sel *sel;
@@ -1136,8 +1136,8 @@ static const struct node {
 	{ "clos!", fn_force_close },
 	{ "close", fn_close },
 	{ "close!", fn_force_close },
-	{ "copy-selection", fn_copy_selection },
-	{ "delete-selection", fn_delete_selection },
+	{ "copy", fn_copy },
+	{ "delete", fn_delete },
 	{ "first", fn_first_window },
 	{ "first-window", fn_first_window },
 	{ "frame", fn_frame },
