@@ -249,7 +249,6 @@ fn_copy(struct tokq *args, struct state *state)
 	struct sys *sys;
 	struct yank *yank;
 	struct sel *sel;
-	int reg = 0;
 
 	yank = state_get_yank(state);
 	sys = view_get_sys(view);
@@ -258,7 +257,7 @@ fn_copy(struct tokq *args, struct state *state)
 		sel_free(sel);
 		return (1);
 	}
-	yank_copy(yank, sys, sel, reg);
+	yank_copy(yank, sys, sel);
 	error_set("copied %d atoms", sel_get_count(sel));
 	sel_free(sel);
 	return (1);
@@ -472,12 +471,12 @@ fn_paste(struct tokq *args __unused, struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct yank *yank = state_get_yank(state);
-	int i, natoms, npaste, reg = 0;
+	int i, natoms, npaste;
 
-	if ((npaste = yank_get_atom_count(yank, reg)) == 0)
+	if ((npaste = yank_get_atom_count(yank)) == 0)
 		return (1);
 	view_snapshot(view);
-	yank_paste(yank, view_get_sys(view), reg);
+	yank_paste(yank, view_get_sys(view));
 	natoms = sys_get_atom_count(view_get_sys(view));
 	sel_clear(view_get_sel(view));
 	for (i = 0; i < npaste; i++)

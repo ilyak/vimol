@@ -16,27 +16,19 @@
 
 #include "vimol.h"
 
-struct tuple {
+struct yank {
 	struct atoms *atoms;
 	struct graph *graph;
-};
-
-struct yank {
-	struct tuple tuple[NUM_REGISTERS];
 };
 
 struct yank *
 yank_create(void)
 {
 	struct yank *yank;
-	int i;
 
 	yank = xcalloc(1, sizeof *yank);
-
-	for (i = 0; i < NUM_REGISTERS; i++) {
-		yank->tuple[i].atoms = atoms_create();
-		yank->tuple[i].graph = graph_create();
-	}
+	yank->atoms = atoms_create();
+	yank->graph = graph_create();
 
 	return (yank);
 }
@@ -44,44 +36,31 @@ yank_create(void)
 void
 yank_free(struct yank *yank)
 {
-	int i;
-
 	if (yank) {
-		for (i = 0; i < NUM_REGISTERS; i++) {
-			atoms_free(yank->tuple[i].atoms);
-			graph_free(yank->tuple[i].graph);
-		}
+		atoms_free(yank->atoms);
+		graph_free(yank->graph);
 		free(yank);
 	}
 }
 
 int
-yank_get_atom_count(struct yank *yank, int reg)
+yank_get_atom_count(struct yank *yank)
 {
-	assert(reg >= 0 && reg < NUM_REGISTERS);
-
-	return (atoms_get_count(yank->tuple[reg].atoms));
+	return (atoms_get_count(yank->atoms));
 }
 
 void
-yank_copy(struct yank *yank, struct sys *sys, struct sel *sel, int reg)
+yank_copy(struct yank *yank, struct sys *sys, struct sel *sel)
 {
-	struct atoms *atoms;
-	struct graph *graph;
 	struct graphedge *edge;
 	const char *name;
 	vec_t xyz;
 	int i, j, type, *map;
 
-	assert(reg >= 0 && reg < NUM_REGISTERS);
-
-	atoms = yank->tuple[reg].atoms;
-	graph = yank->tuple[reg].graph;
-
 	map = xcalloc(sys_get_atom_count(sys), sizeof *map);
 
-	atoms_clear(atoms);
-	graph_clear(graph);
+	atoms_clear(yank->atoms);
+	graph_clear(yank->graph);
 
 	j = 0;
 	sel_iter_start(sel);
@@ -90,8 +69,8 @@ yank_copy(struct yank *yank, struct sys *sys, struct sel *sel, int reg)
 		name = sys_get_atom_name(sys, i);
 		xyz = sys_get_atom_xyz(sys, i);
 
-		atoms_add(atoms, name, xyz);
-		graph_vertex_add(graph);
+		atoms_add(yank->atoms, name, xyz);
+		graph_vertex_add(yank->graph);
 
 		map[i] = j++;
 	}
@@ -106,7 +85,8 @@ yank_copy(struct yank *yank, struct sys *sys, struct sel *sel, int reg)
 			j = graph_edge_j(edge);
 
 			if (sel_selected(sel, j))
-				graph_edge_create(graph, map[i], map[j], type);
+				graph_edge_create(yank->graph, map[i], map[j],
+				    type);
 
 			edge = graph_edge_next(edge);
 		}
@@ -116,30 +96,23 @@ yank_copy(struct yank *yank, struct sys *sys, struct sel *sel, int reg)
 }
 
 void
-yank_paste(struct yank *yank, struct sys *sys, int reg)
+yank_paste(struct yank *yank, struct sys *sys)
 {
-	struct atoms *atoms;
-	struct graph *graph;
 	struct graphedge *edge;
 	const char *name;
 	vec_t xyz;
 	int i, j, n, type;
 
-	assert(reg >= 0 && reg < NUM_REGISTERS);
-
-	atoms = yank->tuple[reg].atoms;
-	graph = yank->tuple[reg].graph;
-
 	n = sys_get_atom_count(sys);
 
-	for (i = 0; i < atoms_get_count(atoms); i++) {
-		name = atoms_get_name(atoms, i);
-		xyz = atoms_get_xyz(atoms, i);
+	for (i = 0; i < atoms_get_count(yank->atoms); i++) {
+		name = atoms_get_name(yank->atoms, i);
+		xyz = atoms_get_xyz(yank->atoms, i);
 		sys_add_atom(sys, name, xyz);
 	}
 
-	for (i = 0; i < graph_get_vertex_count(graph); i++) {
-		edge = graph_get_edges(graph, i);
+	for (i = 0; i < graph_get_vertex_count(yank->graph); i++) {
+		edge = graph_get_edges(yank->graph, i);
 
 		while (edge) {
 			type = graph_edge_get_type(edge);
