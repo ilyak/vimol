@@ -28,7 +28,7 @@ static const struct {
 	{ "X", "copy; delete" },
 	{ "Y", "copy" },
 	{ "Z", "show-all" },
-	{ "S-A", "" },
+	{ "S-A", "select-element H" },
 	{ "S-B", "" },
 	{ "S-C", "view-fit-selection" },
 	{ "S-D", "" },
