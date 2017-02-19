@@ -488,7 +488,6 @@ static int
 fn_replay(struct tokq *args __unused, struct state *state)
 {
 	struct rec *rec = state_get_rec(state);
-	int reg = 0;
 
 	if (rec_is_playing(rec))
 		return (1);
@@ -496,7 +495,7 @@ fn_replay(struct tokq *args __unused, struct state *state)
 		error_set("cannot replay during recording");
 		return (0);
 	}
-	if (!rec_play(rec, reg, state))
+	if (!rec_play(rec, state))
 		return (0);
 	return (1);
 }
@@ -624,7 +623,6 @@ static int
 fn_record(struct tokq *args __unused, struct state *state)
 {
 	struct rec *rec = state_get_rec(state);
-	int reg = 0;
 
 	if (rec_is_playing(rec))
 		return (1);
@@ -632,7 +630,7 @@ fn_record(struct tokq *args __unused, struct state *state)
 		rec_stop(rec);
 		return (1);
 	}
-	rec_start(rec, reg);
+	rec_start(rec);
 	return (1);
 }
 

@@ -17,21 +17,17 @@
 #include "vimol.h"
 
 struct rec {
-	int is_playing, reg;
-	char *data[NUM_REGISTERS];
+	int is_playing, is_recording;
+	char *data;
 };
 
 struct rec *
 rec_create(void)
 {
 	struct rec *rec;
-	int i;
 
 	rec = xcalloc(1, sizeof *rec);
-	rec->reg = -1;
-
-	for (i = 0; i < NUM_REGISTERS; i++)
-		rec->data[i] = xstrdup("");
+	rec->data = xstrdup("");
 
 	return (rec);
 }
@@ -39,11 +35,8 @@ rec_create(void)
 void
 rec_free(struct rec *rec)
 {
-	int i;
-
 	if (rec) {
-		for (i = 0; i < NUM_REGISTERS; i++)
-			free(rec->data[i]);
+		free(rec->data);
 		free(rec);
 	}
 }
@@ -57,99 +50,50 @@ rec_is_playing(struct rec *rec)
 int
 rec_is_recording(struct rec *rec)
 {
-	return (rec->reg != -1);
-}
-
-int
-rec_get_register(struct rec *rec)
-{
-	assert(rec->reg != -1);
-
-	return (rec->reg);
+	return (rec->is_recording);
 }
 
 void
-rec_load(struct rec *rec, const char *path)
+rec_start(struct rec *rec)
 {
-	FILE *fp;
-	char *buffer;
-	int i;
+	assert(!rec->is_playing && !rec->is_recording);
 
-	if ((fp = fopen(path, "r")) == NULL)
-		return;
-
-	buffer = NULL;
-
-	for (i = 0; i < NUM_REGISTERS; i++) {
-		buffer = util_next_line(buffer, fp);
-		free(rec->data[i]);
-		rec->data[i] = xstrdup(buffer ? buffer : "");
-	}
-
-	free(buffer);
-	fclose(fp);
-}
-
-void
-rec_save(struct rec *rec, const char *path)
-{
-	FILE *fp;
-	int i;
-
-	if ((fp = fopen(path, "w")) == NULL)
-		return;
-
-	for (i = 0; i < NUM_REGISTERS; i++)
-		fprintf(fp, "%s\n", rec->data[i]);
-
-	fclose(fp);
-}
-
-void
-rec_start(struct rec *rec, int reg)
-{
-	assert(reg >= 0 && reg < NUM_REGISTERS);
-	assert(rec->reg == -1);
-
-	rec->reg = reg;
-	rec->data[reg][0] = '\0';
+	rec->is_recording = 1;
+	rec->data[0] = '\0';
 }
 
 void
 rec_add(struct rec *rec, const char *add)
 {
-	char *s, *p;
+	char *str;
 
-	assert(rec->reg != -1);
+	assert(rec->is_recording);
 
-	s = rec->data[rec->reg];
-
-	if (s[0] == '\0')
-		p = xstrdup(add);
+	if (rec->data[0] == '\0')
+		str = xstrdup(add);
 	else
-		xasprintf(&p, "%s; %s", s, add);
+		xasprintf(&str, "%s; %s", rec->data, add);
 
-	free(s);
-	rec->data[rec->reg] = p;
+	free(rec->data);
+	rec->data = str;
 }
 
 void
 rec_stop(struct rec *rec)
 {
-	assert(rec->reg != -1);
+	assert(rec->is_recording);
 
-	rec->reg = -1;
+	rec->is_recording = 0;
 }
 
 int
-rec_play(struct rec *rec, int reg, struct state *state)
+rec_play(struct rec *rec, struct state *state)
 {
 	struct cmdq *cmdq;
 
-	assert(reg >= 0 && reg < NUM_REGISTERS);
-	assert(rec->reg == -1 && !rec->is_playing);
+	assert(!rec->is_playing && !rec->is_recording);
 
-	if ((cmdq = cmdq_from_string(rec->data[reg])) == NULL)
+	if ((cmdq = cmdq_from_string(rec->data)) == NULL)
 		return (0);
 
 	rec->is_playing = 1;
