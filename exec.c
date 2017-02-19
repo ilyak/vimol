@@ -882,7 +882,7 @@ fn_select_molecule(struct tokq *args, struct state *state)
 }
 
 static int
-fn_select_elements(struct tokq *args, struct state *state)
+fn_select_element(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
 	struct sys *sys;
@@ -1167,7 +1167,7 @@ static const struct node {
 	{ "ring", fn_ring },
 	{ "rotate-selection", fn_rotate_selection },
 	{ "select", fn_select },
-	{ "select-elements", fn_select_elements },
+	{ "select-element", fn_select_element },
 	{ "select-molecule", fn_select_molecule },
 	{ "select-sphere", fn_select_sphere },
 	{ "select-water", fn_select_water },
