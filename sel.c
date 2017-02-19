@@ -164,19 +164,6 @@ sel_remove(struct sel *sel, int idx)
 }
 
 void
-sel_swap(struct sel *sel, int i, int j)
-{
-	int sel_i = sel_selected(sel, i);
-	int sel_j = sel_selected(sel, j);
-
-	if (sel_i) sel_add(sel, j);
-	else sel_remove(sel, j);
-
-	if (sel_j) sel_add(sel, i);
-	else sel_remove(sel, i);
-}
-
-void
 sel_all(struct sel *sel)
 {
 	int i;

@@ -129,30 +129,6 @@ graph_vertex_remove(struct graph *graph, int idx)
 	}
 }
 
-void
-graph_vertex_swap(struct graph *graph, int i, int j)
-{
-	struct graphedge *edge;
-
-	assert(i >= 0 && i < graph_get_vertex_count(graph));
-	assert(j >= 0 && j < graph_get_vertex_count(graph));
-	assert(i != j);
-
-	for (edge = graph->edges[i]; edge; edge = edge->next) {
-		edge->i = j;
-		edge->rev->j = j;
-	}
-
-	for (edge = graph->edges[j]; edge; edge = edge->next) {
-		edge->i = i;
-		edge->rev->j = i;
-	}
-
-	edge = graph->edges[i];
-	graph->edges[i] = graph->edges[j];
-	graph->edges[j] = edge;
-}
-
 int
 graph_get_vertex_count(struct graph *graph)
 {

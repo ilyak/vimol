@@ -168,26 +168,6 @@ atoms_remove(struct atoms *atoms, int idx)
 }
 
 void
-atoms_swap(struct atoms *atoms, int i, int j)
-{
-	vec_t xyz;
-	int k, type;
-
-	assert(i >= 0 && i < atoms_get_count(atoms));
-	assert(j >= 0 && j < atoms_get_count(atoms));
-
-	type = atoms->type[i];
-	atoms->type[i] = atoms->type[j];
-	atoms->type[j] = type;
-
-	for (k = 0; k < atoms->nframes; k++) {
-		xyz = atoms_get_xyz(atoms, i);
-		atoms_set_xyz(atoms, i, atoms_get_xyz(atoms, j));
-		atoms_set_xyz(atoms, j, xyz);
-	}
-}
-
-void
 atoms_clear(struct atoms *atoms)
 {
 	atoms->natoms = 0;

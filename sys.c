@@ -210,15 +210,6 @@ sys_remove_atom(struct sys *sys, int idx)
 	sys->is_modified = 1;
 }
 
-void
-sys_swap_atoms(struct sys *sys, int i, int j)
-{
-	atoms_swap(sys->atoms, i, j);
-	graph_vertex_swap(sys->graph, i, j);
-	sel_swap(sys->sel, i, j);
-	sel_swap(sys->visible, i, j);
-}
-
 int
 sys_get_atom_count(struct sys *sys)
 {
