@@ -1044,8 +1044,10 @@ fn_toggle(struct tokq *args, struct state *state __unused)
 	if (tokq_count(args) == 0)
 		return (0);
 	name = tok_string(tokq_tok(args, 0));
-	if (!settings_has_bool(name))
+	if (!settings_has_bool(name)) {
+		error_set("specify a boolean setting");
 		return (0);
+	}
 	value = settings_get_bool(name);
 	settings_set_bool(name, !value);
 	return (1);
