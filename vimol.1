@@ -13,7 +13,7 @@
 .\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 .\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 .\"
-.Dd $Mdocdate: February 20 2017 $
+.Dd $Mdocdate: February 21 2017 $
 .Dt VIMOL 1
 .Os
 .Sh NAME
@@ -24,9 +24,11 @@
 .Op Ar files
 .Sh DESCRIPTION
 .Nm
-is a fast and functional molecular viewer and editor with vi-like controls.
-Viewing and editing of PDB and XYZ file formats is supported.
-Multi-frame file support is implemented for both formats.
+is a powerful molecular viewer and editor with vi-like controls.
+It supports viewing and editing of PDB and XYZ file formats.
+Multiple files can be edited simultaneously with convenient navigation
+between open tabs.
+Multi-frame file support is implemented for both PDB and XYZ formats.
 .Sh KEY BINDINGS
 The default key bindings are described below.
 The following notation is used:
@@ -43,7 +45,8 @@ An optional atom selection, (sel), can be used with some commands.
 See the
 .Sx SELECTIONS
 section for more details.
-.Bl -tag -width Ds -offset indent
+.Pp
+.Bl -tag -width indent-two -offset indent -compact
 .It (sel)a
 Fill unsatisfied valencies of selected atoms with hydrogen atoms.
 .It S-a
@@ -75,6 +78,7 @@ Toggle display of atom names.
 .It (sel)m
 Measure position, distance, angle, or torsion depending on the number of
 selected atoms.
+For example, 123m displays the position of an atom with index 123.
 .It (sel)n
 Select atoms within 4 angstrom sphere of selection.
 .It o
@@ -84,9 +88,12 @@ Move selection to the coordinate system origin.
 .It p or C-v
 Paste atoms to the current window.
 .It q
-Quit.
+Quit
+.Nm .
 .It S-q
-Quit discarding unsaved changes.
+Quit
+.Nm
+discarding unsaved changes.
 .It r
 Start recording of issued commands.
 .It 123s
@@ -102,7 +109,8 @@ Unselect last selected atom if no index is specified.
 Hide selected atoms.
 Atoms can be made visible again by pressing z.
 .It (sel)w
-Select whole molecule containing selected atoms.
+Select whole molecules containing selected atoms.
+123w selects the molecule to which atom 123 belongs.
 .It S-w
 Select all water molecules.
 .It (sel)x or (sel)C-x
@@ -145,22 +153,21 @@ Switch to the next window.
 .Sh SELECTIONS
 Atom selections,
 .Ar sel ,
-are specified in three ways.
+can be specified in three ways.
 .Pp
-First, an explicit atom index can be specified using number keys [0-9].
+First, an explicit atom index can be provided using number keys [0-9].
 This is useful with key combinations.
-For example, by pressing 123w the whole molecule containing an atom
-with index 123 is selected.
+For example, 123d deletes an atom with index 123.
 .Pp
 The second way is to explicitly list indices on the command line (see the
 .Sx COMMANDS
 section).
 The indices are separated by a space character.
-Index ranges can be specified using colon ':', e.g., "2 3 6:8" specifies
-atoms with indices 2, 3, 6, 7, 8.
+Index ranges can be specified using colon ':'.
+For example, 6:8 specifies atoms with indices 6, 7, 8.
 Negative indices are used to count backwards starting from the last
 index, i.e., -1 is the last atom.
-Special character '*' selects all atoms.
+Special character '*' can be used to specify all atoms.
 .Pp
 Finally, if no explicit index is specified and no command-line arguments are
 listed, selected atoms in the current window are used.
@@ -170,9 +177,11 @@ Command mode is started by pressing the colon key (:).
 Most of the commands are bound to a key for convenience (see the
 .Sx KEY BINDINGS
 section).
+Multiple commands can be separated by semicolon.
 .Bl -tag -width Ds -offset indent
-.It Ic \&?
-Display version information.
+.It Ic about
+Display information about
+.Nm .
 .It Ic add-hydrogens Op Ar sel
 Fill unsatisfied valencies of atoms in selection
 .Ar sel
@@ -187,7 +196,7 @@ Display current binding if
 .Ar command
 is not specified.
 .It Ic bond Op Ar sel
-Toggle bond between atoms in selection.
+Toggle a bond between two atoms.
 The selection
 .Ar sel
 must contain exactly two atoms.
@@ -257,10 +266,13 @@ Paste atoms from a copy-buffer to the current window.
 Switch to the previous window.
 .It Ic quit
 .D1 (alias: Ic q )
-Quit.
+Quit
+.Nm .
 .It Ic quit!
 .D1 (alias: Ic q! )
-Quit discarding unsaved changes.
+Quit
+.Nm
+discarding unsaved changes.
 .It Ic record
 Start recording of issued commands.
 A recording can be replayed using
@@ -289,15 +301,18 @@ Add atoms specified by
 .Ar sel
 to the current selection.
 Select an unselected atom with lowest index if the argument is omitted.
-.It Ic select-element Ar names
-Select atoms of a particular type.
+.It Ic select-element Ar name ...
+Select all atoms of a particular type.
+This command takes a list of element names to select.
 For example,
 .Bd -literal -offset indent
 select-element H N
 .Ed
 selects all hydrogen and nitrogen atoms.
 .It Ic select-molecule Op Ar sel
-Select whole containing molecule for each atom in selection.
+For each atom in selection
+.Ar sel ,
+select the whole molecule containing the atom.
 .It Ic select-sphere Ar radius Op Ar sel
 Select a sphere within a specified
 .Ar radius
@@ -380,66 +395,100 @@ is not specified.
 .Sh SETTINGS
 The following settings control various aspects of
 .Nm .
-They can be changed using
+They can be changed using the
 .Ic set
-and
+command.
+Boolean settings can be switched on/off using the
 .Ic toggle
-commands.
-.Bl -tag -width Ds -offset indent
+command.
+Colors are specified using an RGB value.
+For example, red is 255 0 0.
+.Pp
+.Bl -tag -width Ds -offset indent -compact
 .It Ic atom-size
 .D1 (type: Ic float )
+Atom sphere size.
 .It Ic atom-visible
 .D1 (type: Ic boolean )
+Specifies whether to draw atom spheres.
 .It Ic bg-color
 .D1 (type: Ic color )
+Background color.
 .It Ic bond-size
 .D1 (type: Ic float )
+Bond cylinder size.
 .It Ic bond-visible
 .D1 (type: Ic boolean )
+Specifies whether to draw bond cylinders.
 .It Ic id-color
 .D1 (type: Ic color )
+Color of atom index labels.
 .It Ic id-font
 .D1 (type: Ic string )
+Atom index label font.
 .It Ic id-font-size
 .D1 (type: Ic float )
+Atom index label font size.
 .It Ic id-visible
 .D1 (type: Ic boolean )
+Atom index label visibility.
 .It Ic name-color
 .D1 (type: Ic color )
+Color of atom name labels.
 .It Ic name-font
 .D1 (type: Ic string )
+Atom name label font.
 .It Ic name-font-size
 .D1 (type: Ic float )
+Atom name label font size.
 .It Ic name-visible
 .D1 (type: Ic boolean )
+Atom name label visibility.
 .It Ic origin-color
 .D1 (type: Ic color )
+Color of coordinate system axes and labels.
 .It Ic origin-font
 .D1 (type: Ic string )
+Coordinate system axis labels font.
 .It Ic origin-font-size
 .D1 (type: Ic float )
+Coordinate system axis labels font size.
 .It Ic origin-line-width
 .D1 (type: Ic float )
+Coordinate system axis line width.
 .It Ic origin-visible
 .D1 (type: Ic boolean )
+Specifies whether to draw coordinate system axes and labels.
 .It Ic selection-color
 .D1 (type: Ic color )
+Color of atom selection markers.
 .It Ic selection-size
 .D1 (type: Ic float )
+Size of atom selection markers.
 .It Ic statusbar-color
 .D1 (type: Ic color )
+Status bar background color.
 .It Ic statusbar-error-color
 .D1 (type: Ic color )
+Status bar error text color.
 .It Ic statusbar-font
 .D1 (type: Ic string )
+Status bar text font.
 .It Ic statusbar-font-size
 .D1 (type: Ic string )
+Status bar font size.
 .It Ic statusbar-text-color
 .D1 (type: Ic color )
+Status bar text color.
 .It Ic statusbar-visible
 .D1 (type: Ic boolean )
+Status bar visibility.
 .It Ic color-x
 .D1 (type: Ic color )
+Color of an unknown element.
+Colors of common elements can be specified using
+.Ic color-h , Ic color-he , Ic color-li ,
+and so on.
 .El
 .Sh AUTHORS
 .Nm
