@@ -994,8 +994,9 @@ fn_select_z(struct tokq *args, struct state *state)
 static int
 fn_set(struct tokq *args, struct state *state __unused)
 {
-	const char *name, *value;
-	char buf[1024];
+	char buf[BUFSIZ], *value;
+	const char *name;
+	int rc;
 
 	if (tokq_count(args) == 0) {
 		error_set("specify a setting name");
@@ -1011,8 +1012,10 @@ fn_set(struct tokq *args, struct state *state __unused)
 		error_set("%s is %s", name, buf);
 		return (1);
 	}
-	value = tok_string(tokq_tok(args, 1));
-	return (settings_set(name, value));
+	value = tokq_strcat(args, 1, tokq_count(args) - 1);
+	rc = settings_set(name, value);
+	free(value);
+	return (rc);
 }
 
 static int

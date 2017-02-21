@@ -80,7 +80,7 @@ static int
 set_from_string(struct node *node, const char *value)
 {
 	union data data;
-	int r, g, b;
+	int r = 0, g = 0, b = 0;
 
 	switch (node->type) {
 	case NODE_TYPE_INT:
