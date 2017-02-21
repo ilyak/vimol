@@ -1042,7 +1042,6 @@ static int
 fn_toggle(struct tokq *args, struct state *state __unused)
 {
 	const char *name;
-	int value;
 
 	if (tokq_count(args) == 0)
 		return (0);
@@ -1051,8 +1050,10 @@ fn_toggle(struct tokq *args, struct state *state __unused)
 		error_set("specify a boolean setting");
 		return (0);
 	}
-	value = settings_get_bool(name);
-	settings_set_bool(name, !value);
+	if (settings_get_bool(name))
+		settings_set(name, "false");
+	else
+		settings_set(name, "true");
 	return (1);
 }
 
