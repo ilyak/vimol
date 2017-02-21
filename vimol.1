@@ -13,351 +13,435 @@
 .\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 .\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 .\"
-.TH VIMOL 1 "February 18, 2017"
-.SH NAME
-vimol \- vimol is a molecular viewer and editor with vi-like controls.
-.SH SYNOPSIS
-.B vimol
-.RI [ file... ]
-.SH DESCRIPTION
-.B vimol
-is a fast and functional molecular viewer and editor with vi-like
-controls. Viewing and editing of \fB.pdb\fR and \fB.xyz\fR
-file formats is supported. Multi-frame support is implemented for
-both \fB.pdb\fR and \fB.xyz\fR files.
-.SH KEY BINDINGS
-The key bindings are described below. The
-.B S\-
-prefix means
-.B Shift
-key and the
-.B C\-
-prefix means
-.B Ctrl
-key.
-.TP
-.B [sel]a
+.Dd $Mdocdate: February 20 2017 $
+.Dt VIMOL 1
+.Os
+.Sh NAME
+.Nm vimol
+.Nd a powerful molecular viewer and editor with vi-like controls.
+.Sh SYNOPSIS
+.Nm vimol
+.Op Ar files
+.Sh DESCRIPTION
+.Nm
+is a fast and functional molecular viewer and editor with vi-like controls.
+Viewing and editing of PDB and XYZ file formats is supported.
+Multi-frame file support is implemented for both formats.
+.Sh KEY BINDINGS
+The default key bindings are described below.
+The following notation is used:
+.Pp
+.Bl -tag -width Ds -offset indent -compact
+.It S-
+Shift key.
+.It C-
+Ctrl key.
+.El
+.Pp
+Arrow keys are equivalent to [hjkl] keys.
+An optional atom selection, (sel), can be used with some commands.
+See the
+.Sx SELECTIONS
+section for more details.
+.Bl -tag -width Ds -offset indent
+.It (sel)a
 Fill unsatisfied valencies of selected atoms with hydrogen atoms.
-.TP
-.B A
+.It S-a
 Select all hydrogen atoms.
-.TP
-.B [sel]b
+.It (sel)b
 Toggle a bond between two selected atoms.
-.TP
-.B [sel]c
+.It (sel)c
 Center selection.
-.TP
-.B [sel]C
+.It (sel)S-c
 Center and fit selection to window.
-.TP
-.B [sel]d, [sel]Delete
+.It (sel)d or (sel)Delete
 Delete selected atoms.
-.TP
-.B e
+.It e
 Clear selection.
-.TP
-.B f
+.It f
 Zoom in.
-.TP
-.B g
+.It g
 Zoom out.
-.TP
-.B h, j, k, l, Left, Down, Up, Right, F, G
+.It [hjkl]
 Rotate the camera.
-.TP
-.B H, J, K, L, S-Left, S-Down, S-Up, S-Right
+.It S-[hjkl]
 Move the camera.
-.TP
-.B i
+.It S-[fg]
+Rotate the camera along the view axis.
+.It i
 Toggle display of atom indices.
-.TP
-.B I
+.It S-i
 Toggle display of atom names.
-.TP
-.B [sel]m
+.It (sel)m
 Measure position, distance, angle, or torsion depending on the number of
 selected atoms.
-.TP
-.B [sel]n
+.It (sel)n
 Select atoms within 4 angstrom sphere of selection.
-.TP
-.B o
+.It o
 Toggle display of the coordinate system origin and axes.
-.TP
-.B [sel]O
+.It (sel)S-o
 Move selection to the coordinate system origin.
-.TP
-.B p, C-v
+.It p or C-v
 Paste atoms to the current window.
-.TP
-.B q
-Quit \fBvimol\fR.
-.TP
-.B Q
-Quit \fBvimol\fR discarding unsaved changes.
-.TP
-.B r
+.It q
+Quit.
+.It S-q
+Quit discarding unsaved changes.
+.It r
 Start recording of issued commands.
-.TP
-.B 123s
-Select atom with index \fI123\fR. Selects first unselected atom if no index
-is specified.
-.TP
-.B t
+.It 123s
+Select atom with index 123.
+Select an unselected atom with lowest index if no index is specified.
+.It t
 Replay last recording.
-.TP
-.B 123u
-Unselect atom with index \fI123\fR. Unselects last selected atom if no index
-is specified.
-.TP
-.B [sel]v
-Hide selected atoms. Atoms can be made visible again by pressing \fBz\fR.
-.TP
-.B [sel]w
+Period key (.) with count can be used to repeat many times after that.
+.It 123u
+Unselect atom with index 123.
+Unselect last selected atom if no index is specified.
+.It (sel)v
+Hide selected atoms.
+Atoms can be made visible again by pressing z.
+.It (sel)w
 Select whole molecule containing selected atoms.
-.TP
-.B W
+.It S-w
 Select all water molecules.
-.TP
-.B [sel]x, [sel]C-x
+.It (sel)x or (sel)C-x
 Cut selected atoms.
-.TP
-.B [sel]y, [sel]C-c
+.It (sel)y or (sel)C-c
 Copy selected atoms.
-.TP
-.B z
+.It z
 Show all hidden atoms.
-.TP
-.B C-a
+.It C-a
 Select all atoms.
-.TP
-.B C-h, C-j, C-k, C-l, C-Left, C-Down, C-Up, C-Right, C-f, C-g
+.It C-[hjklfg]
 Rotate selected atoms.
-.TP
-.B C-H, C-J, C-K, C-L, CS-Left, CS-Down, CS-Up, CS-Right
+.It CS-[hjkl]
 Move selected atoms.
-.TP
-.B C-r
+.It C-r
 Redo last change.
-.TP
-.B C-z
+.It C-z
 Undo last change.
-.TP
-.B 123.
-Repeat last command \fI123\fR times.
-.TP
-.B =
+.It 123.
+Repeat last command 123 times.
+.It =
 Invert current selection.
-.TP
-.B Space
-Toggle fullscreen mode.
-.TP
-.B `
+.It Space
+Toggle full screen mode.
+.It `
 Reset view.
-.TP
-.B [
+.It \&[
 Go to the previous frame.
-.TP
-.B ]
+.It \&]
 Go to the next frame.
-.TP
-.B {
+.It {
 Go 100 frames backward.
-.TP
-.B }
+.It }
 Go 100 frames forward.
-.TP
-.B <
+.It <
 Switch to the previous window.
-.TP
-.B >
+.It >
 Switch to the next window.
-.SH SELECTIONS
-Description of selections
-.SH COMMANDS
-Below is the list of available commands. The command mode is started using
-\fB:\fR (colon) key. Most of these commands have a key binding (see
-.B KEY BINDINGS
+.El
+.Sh SELECTIONS
+Atom selections,
+.Ar sel ,
+are specified in three ways.
+.Pp
+First, an explicit atom index can be specified using number keys [0-9].
+This is useful with key combinations.
+For example, by pressing 123w the whole molecule containing an atom
+with index 123 is selected.
+.Pp
+The second way is to explicitly list indices on the command line (see the
+.Sx COMMANDS
 section).
-.TP
-.B ?
+The indices are separated by a space character.
+Index ranges can be specified using colon ':', e.g., "2 3 6:8" specifies
+atoms with indices 2, 3, 6, 7, 8.
+Negative indices are used to count backwards starting from the last
+index, i.e., -1 is the last atom.
+Special character '*' selects all atoms.
+.Pp
+Finally, if no explicit index is specified and no command-line arguments are
+listed, selected atoms in the current window are used.
+.Sh COMMANDS
+Below is the list of available commands.
+Command mode is started by pressing the colon key (:).
+Most of the commands are bound to a key for convenience (see the
+.Sx KEY BINDINGS
+section).
+.Bl -tag -width Ds -offset indent
+.It Ic \&?
 Display version information.
-.TP
-.B add-hydrogens \fR[\fIsel\fR]
-Fill unsatisfied valencies of atoms in selection \fIsel\fR with hydrogen atoms.
-.TP
-.B atom \fR[\fIname\fR] [\fIx y z\fR]
-Create an atom \fIname\fR with coordinates \fIx y z\fR. The default is to
-create a carbon atom \fBC\fR at coordinate origin \fB0 0 0\fR.
-.TP
-.B bind \fIkey \fR[\fIcommand\fR]
-Bind key to command. Display current binding if \fIcommand\fR is not specified.
-.TP
-.B bond \fR[\fIsel\fR]
-Toggle bond between atoms in selection. The selection must contain
-exactly two atoms.
-.TP
-.B chain \fR[\fIn\fR]
-Create a carbon chain of length \fIn\fR. The default \fIn\fR is \fB4\fR.
-.TP
-.B clo[se]
+.It Ic add-hydrogens Op Ar sel
+Fill unsatisfied valencies of atoms in selection
+.Ar sel
+with hydrogen atoms.
+.It Ic atom Op Ar element Op Ar x y z
+Create an atom with coordinates
+.Ar x y z .
+The default is to create a carbon atom at coordinate origin.
+.It Ic bind Ar key Op Ar command
+Bind key to command.
+Display current binding if
+.Ar command
+is not specified.
+.It Ic bond Op Ar sel
+Toggle bond between atoms in selection.
+The selection
+.Ar sel
+must contain exactly two atoms.
+.It Ic chain Op Ar n
+Create a carbon chain of length
+.Ar n .
+The default
+.Ar n
+is 4.
+.It Ic clo[se]
 Close current window.
-.TP
-.B clo[se]!
+.It Ic clo[se]!
 Close current window discarding unsaved changes.
-.TP
-.B copy \fR[\fIsel\fR]
-Copy atoms in selection \fIsel\fR.
-.TP
-.B delete \fR[\fIsel\fR]
-Delete atoms in selection \fIsel\fR.
-.TP
-.B first\fR, \fBfirst-window
+.It Ic copy Op Ar sel
+Copy atoms from selection
+.Ar sel
+to a copy-buffer.
+.It Ic delete Op Ar sel
+Delete atoms in selection
+.Ar sel .
+.It Ic first-window
+.D1 (alias: Ic first )
 Switch to the first window.
-.TP
-.B frame \fIn\fR
-Go to a specific frame. Count from the end if \fIn\fR is negative.
-.TP
-.B fullscreen
-Toggle fullscreen mode.
-.TP
-.B hide-selection \fR[\fIsel\fR]
-Hide specified atoms.
-.TP
-.B invert-selection
+.It Ic frame Op Ar n
+Go to a specific frame
+.Ar n .
+Count from the end if
+.Ar n
+is negative, i.e., -1 is the last frame.
+.It Ic fullscreen
+Toggle full screen mode.
+.It Ic hide-selection Op Ar sel
+Hide atoms specified by
+.Ar sel .
+.It Ic invert-selection
 Invert current selection.
-.TP
-.B last\fR, \fBlast-window
+.It Ic last-window
+.D1 (alias: Ic last )
 Switch to the last window.
-.TP
-.B measure \fR[\fIsel\fR]
+.It Ic measure Op Ar sel
 Measure position, distance, angle, or torsion depending on the number of
-atoms in selection \fIsel\fR.
-.TP
-.B move-selection \fIx y z \fR[\fIsel\fR]
-Move selection by the specified amount. The displacement vector \fIx y z\fR is
-relative to camera coordinate system.
-.TP
-.B move-selection-to \fIx y z \fR[\fIsel\fR]
-Move selection center to coordinates \fIx y z\fR.
-.TP
-.B new \fR[\fIpath\fR], \fBopen \fR[\fIpath\fR]
+atoms in selection.
+.It Ic move-selection Ar x y z Op Ar sel
+Move selection by the specified amount.
+The displacement
+.Ar x y z
+is relative to camera coordinate system.
+.It Ic move-selection-to Ar x y z Op Ar sel
+Move selection center to the coordinates
+.Ar x y z .
+.It Ic open Op Ar path
+.D1 (alias: Ic new )
 Open file in a new window.
-.TP
-.B next-frame \fR[\fIn\fR]
-Switch to the next frame. Number of frames to advance \fIn\fR can optionally
-be specified. \fIn\fR can be negative.
-.TP
-.B next-window
+.It Ic next-frame Op Ar n
+Switch to the next frame.
+Number of frames to advance,
+.Ar n ,
+can optionally be specified.
+The value of
+.Ar n
+can be negative.
+.It Ic next-window
 Switch to the next window.
-.TP
-.B paste
-Paste atoms.
-.TP
-.B prev-window
+.It Ic paste
+Paste atoms from a copy-buffer to the current window.
+.It Ic prev-window
 Switch to the previous window.
-.TP
-.B q\fR, \fBquit
-Quit \fBvimol\fR.
-.TP
-.B q!\fR, \fBquit!
-Quit \fBvimol\fR discarding unsaved changes.
-.TP
-.B record
-Start recording of issued commands. A recording can be replayed using
-\fBreplay\fR command.
-.TP
-.B redo
+.It Ic quit
+.D1 (alias: Ic q )
+Quit.
+.It Ic quit!
+.D1 (alias: Ic q! )
+Quit discarding unsaved changes.
+.It Ic record
+Start recording of issued commands.
+A recording can be replayed using
+.Ic replay
+command.
+.It Ic redo
 Redo last change.
-.TP
-.B rename \fIname \fR[\fIsel\fR]
-Set a new \fIname\fR for all atoms in selection \fIsel\fR.
-.TP
-.B replay
+.It Ic rename Ar name Op Ar sel
+Set a new name for all atoms in selection.
+.It Ic replay
 Replay last recording.
-.TP
-.B reset-bonds
+.It Ic reset-bonds
 Reset all bonds.
-.TP
-.B ring \fR[\fIn\fR]
-Create a carbon ring of size \fIn\fR. The default \fIn\fR is \fB6\fR.
-.TP
-.B rotate-selection \fIa b c\fR [\fIsel\fR]
-Rotate selected atoms. \fIa b c\fR specify rotation angles. Rotation is
-relative to camera coordinate system.
-.TP
-.B select \fR[\fIsel\fR]
-Add atoms specified by \fIsel\fR to the current selection. Selects first
-unselected atom if the argument is omitted.
-.TP
-.B select-element \fIname...
-Select atoms of a particular kind.
-.TP
-.B select-molecule \fR[\fIsel\fR]
-Select whole containing molecule for all atoms in selection.
-.TP
-.B select-sphere \fIradius\fR [\fIsel\fR]
-Select a sphere around selection.
-.TP
-.B select-water
+.It Ic ring Op Ar n
+Create a carbon ring of size
+.Ar n .
+The default
+.Ar n
+is 6.
+.It Ic rotate-selection Ar a b c Op Ar sel
+Rotate selected atoms.
+Rotation angles relative to the camera coordinate system are specified by
+.Ar a b c .
+.It Ic select Op Ar sel
+Add atoms specified by
+.Ar sel
+to the current selection.
+Select an unselected atom with lowest index if the argument is omitted.
+.It Ic select-element Ar names
+Select atoms of a particular type.
+For example,
+.Bd -literal -offset indent
+select-element H N
+.Ed
+selects all hydrogen and nitrogen atoms.
+.It Ic select-molecule Op Ar sel
+Select whole containing molecule for each atom in selection.
+.It Ic select-sphere Ar radius Op Ar sel
+Select a sphere within a specified
+.Ar radius
+from each atom in selection
+.Ar sel .
+.It Ic select-water
 Select all water molecules.
-.TP
-.B select-x \fR[\fIx\fR]
-Select atoms with \fIx\fR coordinate grater than \fIx\fR. Invert selection
-to get complementary set of atoms. This is useful for making
-solvation boxes. The default \fIx\fR value is 0.
-.TP
-.B select-y \fR[\fIy\fR]
-Select atoms with \fIy\fR coordinate grater than \fIy\fR. Invert selection
-to get complementary set of atoms. This is useful for making
-solvation boxes. The default \fIy\fR value is 0.
-.TP
-.B select-z \fR[\fIz\fR]
-Select atoms with \fIz\fR coordinate grater than \fIz\fR. Invert selection
-to get complementary set of atoms. This is useful for making
-solvation boxes. The default \fIz\fR value is 0.
-.TP
-.B set \fIsetting \fR[\fIvalue\fR]
-Set \fIsetting\fR to a new value. Displays current value if the second
-argument is omitted.
-.TP
-.B show-all
+.It Ic select-x Op Ar x
+Select atoms with x coordinate grater than
+.Ar x .
+Invert selection to get the complementary set of atoms.
+This is useful for making solvation boxes.
+The default
+.Ar x
+is 0.
+.It Ic select-y Op Ar y
+Select atoms with y coordinate grater than
+.Ar y .
+Invert selection to get the complementary set of atoms.
+This is useful for making solvation boxes.
+The default
+.Ar y
+is 0.
+.It Ic select-z Op Ar z
+Select atoms with z coordinate grater than
+.Ar z .
+Invert selection to get the complementary set of atoms.
+This is useful for making solvation boxes.
+The default
+.Ar z
+is 0.
+.It Ic set Ar setting Op Ar value
+Set the
+.Ar setting
+to a new value.
+Current value is displayed if the second argument is omitted.
+See the
+.Sx SETTINGS
+section for the list of available options.
+.It Ic show-all
 Show all hidden atoms.
-.TP
-.B source \fIpath\fR
+.It Ic source Ar path
 Execute commands from a file.
-.TP
-.B toggle \fIsetting\fR
+.It Ic toggle Ar setting
 Toggle a boolean setting.
-.TP
-.B undo
+See the
+.Sx SETTINGS
+section for the list of available options.
+.It Ic undo
 Undo last change.
-.TP
-.B unselect \fR[\fIsel\fR]
-Unselect atoms specified by \fIsel\fR. Unselects last selected atom if
-the argument is omitted.
-.TP
-.B view-center-selection \fR[\fIsel\fR]
-Center selection.
-.TP
-.B view-fit-selection \fR[\fIsel\fR]
+.It Ic unselect Op Ar sel
+Unselect atoms specified by
+.Ar sel .
+Unselect last selected atom if the argument is omitted.
+.It Ic view-center-selection Op Ar sel
+Center selection in window.
+.It Ic view-fit-selection Op Ar sel
 Center and fit selection to window.
-.TP
-.B view-move \fIx y z
-Move the camera. \fIx y z\fR specify a displacement.
-.TP
-.B view-reset
+.It Ic view-move Ar x y z
+Move the camera.
+Arguments
+.Ar x y z
+specify a displacement.
+.It Ic view-reset
 Reset the view.
-.TP
-.B view-rotate \fIa b c
-Rotate the camera. \fIa b c\fR specify the rotation angles.
-.TP
-.B view-zoom \fIfactor
+.It Ic view-rotate Ar a b c
+Rotate the camera.
+Arguments
+.Ar a b c
+specify rotation angles.
+.It Ic view-zoom Ar factor
 Change zoom.
-.TP
-.B w \fR[\fIpath\fR], \fBwrite \fR[\fIpath\fR]
-Write changes to file. Saves to the current file if \fIpath\fR is not
-specified.
-.SH AUTHOR
-Vimol is (c) 2013-2017 Ilya Kaliman
+.It Ic write Op Ar path
+.D1 (alias: Ic w )
+Write changes to a file.
+Save to the current file if
+.Ar path
+is not specified.
+.El
+.Sh SETTINGS
+The following settings control various aspects of
+.Nm .
+They can be changed using
+.Ic set
+and
+.Ic toggle
+commands.
+.Bl -tag -width Ds -offset indent
+.It Ic atom-size
+.D1 (type: Ic float )
+.It Ic atom-visible
+.D1 (type: Ic boolean )
+.It Ic bg-color
+.D1 (type: Ic color )
+.It Ic bond-size
+.D1 (type: Ic float )
+.It Ic bond-visible
+.D1 (type: Ic boolean )
+.It Ic id-color
+.D1 (type: Ic color )
+.It Ic id-font
+.D1 (type: Ic string )
+.It Ic id-font-size
+.D1 (type: Ic float )
+.It Ic id-visible
+.D1 (type: Ic boolean )
+.It Ic name-color
+.D1 (type: Ic color )
+.It Ic name-font
+.D1 (type: Ic string )
+.It Ic name-font-size
+.D1 (type: Ic float )
+.It Ic name-visible
+.D1 (type: Ic boolean )
+.It Ic origin-color
+.D1 (type: Ic color )
+.It Ic origin-font
+.D1 (type: Ic string )
+.It Ic origin-font-size
+.D1 (type: Ic float )
+.It Ic origin-line-width
+.D1 (type: Ic float )
+.It Ic origin-visible
+.D1 (type: Ic boolean )
+.It Ic selection-color
+.D1 (type: Ic color )
+.It Ic selection-size
+.D1 (type: Ic float )
+.It Ic statusbar-color
+.D1 (type: Ic color )
+.It Ic statusbar-error-color
+.D1 (type: Ic color )
+.It Ic statusbar-font
+.D1 (type: Ic string )
+.It Ic statusbar-font-size
+.D1 (type: Ic string )
+.It Ic statusbar-text-color
+.D1 (type: Ic color )
+.It Ic statusbar-visible
+.D1 (type: Ic boolean )
+.It Ic color-x
+.D1 (type: Ic color )
+.El
+.Sh AUTHORS
+.Nm
+was developed by
+.An Ilya Kaliman
