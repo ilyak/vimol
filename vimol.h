@@ -243,11 +243,6 @@ int settings_get_bool(const char *);
 const char *settings_get_string(const char *);
 color_t settings_get_color(const char *);
 int settings_set(const char *, const char *);
-int settings_set_int(const char *, int);
-int settings_set_double(const char *, double);
-int settings_set_bool(const char *, int);
-int settings_set_string(const char *, const char *);
-int settings_set_color(const char *, color_t);
 
 /* spi.c */
 struct spi *spi_create(void);
