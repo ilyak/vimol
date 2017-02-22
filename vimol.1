@@ -96,12 +96,13 @@ Quit
 discarding unsaved changes.
 .It r
 Start recording of issued commands.
+Recordings can be replayed by pressing t.
 .It 123s
 Select atom with index 123.
 Select an unselected atom with lowest index if no index is specified.
 .It t
 Replay last recording.
-Period key (.) with count can be used to repeat many times after that.
+Period key '.' with count can be used to repeat many times after that.
 .It 123u
 Unselect atom with index 123.
 Unselect last selected atom if no index is specified.
@@ -114,7 +115,7 @@ Select whole molecules containing selected atoms.
 .It S-w
 Select all water molecules.
 .It (sel)x or (sel)C-x
-Cut selected atoms.
+Cut (copy and delete) selected atoms.
 .It (sel)y or (sel)C-c
 Copy selected atoms.
 .It z
@@ -136,7 +137,7 @@ Invert current selection.
 .It Space
 Toggle full screen mode.
 .It `
-Reset view.
+Reset the view.
 .It \&[
 Go to the previous frame.
 .It \&]
@@ -151,15 +152,15 @@ Switch to the previous tab.
 Switch to the next tab.
 .El
 .Sh SELECTIONS
-Atom selections,
+An atom selection,
 .Ar sel ,
-can be specified in three ways.
+can be specified in various ways.
 .Pp
 First, an explicit atom index can be provided using number keys [0-9].
 This is useful with key combinations.
 For example, 123d deletes an atom with index 123.
 .Pp
-The second way is to explicitly list indices on the command line (see the
+Atom indices can be explicitly listed on the command line (see the
 .Sx COMMANDS
 section).
 The indices are separated by a space character.
@@ -167,13 +168,13 @@ Index ranges can be specified using colon ':'.
 For example, 6:8 specifies atoms with indices 6, 7, 8.
 Negative indices are used to count backwards starting from the last
 index, i.e., -1 is the last atom.
-Special character '*' can be used to specify all atoms.
+An asterisk '*' can be used to specify all atoms.
 .Pp
 Finally, if no explicit index is specified and no command-line arguments are
-listed, selected atoms in the current tab are used.
+listed, atoms which are selected in the current tab are used.
 .Sh COMMANDS
 Below is the list of available commands.
-Command mode is started by pressing the colon key (:).
+Command mode is started by pressing the colon key ':'.
 Most of the commands are bound to a key for convenience (see the
 .Sx KEY BINDINGS
 section).
@@ -252,9 +253,7 @@ Switch to the next frame.
 Number of frames to advance,
 .Ar n ,
 can optionally be specified.
-The value of
-.Ar n
-can be negative.
+It can be negative.
 .It Ic next-tab
 Switch to the next tab.
 .It Ic open Op Ar path
@@ -407,19 +406,19 @@ For example, red is 255 0 0.
 .Bl -tag -width Ds -offset indent -compact
 .It Ic atom-size
 .D1 (type: Ic float )
-Atom sphere size.
+Atom size used for drawing.
 .It Ic atom-visible
 .D1 (type: Ic boolean )
-Specifies whether to draw atom spheres.
+Specifies whether to draw the atoms.
 .It Ic bg-color
 .D1 (type: Ic color )
 Background color.
 .It Ic bond-size
 .D1 (type: Ic float )
-Bond cylinder size.
+Bond size used for drawing.
 .It Ic bond-visible
 .D1 (type: Ic boolean )
-Specifies whether to draw bond cylinders.
+Specifies whether to draw the bonds.
 .It Ic id-color
 .D1 (type: Ic color )
 Color of atom index labels.
