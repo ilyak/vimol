@@ -18,7 +18,9 @@ $(PROG): $(ALL_O)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(PROG) $(ALL_O) $(LIBS)
 
 install:
+	mkdir -p $(PREFIX)/bin
 	install -m 0755 $(PROG) $(PREFIX)/bin
+	mkdir -p $(PREFIX)/man/man1
 	install -m 0644 $(PROG).1 $(PREFIX)/man/man1
 
 uninstall:
