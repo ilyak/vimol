@@ -243,13 +243,10 @@ atoms in selection.
 Move selection by the specified amount.
 The displacement
 .Ar x y z
-is relative to camera coordinate system.
+is relative to the camera coordinate system.
 .It Ic move-selection-to Ar x y z Op Ar sel
 Move selection center to the coordinates
 .Ar x y z .
-.It Ic open Op Ar path
-.D1 (alias: Ic new )
-Open file in a new tab.
 .It Ic next-frame Op Ar n
 Switch to the next frame.
 Number of frames to advance,
@@ -260,6 +257,9 @@ The value of
 can be negative.
 .It Ic next-tab
 Switch to the next tab.
+.It Ic open Op Ar path
+.D1 (alias: Ic new )
+Open file in a new tab.
 .It Ic paste
 Paste atoms from a copy-buffer to the current tab.
 .It Ic prev-tab
@@ -475,7 +475,7 @@ Status bar error text color.
 .D1 (type: Ic string )
 Status bar text font.
 .It Ic statusbar-font-size
-.D1 (type: Ic string )
+.D1 (type: Ic float )
 Status bar font size.
 .It Ic statusbar-text-color
 .D1 (type: Ic color )
