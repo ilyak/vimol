@@ -233,13 +233,13 @@ fn_chain(struct tokq *args, struct state *state)
 static int
 fn_close(struct tokq *args __unused, struct state *state)
 {
-	return (wnd_close(state_get_wnd(state), 0));
+	return (tabs_close(state_get_tabs(state), 0));
 }
 
 static int
 fn_force_close(struct tokq *args __unused, struct state *state)
 {
-	return (wnd_close(state_get_wnd(state), 1));
+	return (tabs_close(state_get_tabs(state), 1));
 }
 
 static int
@@ -427,40 +427,40 @@ fn_new(struct tokq *args, struct state *state)
 
 	if (tokq_count(args) > 0)
 		path = tok_string(tokq_tok(args, 0));
-	return (wnd_open(state_get_wnd(state), path));
+	return (tabs_open(state_get_tabs(state), path));
 }
 
 static int
-fn_first_window(struct tokq *args __unused, struct state *state)
+fn_first_tab(struct tokq *args __unused, struct state *state)
 {
-	wnd_first(state_get_wnd(state));
+	tabs_first(state_get_tabs(state));
 
 	return (1);
 }
 
 static int
-fn_last_window(struct tokq *args __unused, struct state *state)
+fn_last_tab(struct tokq *args __unused, struct state *state)
 {
-	wnd_last(state_get_wnd(state));
+	tabs_last(state_get_tabs(state));
 
 	return (1);
 }
 
 static int
-fn_prev_window(struct tokq *args __unused, struct state *state)
+fn_prev_tab(struct tokq *args __unused, struct state *state)
 {
-	if (!wnd_prev(state_get_wnd(state))) {
-		error_set("no previous window");
+	if (!tabs_prev(state_get_tabs(state))) {
+		error_set("no previous tab");
 		return (0);
 	}
 	return (1);
 }
 
 static int
-fn_next_window(struct tokq *args __unused, struct state *state)
+fn_next_tab(struct tokq *args __unused, struct state *state)
 {
-	if (!wnd_next(state_get_wnd(state))) {
-		error_set("no next window");
+	if (!tabs_next(state_get_tabs(state))) {
+		error_set("no next tab");
 		return (0);
 	}
 	return (1);
@@ -1141,23 +1141,23 @@ static const struct node {
 	{ "close!", fn_force_close },
 	{ "copy", fn_copy },
 	{ "delete", fn_delete },
-	{ "first", fn_first_window },
-	{ "first-window", fn_first_window },
+	{ "first", fn_first_tab },
+	{ "first-tab", fn_first_tab },
 	{ "frame", fn_frame },
 	{ "fullscreen", fn_fullscreen },
 	{ "hide-selection", fn_hide_selection },
 	{ "invert-selection", fn_invert_selection },
-	{ "last", fn_last_window },
-	{ "last-window", fn_last_window },
+	{ "last", fn_last_tab },
+	{ "last-tab", fn_last_tab },
 	{ "measure", fn_measure },
 	{ "move-selection", fn_move_selection },
 	{ "move-selection-to", fn_move_selection_to },
 	{ "new", fn_new },
 	{ "next-frame", fn_next_frame },
-	{ "next-window", fn_next_window },
+	{ "next-tab", fn_next_tab },
 	{ "open", fn_new },
 	{ "paste", fn_paste },
-	{ "prev-window", fn_prev_window },
+	{ "prev-tab", fn_prev_tab },
 	{ "q", fn_quit },
 	{ "q!", fn_force_quit },
 	{ "quit", fn_quit },

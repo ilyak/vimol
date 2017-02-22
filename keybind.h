@@ -108,6 +108,6 @@ static const struct {
 	{ "]", "next-frame 1" },
 	{ "S-[", "next-frame -100" },
 	{ "S-]", "next-frame 100" },
-	{ "S-,", "prev-window" },
-	{ "S-.", "next-window" },
+	{ "S-,", "prev-tab" },
+	{ "S-.", "next-tab" },
 };

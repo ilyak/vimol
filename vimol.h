@@ -83,7 +83,7 @@ struct sys;         /* molecular system structure */
 struct tokq;        /* token list */
 struct undo;        /* undo-redo management */
 struct view;        /* viewport */
-struct wnd;         /* windows */
+struct tabs;        /* tabs */
 struct yank;        /* copy-paste buffer */
 
 /* atoms.c */
@@ -261,7 +261,7 @@ void state_free(struct state *);
 struct bind *state_get_bind(struct state *);
 struct rec *state_get_rec(struct state *);
 struct view *state_get_view(struct state *);
-struct wnd *state_get_wnd(struct state *);
+struct tabs *state_get_tabs(struct state *);
 struct yank *state_get_yank(struct state *);
 int state_get_index(struct state *);
 int state_source(struct state *, const char *);
@@ -360,20 +360,20 @@ void view_center_sel(struct view *, struct sel *);
 void view_fit_sel(struct view *, struct sel *);
 void view_render(struct view *, cairo_t *);
 
-/* wnd.c */
-struct wnd *wnd_create(void);
-void wnd_free(struct wnd *);
-struct view *wnd_get_view(struct wnd *);
-int wnd_open(struct wnd *, const char *);
-int wnd_close(struct wnd *, int);
-int wnd_is_modified(struct wnd *);
-int wnd_any_modified(struct wnd *);
-int wnd_next(struct wnd *);
-int wnd_prev(struct wnd *);
-void wnd_first(struct wnd *);
-void wnd_last(struct wnd *);
-int wnd_get_index(struct wnd *);
-int wnd_get_count(struct wnd *);
+/* tabs.c */
+struct tabs *tabs_create(void);
+void tabs_free(struct tabs *);
+struct view *tabs_get_view(struct tabs *);
+int tabs_open(struct tabs *, const char *);
+int tabs_close(struct tabs *, int);
+int tabs_is_modified(struct tabs *);
+int tabs_any_modified(struct tabs *);
+int tabs_next(struct tabs *);
+int tabs_prev(struct tabs *);
+void tabs_first(struct tabs *);
+void tabs_last(struct tabs *);
+int tabs_get_index(struct tabs *);
+int tabs_get_count(struct tabs *);
 
 /* xmalloc.c */
 void *xcalloc(size_t, size_t);

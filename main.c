@@ -20,7 +20,7 @@ int
 main(int argc, char **argv)
 {
 	struct state *state;
-	struct wnd *wnd;
+	struct tabs *tabs;
 	int idx;
 
 	settings_init();
@@ -31,14 +31,14 @@ main(int argc, char **argv)
 	SDL_StopTextInput();
 
 	state = state_create();
-	wnd = state_get_wnd(state);
+	tabs = state_get_tabs(state);
 
 	for (idx = 1; idx < argc; idx++)
-		if (!wnd_open(wnd, argv[idx]))
+		if (!tabs_open(tabs, argv[idx]))
 			warn("error opening file \"%s\": %s", argv[idx],
 			    error_get());
 
-	wnd_first(wnd);
+	tabs_first(tabs);
 	state_source(state, settings_get_string("vimolrc-path"));
 	state_event_loop(state);
 

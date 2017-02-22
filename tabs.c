@@ -22,7 +22,7 @@ struct node {
 	struct node *prev;
 };
 
-struct wnd {
+struct tabs {
 	struct node *iter;
 };
 
@@ -53,78 +53,78 @@ insert_after(struct node *iter, struct node *node)
 	iter->next = node;
 }
 
-struct wnd *
-wnd_create(void)
+struct tabs *
+tabs_create(void)
 {
-	struct wnd *wnd;
+	struct tabs *tabs;
 
-	wnd = xcalloc(1, sizeof *wnd);
-	wnd->iter = create_node("");
+	tabs = xcalloc(1, sizeof *tabs);
+	tabs->iter = create_node("");
 
-	return (wnd);
+	return (tabs);
 }
 
 void
-wnd_free(struct wnd *wnd)
+tabs_free(struct tabs *tabs)
 {
 	struct node *node;
 
-	if (wnd) {
-		while (wnd->iter->prev)
-			wnd->iter = wnd->iter->prev;
-		while (wnd->iter) {
-			node = wnd->iter;
-			wnd->iter = wnd->iter->next;
+	if (tabs) {
+		while (tabs->iter->prev)
+			tabs->iter = tabs->iter->prev;
+		while (tabs->iter) {
+			node = tabs->iter;
+			tabs->iter = tabs->iter->next;
 			view_free(node->view);
 			free(node);
 		}
-		free(wnd);
+		free(tabs);
 	}
 }
 
 struct view *
-wnd_get_view(struct wnd *wnd)
+tabs_get_view(struct tabs *tabs)
 {
-	return (wnd->iter->view);
+	return (tabs->iter->view);
 }
 
 int
-wnd_open(struct wnd *wnd, const char *path)
+tabs_open(struct tabs *tabs, const char *path)
 {
 	struct node *node;
 	struct view *view;
 
 	assert(path);
 
-	if (path[0] != '\0' && view_is_new(wnd->iter->view)) {
+	if (path[0] != '\0' && view_is_new(tabs->iter->view)) {
 		if ((view = view_create(path)) == NULL)
 			return (0);
-		view_free(wnd->iter->view);
-		wnd->iter->view = view;
+		view_free(tabs->iter->view);
+		tabs->iter->view = view;
 		return (1);
 	}
 
 	if ((node = create_node(path)) == NULL)
 		return (0);
 
-	insert_after(wnd->iter, node);
-	wnd->iter = node;
+	insert_after(tabs->iter, node);
+	tabs->iter = node;
 
 	return (1);
 }
 
 int
-wnd_close(struct wnd *wnd, int force)
+tabs_close(struct tabs *tabs, int force)
 {
-	struct node *node = wnd->iter;
+	struct node *node = tabs->iter;
 
-	if (!force && wnd_is_modified(wnd)) {
+	if (!force && tabs_is_modified(tabs)) {
 		error_set("save changes or add ! to override");
 		return (0);
 	}
 
 	if (node->next == NULL && node->prev == NULL) {
-		error_set("cannot close last window");
+		error_set("cannot close last tab");
 		return (0);
 	}
 
@@ -134,10 +134,10 @@ wnd_close(struct wnd *wnd, int force)
 		if (node->prev)
 			node->prev->next = node->next;
 
-		wnd->iter = node->next;
+		tabs->iter = node->next;
 	} else {
 		node->prev->next = NULL;
-		wnd->iter = node->prev;
+		tabs->iter = node->prev;
 	}
 
 	view_free(node->view);
@@ -147,73 +147,73 @@ wnd_close(struct wnd *wnd, int force)
 }
 
 int
-wnd_is_modified(struct wnd *wnd)
+tabs_is_modified(struct tabs *tabs)
 {
-	return (view_is_modified(wnd_get_view(wnd)));
+	return (view_is_modified(tabs_get_view(tabs)));
 }
 
 int
-wnd_any_modified(struct wnd *wnd)
+tabs_any_modified(struct tabs *tabs)
 {
 	struct node *node;
 
-	for (node = wnd->iter->next; node; node = node->next)
+	for (node = tabs->iter->next; node; node = node->next)
 		if (view_is_modified(node->view))
 			return (1);
 
-	for (node = wnd->iter->prev; node; node = node->prev)
+	for (node = tabs->iter->prev; node; node = node->prev)
 		if (view_is_modified(node->view))
 			return (1);
 
-	return (wnd_is_modified(wnd));
+	return (tabs_is_modified(tabs));
 }
 
 int
-wnd_next(struct wnd *wnd)
+tabs_next(struct tabs *tabs)
 {
-	if (wnd->iter->next == NULL)
+	if (tabs->iter->next == NULL)
 		return (0);
 
-	wnd->iter = wnd->iter->next;
+	tabs->iter = tabs->iter->next;
 
 	return (1);
 }
 
 int
-wnd_prev(struct wnd *wnd)
+tabs_prev(struct tabs *tabs)
 {
-	if (wnd->iter->prev == NULL)
+	if (tabs->iter->prev == NULL)
 		return (0);
 
-	wnd->iter = wnd->iter->prev;
+	tabs->iter = tabs->iter->prev;
 
 	return (1);
 }
 
 void
-wnd_first(struct wnd *wnd)
+tabs_first(struct tabs *tabs)
 {
-	while (wnd->iter->prev)
-		wnd->iter = wnd->iter->prev;
+	while (tabs->iter->prev)
+		tabs->iter = tabs->iter->prev;
 }
 
 void
-wnd_last(struct wnd *wnd)
+tabs_last(struct tabs *tabs)
 {
-	while (wnd->iter->next)
-		wnd->iter = wnd->iter->next;
+	while (tabs->iter->next)
+		tabs->iter = tabs->iter->next;
 }
 
 int
-wnd_get_index(struct wnd *wnd)
+tabs_get_index(struct tabs *tabs)
 {
-	struct node *iter = wnd->iter;
+	struct node *iter = tabs->iter;
 	int idx = 0;
 
 	while (iter->prev)
 		iter = iter->prev;
 
-	while (iter != wnd->iter) {
+	while (iter != tabs->iter) {
 		iter = iter->next;
 		idx++;
 	}
@@ -222,9 +222,9 @@ wnd_get_index(struct wnd *wnd)
 }
 
 int
-wnd_get_count(struct wnd *wnd)
+tabs_get_count(struct tabs *tabs)
 {
-	struct node *iter = wnd->iter;
+	struct node *iter = tabs->iter;
 	int cnt = 1;
 
 	while (iter->prev)

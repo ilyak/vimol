@@ -26,7 +26,7 @@ struct state {
 	struct history *history;
 	struct rec *rec;
 	struct statusbar *statusbar;
-	struct wnd *wnd;
+	struct tabs *tabs;
 	struct yank *yank;
 	SDL_Window *window;
 	cairo_t *cairo;
@@ -169,7 +169,7 @@ set_statusbar_text(struct state *state)
 	snprintf(buf + strlen(buf), sizeof buf - strlen(buf),
 	    "%s %d/%d %d/%d", filename,
 	    sys_get_frame(sys) + 1, sys_get_frame_count(sys),
-	    wnd_get_index(state->wnd) + 1, wnd_get_count(state->wnd));
+	    tabs_get_index(state->tabs) + 1, tabs_get_count(state->tabs));
 	statusbar_set_info_text(state->statusbar, "%s", buf);
 }
 
@@ -390,7 +390,7 @@ process_event(struct state *state, SDL_Event *event)
 {
 	switch (event->type) {
 	case SDL_QUIT:
-		if (state->force_quit || !wnd_any_modified(state->wnd))
+		if (state->force_quit || !tabs_any_modified(state->tabs))
 			return (0);
 		statusbar_set_error(state->statusbar,
 		    "save changes or add ! to override");
@@ -425,7 +425,7 @@ state_create(void)
 	state->history = history_create();
 	state->rec = rec_create();
 	state->statusbar = statusbar_create();
-	state->wnd = wnd_create();
+	state->tabs = tabs_create();
 	state->yank = yank_create();
 
 	create_window(state);
@@ -448,7 +448,7 @@ state_free(struct state *state)
 		history_free(state->history);
 		rec_free(state->rec);
 		statusbar_free(state->statusbar);
-		wnd_free(state->wnd);
+		tabs_free(state->tabs);
 		yank_free(state->yank);
 		cairo_destroy(state->cairo);
 		SDL_DestroyWindow(state->window);
@@ -471,13 +471,13 @@ state_get_rec(struct state *state)
 struct view *
 state_get_view(struct state *state)
 {
-	return (wnd_get_view(state->wnd));
+	return (tabs_get_view(state->tabs));
 }
 
-struct wnd *
-state_get_wnd(struct state *state)
+struct tabs *
+state_get_tabs(struct state *state)
 {
-	return (state->wnd);
+	return (state->tabs);
 }
 
 struct yank *

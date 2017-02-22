@@ -54,9 +54,9 @@ Select all hydrogen atoms.
 .It (sel)b
 Toggle a bond between two selected atoms.
 .It (sel)c
-Center selection.
+Center selection in a window.
 .It (sel)S-c
-Center and fit selection to window.
+Center and fit selection to a window.
 .It (sel)d or (sel)Delete
 Delete selected atoms.
 .It e
@@ -86,7 +86,7 @@ Toggle display of the coordinate system origin and axes.
 .It (sel)S-o
 Move selection to the coordinate system origin.
 .It p or C-v
-Paste atoms to the current window.
+Paste atoms to the current tab.
 .It q
 Quit
 .Nm .
@@ -146,9 +146,9 @@ Go 100 frames backward.
 .It }
 Go 100 frames forward.
 .It <
-Switch to the previous window.
+Switch to the previous tab.
 .It >
-Switch to the next window.
+Switch to the next tab.
 .El
 .Sh SELECTIONS
 Atom selections,
@@ -170,7 +170,7 @@ index, i.e., -1 is the last atom.
 Special character '*' can be used to specify all atoms.
 .Pp
 Finally, if no explicit index is specified and no command-line arguments are
-listed, selected atoms in the current window are used.
+listed, selected atoms in the current tab are used.
 .Sh COMMANDS
 Below is the list of available commands.
 Command mode is started by pressing the colon key (:).
@@ -207,9 +207,9 @@ The default
 .Ar n
 is 4.
 .It Ic clo[se]
-Close current window.
+Close current tab.
 .It Ic clo[se]!
-Close current window discarding unsaved changes.
+Close current tab discarding unsaved changes.
 .It Ic copy Op Ar sel
 Copy atoms from selection
 .Ar sel
@@ -217,9 +217,9 @@ to a copy-buffer.
 .It Ic delete Op Ar sel
 Delete atoms in selection
 .Ar sel .
-.It Ic first-window
+.It Ic first-tab
 .D1 (alias: Ic first )
-Switch to the first window.
+Switch to the first tab.
 .It Ic frame Op Ar n
 Go to a specific frame
 .Ar n .
@@ -233,9 +233,9 @@ Hide atoms specified by
 .Ar sel .
 .It Ic invert-selection
 Invert current selection.
-.It Ic last-window
+.It Ic last-tab
 .D1 (alias: Ic last )
-Switch to the last window.
+Switch to the last tab.
 .It Ic measure Op Ar sel
 Measure position, distance, angle, or torsion depending on the number of
 atoms in selection.
@@ -249,7 +249,7 @@ Move selection center to the coordinates
 .Ar x y z .
 .It Ic open Op Ar path
 .D1 (alias: Ic new )
-Open file in a new window.
+Open file in a new tab.
 .It Ic next-frame Op Ar n
 Switch to the next frame.
 Number of frames to advance,
@@ -258,12 +258,12 @@ can optionally be specified.
 The value of
 .Ar n
 can be negative.
-.It Ic next-window
-Switch to the next window.
+.It Ic next-tab
+Switch to the next tab.
 .It Ic paste
-Paste atoms from a copy-buffer to the current window.
-.It Ic prev-window
-Switch to the previous window.
+Paste atoms from a copy-buffer to the current tab.
+.It Ic prev-tab
+Switch to the previous tab.
 .It Ic quit
 .D1 (alias: Ic q )
 Quit
@@ -368,9 +368,9 @@ Unselect atoms specified by
 .Ar sel .
 Unselect last selected atom if the argument is omitted.
 .It Ic view-center-selection Op Ar sel
-Center selection in window.
+Center selection in a window.
 .It Ic view-fit-selection Op Ar sel
-Center and fit selection to window.
+Center and fit selection to a window.
 .It Ic view-move Ar x y z
 Move the camera.
 Arguments
