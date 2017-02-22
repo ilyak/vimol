@@ -80,10 +80,10 @@ struct spi;         /* spatial index */
 struct state;       /* app state */
 struct statusbar;   /* status bar and command line */
 struct sys;         /* molecular system structure */
+struct tabs;        /* tabs */
 struct tokq;        /* token list */
 struct undo;        /* undo-redo management */
 struct view;        /* viewport */
-struct tabs;        /* tabs */
 struct yank;        /* copy-paste buffer */
 
 /* atoms.c */
@@ -308,6 +308,21 @@ vec_t sys_get_sel_center(struct sys *, struct sel *);
 void sys_reset_bonds(struct sys *);
 int sys_save_to_file(struct sys *, const char *);
 
+/* tabs.c */
+struct tabs *tabs_create(void);
+void tabs_free(struct tabs *);
+struct view *tabs_get_view(struct tabs *);
+int tabs_open(struct tabs *, const char *);
+int tabs_close(struct tabs *, int);
+int tabs_is_modified(struct tabs *);
+int tabs_any_modified(struct tabs *);
+int tabs_next(struct tabs *);
+int tabs_prev(struct tabs *);
+void tabs_first(struct tabs *);
+void tabs_last(struct tabs *);
+int tabs_get_index(struct tabs *);
+int tabs_get_count(struct tabs *);
+
 /* tok.c */
 int tok_int(tok_t);
 double tok_double(tok_t);
@@ -359,21 +374,6 @@ void view_reset(struct view *);
 void view_center_sel(struct view *, struct sel *);
 void view_fit_sel(struct view *, struct sel *);
 void view_render(struct view *, cairo_t *);
-
-/* tabs.c */
-struct tabs *tabs_create(void);
-void tabs_free(struct tabs *);
-struct view *tabs_get_view(struct tabs *);
-int tabs_open(struct tabs *, const char *);
-int tabs_close(struct tabs *, int);
-int tabs_is_modified(struct tabs *);
-int tabs_any_modified(struct tabs *);
-int tabs_next(struct tabs *);
-int tabs_prev(struct tabs *);
-void tabs_first(struct tabs *);
-void tabs_last(struct tabs *);
-int tabs_get_index(struct tabs *);
-int tabs_get_count(struct tabs *);
 
 /* xmalloc.c */
 void *xcalloc(size_t, size_t);
