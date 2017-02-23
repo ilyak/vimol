@@ -25,13 +25,13 @@
 .Sh DESCRIPTION
 .Nm
 is a powerful molecular viewer and editor with vi-like controls.
-It supports viewing and editing of PDB and XYZ file formats.
+It supports viewing and editing of PDB and XYZ files.
 Multiple files can be edited simultaneously with convenient navigation
 between open tabs.
 Multi-frame file support is implemented for both PDB and XYZ formats.
 .Sh KEY BINDINGS
 The default key bindings are described below.
-The following notation is used:
+The following notation is used throughout:
 .Pp
 .Bl -tag -width Ds -offset indent -compact
 .It S-
@@ -80,7 +80,7 @@ Measure position, distance, angle, or torsion depending on the number of
 selected atoms.
 For example, 123m displays the position of an atom with index 123.
 .It (sel)n
-Select atoms within 4 angstrom sphere of selection.
+Select atoms within 4 angstrom sphere of current selection.
 .It o
 Toggle display of the coordinate system origin and axes.
 .It (sel)S-o
@@ -171,7 +171,7 @@ index, i.e., -1 is the last atom.
 An asterisk '*' can be used to specify all atoms.
 .Pp
 Finally, if no explicit index is specified and no command-line arguments are
-listed, atoms which are selected in the current tab are used.
+listed, selected atoms from the current tab are used.
 .Sh COMMANDS
 Below is the list of available commands.
 Command mode is started by pressing the colon key ':'.
@@ -296,13 +296,15 @@ Rotate selected atoms.
 Rotation angles relative to the camera coordinate system are specified by
 .Ar a b c .
 .It Ic select Op Ar sel
+.D1 (alias: Ic s )
 Add atoms specified by
 .Ar sel
 to the current selection.
 Select an unselected atom with lowest index if the argument is omitted.
 .It Ic select-element Ar name ...
 Select all atoms of a particular type.
-This command takes a list of element names to select.
+This command takes a list of element names.
+Atoms of those types will be added to the current selection.
 For example,
 .Bd -literal -offset indent
 select-element H N
@@ -363,8 +365,10 @@ section for the list of available options.
 .It Ic undo
 Undo last change.
 .It Ic unselect Op Ar sel
-Unselect atoms specified by
-.Ar sel .
+.D1 (alias: Ic u )
+Remove atoms specified by
+.Ar sel
+from the current selection.
 Unselect last selected atom if the argument is omitted.
 .It Ic view-center-selection Op Ar sel
 Center selection in a window.
@@ -384,6 +388,8 @@ Arguments
 specify rotation angles.
 .It Ic view-zoom Ar factor
 Change zoom.
+.Ar factor
+should be a number close to 1.
 .It Ic write Op Ar path
 .D1 (alias: Ic w )
 Write changes to a file.
