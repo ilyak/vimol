@@ -25,7 +25,7 @@ static const struct {
 	{ "I", "toggle id-visible" },
 	{ "S-I", "toggle name-visible" },
 	{ "M", "measure" },
-	{ "N", "select-sphere" },
+	{ "N", "select-within" },
 	{ "O", "toggle origin-visible" },
 	{ "S-O", "move-selection-to" },
 	{ "P", "paste" },

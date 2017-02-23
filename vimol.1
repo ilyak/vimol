@@ -78,7 +78,8 @@ Measure position, distance, angle, or torsion depending on the number of
 selected atoms.
 For example, 123m displays the position of an atom with index 123.
 .It (sel)n
-Select atoms within 4 angstrom sphere of current selection.
+Select all atoms which are within the 4 angstrom radius of atoms in
+the current selection.
 .It o
 Toggle display of the coordinate system origin and axes.
 .It (sel)S-o
@@ -312,10 +313,10 @@ selects all hydrogen and nitrogen atoms.
 For each atom in selection
 .Ar sel ,
 select the whole molecule containing the atom.
-.It Ic select-sphere Ar radius Op Ar sel
-Select a sphere within a specified
+.It Ic select-within Ar radius Op Ar sel
+Select all atoms which are within a specified
 .Ar radius
-from each atom in selection
+of atoms in the selection
 .Ar sel .
 .It Ic select-water
 Select all water molecules.
