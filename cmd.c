@@ -73,7 +73,22 @@ parse_tokq(struct cmdq *cmdq, struct tokq *tokq)
 	return (1);
 }
 
-struct cmdq *
+static void
+cmdq_free(struct cmdq *cmdq)
+{
+	int i;
+
+	if (cmdq) {
+		for (i = 0; i < cmdq->nelts; i++) {
+			free(cmdq->data[i].name);
+			tokq_free(cmdq->data[i].args);
+		}
+		free(cmdq->data);
+		free(cmdq);
+	}
+}
+
+static struct cmdq *
 cmdq_from_string(const char *str)
 {
 	struct cmdq *cmdq;
@@ -96,31 +111,7 @@ cmdq_from_string(const char *str)
 	return (cmdq);
 }
 
-int
-cmdq_validate_string(const char *str)
-{
-	struct cmdq *cmdq;
-
-	if ((cmdq = cmdq_from_string(str)) == NULL)
-		return (0);
-	cmdq_free(cmdq);
-	return (1);
-}
-
-int
-cmdq_exec_string(const char *str, struct state *state)
-{
-	struct cmdq *cmdq;
-	int rc;
-
-	if ((cmdq = cmdq_from_string(str)) == NULL)
-		return (0);
-	rc = cmdq_exec(cmdq, state);
-	cmdq_free(cmdq);
-	return (rc);
-}
-
-int
+static int
 cmdq_exec(struct cmdq *cmdq, struct state *state)
 {
 	struct cmd *cmd;
@@ -134,17 +125,26 @@ cmdq_exec(struct cmdq *cmdq, struct state *state)
 	return (1);
 }
 
-void
-cmdq_free(struct cmdq *cmdq)
+int
+cmd_validate(const char *str)
 {
-	int i;
+	struct cmdq *cmdq;
 
-	if (cmdq) {
-		for (i = 0; i < cmdq->nelts; i++) {
-			free(cmdq->data[i].name);
-			tokq_free(cmdq->data[i].args);
-		}
-		free(cmdq->data);
-		free(cmdq);
-	}
+	if ((cmdq = cmdq_from_string(str)) == NULL)
+		return (0);
+	cmdq_free(cmdq);
+	return (1);
+}
+
+int
+cmd_exec(const char *str, struct state *state)
+{
+	struct cmdq *cmdq;
+	int rc;
+
+	if ((cmdq = cmdq_from_string(str)) == NULL)
+		return (0);
+	rc = cmdq_exec(cmdq, state);
+	cmdq_free(cmdq);
+	return (rc);
 }

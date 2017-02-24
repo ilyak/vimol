@@ -146,7 +146,7 @@ fn_bind(struct tokq *args, struct state *state)
 			error_set("\"%s\" is not bound", name);
 	} else {
 		cmd = tokq_strcat(args, 1, tokq_count(args) - 1);
-		if (!cmdq_validate_string(cmd)) {
+		if (!cmd_validate(cmd)) {
 			error_set("\"%s\": invalid command", cmd);
 			free(cmd);
 			return (0);

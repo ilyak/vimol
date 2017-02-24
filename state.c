@@ -135,7 +135,7 @@ set_default_bindings(struct state *state)
 #include "keybind.h"
 
 	for (i = 0; i < sizeof keys / sizeof *keys; i++) {
-		if (!cmdq_validate_string(keys[i].command))
+		if (!cmd_validate(keys[i].command))
 			fatal("invalid binding for key %s", keys[i].key);
 		bind_set(state->bind, keys[i].key, keys[i].command);
 	}
@@ -184,11 +184,9 @@ stop_input(struct state *state)
 static void
 run_cmd(struct state *state, const char *command)
 {
-	struct cmdq *cmdq;
-
 	error_clear();
 
-	if ((cmdq = cmdq_from_string(command)) == NULL) {
+	if (!cmd_validate(command)) {
 		statusbar_set_error(state->statusbar, error_get());
 		return;
 	}
@@ -196,14 +194,13 @@ run_cmd(struct state *state, const char *command)
 	if (rec_is_recording(state->rec))
 		rec_add(state->rec, command);
 
-	if (cmdq_exec(cmdq, state))
+	if (cmd_exec(command, state))
 		statusbar_set_text(state->statusbar, error_get());
 	else
 		statusbar_set_error(state->statusbar, error_get());
 
 	/* bind dot to last executed command */
 	bind_set(state->bind, ".", command);
-	cmdq_free(cmdq);
 }
 
 static void
@@ -374,7 +371,7 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 				index = state->index;
 				state->index = 0;
 				for (i = 0; i < index; i++)
-					if (!cmdq_exec_string(command, state))
+					if (!cmd_exec(command, state))
 						break;
 			} else
 				run_cmd(state, command);
@@ -508,7 +505,7 @@ state_source(struct state *state, const char *path)
 	while ((buffer = util_next_line(buffer, fp)) != NULL) {
 		if (string_is_comment(buffer))
 			continue;
-		cmdq_exec_string(buffer, state);
+		cmd_exec(buffer, state);
 	}
 
 	fclose(fp);

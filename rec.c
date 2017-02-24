@@ -89,17 +89,14 @@ rec_stop(struct rec *rec)
 int
 rec_play(struct rec *rec, struct state *state)
 {
-	struct cmdq *cmdq;
-
 	assert(!rec->is_playing && !rec->is_recording);
 
-	if ((cmdq = cmdq_from_string(rec->data)) == NULL)
+	if (!cmd_validate(rec->data))
 		return (0);
 
 	rec->is_playing = 1;
-	cmdq_exec(cmdq, state);
+	cmd_exec(rec->data, state);
 	rec->is_playing = 0;
-	cmdq_free(cmdq);
 
 	return (1);
 }

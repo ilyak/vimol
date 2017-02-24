@@ -69,7 +69,6 @@ typedef const char *tok_t; /* a tokq token */
 struct atoms;       /* atom storage */
 struct bind;        /* key-command bindings */
 struct camera;      /* an eye of a user */
-struct cmdq;        /* command list */
 struct edit;        /* string edit control */
 struct graph;       /* vertices connected with edges */
 struct graphedge;   /* edge of a graph */
@@ -126,11 +125,8 @@ double camera_get_zoom(struct camera *, int, int);
 point_t camera_transform(struct camera *, vec_t);
 
 /* cmd.c */
-struct cmdq *cmdq_from_string(const char *);
-int cmdq_validate_string(const char *);
-int cmdq_exec_string(const char *, struct state *);
-int cmdq_exec(struct cmdq *, struct state *);
-void cmdq_free(struct cmdq *);
+int cmd_validate(const char *);
+int cmd_exec(const char *, struct state *);
 
 /* edit.c */
 struct edit *edit_create(void);
