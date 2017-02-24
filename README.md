@@ -1,4 +1,4 @@
-# Vimol 2.0
+# Vimol 2.0 (beta)
 
 Vimol is a powerful molecular viewer and editor. Vimol features
 vi-like key bindings, fast and lightweight design, editing in multiple tabs,
@@ -23,8 +23,8 @@ with their corresponding development packages:
  * Cairo graphics library (https://cairographics.org). Version 1.12.0 or
    newer is recommended.
 
-  - Fedora: `yum install cairo-devel`
-  - Ubuntu: `apt-get install libcairo-dev`
+  - Fedora Linux: `yum install cairo-devel`
+  - Ubuntu Linux: `apt-get install libcairo-dev`
   - FreeBSD: `pkg install cairo`
   - OpenBSD: `pkg_add cairo`
   - Mac OS X: see [here](https://cairographics.org/download/)
@@ -33,8 +33,8 @@ with their corresponding development packages:
    recommended. Make sure that the video support is turned on if building SDL
    from source.
 
-  - Fedora: `yum install SDL2-devel`
-  - Ubuntu: `apt-get install libsdl2-dev`
+  - Fedora Linux: `yum install SDL2-devel`
+  - Ubuntu Linux: `apt-get install libsdl2-dev`
   - FreeBSD: `pkg install sdl2`
   - OpenBSD: `pkg_add sdl2`
   - Mac OS X: see [here](https://libsdl.org/download-2.0.php)
@@ -47,4 +47,4 @@ To install vimol, issue as root:
 
 	make install
 
-Use `vimol` to start vimol, and `man vimol` to see the manual page.
+Use `vimol` to start the program, and `man vimol` to see the manual page.
