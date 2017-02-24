@@ -12,6 +12,10 @@ manual page.
 
 ### Compilation from sources
 
+Get vimol source code by cloning [git](https://git-scm.com) repository:
+
+	git clone https://github.com/ilyak/vimol
+
 To compile vimol from source you will need an ANSI C complaint compiler and a
 make utility. You will also need the following dependencies installed along
 with their corresponding development packages:
