@@ -46,3 +46,5 @@ After installing all dependencies, compile vimol by issuing:
 To install vimol, issue as root:
 
 	make install
+
+Use `vimol` to start vimol, and `man vimol` to see the manual page.
