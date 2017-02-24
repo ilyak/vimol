@@ -24,18 +24,20 @@ with their corresponding development packages:
    newer is recommended.
 
   - Fedora: `yum install cairo-devel`
+  - Ubuntu: `apt-get install libcairo-dev`
   - FreeBSD: `pkg install cairo`
   - OpenBSD: `pkg_add cairo`
-  - Ubuntu: `apt-get install libcairo-dev`
+  - Mac OS X: see [here](https://cairographics.org/download/)
 
  * Simple direct-media layer (https://libsdl.org). Version 2.0.1 or newer is
    recommended. Make sure that the video support is turned on if building SDL
    from source.
 
   - Fedora: `yum install SDL2-devel`
+  - Ubuntu: `apt-get install libsdl2-dev`
   - FreeBSD: `pkg install sdl2`
   - OpenBSD: `pkg_add sdl2`
-  - Ubuntu: `apt-get install libsdl2-dev`
+  - Mac OS X: see [here](https://libsdl.org/download-2.0.php)
 
 After installing all dependencies, compile vimol by issuing:
 
