@@ -1,13 +1,14 @@
 # Vimol
 
-Vimol is a powerful molecular viewer and editor inspired by vim. Vimol features
+Vimol is a powerful molecular viewer and editor. Vimol features
 vi-like key bindings, fast and lightweight design, editing in multiple tabs,
 visualization of trajectories, unlimited undo/redo, command record/replay,
 and much more! Vimol does not require the mouse, and most things
 can be accomplished in less than 5 keystrokes. Use **h**/**j**/**k**/**l** keys
 to rotate the molecule and **q** to exit the program. Viewing and editing of
 multi-frame **xyz** and **pdb** files are supported. For the detailed
-documentation consult the _vimol(1)_ man page.
+documentation consult the [vimol(1)](https://vimol.github.io/vimol.1.html)
+manual page.
 
 ### Compilation from sources
 
