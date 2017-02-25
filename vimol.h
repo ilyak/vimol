@@ -34,11 +34,19 @@
 #include <cairo.h>
 
 #ifndef __unused
+#if defined(__GNUC__)
+#define __unused __attribute__((__unused__))
+#else
 #define __unused
+#endif
 #endif /* __unused */
 
 #ifndef __dead
+#if defined(__GNUC__)
+#define __dead __attribute__((__noreturn__))
+#else
 #define __dead
+#endif
 #endif /* __dead */
 
 /* OS is defined in SDL */
