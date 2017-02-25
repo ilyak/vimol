@@ -779,27 +779,13 @@ static int
 fn_select(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
-	struct sel *visible;
 	struct sel *sel;
 	int idx;
 
-	visible = view_get_visible(view);
-	if (tokq_count(args) == 0) {
-		if (state_get_index(state) == 0) {
-			sel_iter_start(visible);
-			while (sel_iter_next(visible, &idx)) {
-				if (!sel_selected(view_get_sel(view), idx)) {
-					sel_add(view_get_sel(view), idx);
-					return (1);
-				}
-			}
-			return (1);
-		}
-	}
 	sel = make_sel(args, 0, tokq_count(args), state);
 	sel_iter_start(sel);
 	while (sel_iter_next(sel, &idx))
-		if (sel_selected(visible, idx))
+		if (sel_selected(view_get_visible(view), idx))
 			sel_add(view_get_sel(view), idx);
 	sel_free(sel);
 	return (1);

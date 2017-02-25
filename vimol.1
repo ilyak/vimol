@@ -100,8 +100,7 @@ Start recording of issued commands.
 Recordings can be replayed by pressing
 .Ql t .
 .It 123s
-Select atom with index 123.
-Select an unselected atom with lowest index if no index is specified.
+Select an atom with index 123.
 .It (sel)S-s
 Select all atoms directly connected to the selected atoms.
 .It t
@@ -110,7 +109,7 @@ Period key
 .Ql \&.
 with count can be used to repeat many times after that.
 .It 123u
-Unselect atom with index 123.
+Unselect an atom with index 123.
 Unselect last selected atom if no index is specified.
 .It (sel)v
 Hide selected atoms.
@@ -311,7 +310,6 @@ Rotation angles relative to the camera coordinate system are specified by
 Add atoms specified by
 .Ar sel
 to the current selection.
-Select an unselected atom with lowest index if the argument is omitted.
 .It Ic select-connected Op Ar sel
 Select all atoms directly connected to atoms in selection
 .Ar sel .
