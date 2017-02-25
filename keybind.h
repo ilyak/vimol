@@ -34,6 +34,7 @@ static const struct {
 	{ "S-Q", "quit!" },
 	{ "R", "record" },
 	{ "S", "select" },
+	{ "S-S", "select-connected" },
 	{ "T", "replay" },
 	{ "U", "unselect" },
 	{ "V", "hide-selection" },

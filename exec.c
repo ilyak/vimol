@@ -852,6 +852,33 @@ fn_select_within(struct tokq *args, struct state *state)
 }
 
 static int
+fn_select_connected(struct tokq *args, struct state *state)
+{
+	struct view *view = state_get_view(state);
+	struct graph *graph;
+	struct sel *sel;
+	struct graphedge *edge;
+	int i, j;
+
+	graph = view_get_graph(view);
+	sel = make_sel(args, 1, tokq_count(args), state);
+	sel_iter_start(sel);
+	while (sel_iter_next(sel, &i)) {
+		if (sel_selected(view_get_visible(view), i))
+			sel_add(view_get_sel(view), i);
+		edge = graph_get_edges(graph, i);
+		while (edge) {
+			j = graph_edge_j(edge);
+			if (sel_selected(view_get_visible(view), j))
+				sel_add(view_get_sel(view), j);
+			edge = graph_edge_next(edge);
+		}
+	}
+	sel_free(sel);
+	return (1);
+}
+
+static int
 fn_select_molecule(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
@@ -1172,6 +1199,7 @@ static const struct node {
 	{ "rotate-selection", fn_rotate_selection },
 	{ "s", fn_select },
 	{ "select", fn_select },
+	{ "select-connected", fn_select_connected },
 	{ "select-element", fn_select_element },
 	{ "select-molecule", fn_select_molecule },
 	{ "select-water", fn_select_water },

@@ -102,6 +102,8 @@ Recordings can be replayed by pressing
 .It 123s
 Select atom with index 123.
 Select an unselected atom with lowest index if no index is specified.
+.It (sel)S-s
+Select all atoms directly connected to the selected atoms.
 .It t
 Replay last recording.
 Period key
@@ -310,6 +312,9 @@ Add atoms specified by
 .Ar sel
 to the current selection.
 Select an unselected atom with lowest index if the argument is omitted.
+.It Ic select-connected Op Ar sel
+Select all atoms directly connected to atoms in selection
+.Ar sel .
 .It Ic select-element Ar name ...
 Select all atoms of a particular type.
 This command takes a list of element names.
