@@ -481,6 +481,7 @@ fn_paste(struct tokq *args __unused, struct state *state)
 	sel_clear(view_get_sel(view));
 	for (i = 0; i < npaste; i++)
 		sel_add(view_get_sel(view), natoms-npaste+i);
+	error_set("added %d atoms", npaste);
 	return (1);
 }
 
