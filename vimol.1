@@ -13,7 +13,7 @@
 .\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 .\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 .\"
-.Dd $Mdocdate: February 21 2017 $
+.Dd $Mdocdate: February 25 2017 $
 .Dt VIMOL 1
 .Os
 .Sh NAME
@@ -41,7 +41,9 @@ Ctrl key.
 .El
 .Pp
 Arrow keys are equivalent to [hjkl] keys.
-An optional atom selection, (sel), can be used with some commands.
+Most commands operate on an atom selection, (sel).
+An explicit atom index can be specified with number
+keys [0-9] for such commands.
 See the
 .Sx SELECTIONS
 section for more details.
@@ -95,19 +97,23 @@ Quit
 discarding unsaved changes.
 .It r
 Start recording of issued commands.
-Recordings can be replayed by pressing t.
+Recordings can be replayed by pressing
+.Ql t .
 .It 123s
 Select atom with index 123.
 Select an unselected atom with lowest index if no index is specified.
 .It t
 Replay last recording.
-Period key '.' with count can be used to repeat many times after that.
+Period key
+.Ql \&.
+with count can be used to repeat many times after that.
 .It 123u
 Unselect atom with index 123.
 Unselect last selected atom if no index is specified.
 .It (sel)v
 Hide selected atoms.
-Atoms can be made visible again by pressing z.
+Atoms can be made visible again by pressing
+.Ql z .
 .It (sel)w
 Select whole molecules containing selected atoms.
 123w selects the molecule to which atom 123 belongs.
@@ -163,21 +169,25 @@ Atom indices can be explicitly listed on the command line (see the
 .Sx COMMANDS
 section).
 The indices are separated by a space character.
-Index ranges can be specified using colon ':'.
+Index ranges can be specified using colon
+.Ql \&: .
 For example, 6:8 specifies atoms with indices 6, 7, 8.
 Negative indices are used to count backwards starting from the last
 index, i.e., -1 is the last atom.
-An asterisk '*' can be used to specify all atoms.
+An asterisk
+.Ql *
+can be used to specify all atoms.
 .Pp
 Finally, if no explicit index is specified and no command-line arguments are
 listed, selected atoms from the current tab are used.
 .Sh COMMANDS
 Below is the list of available commands.
-Command mode is started by pressing the colon key ':'.
+Command mode is started by pressing the colon key
+.Ql \&: .
 Most of the commands are bound to a key for convenience (see the
 .Sx KEY BINDINGS
 section).
-Multiple commands can be separated by semicolon.
+Multiple commands can be separated by a semicolon.
 .Bl -tag -width Ds -offset indent
 .It Ic about
 Display information about
