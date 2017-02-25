@@ -17,7 +17,7 @@
 #include "vimol.h"
 
 static void
-select_connected(struct graph *graph, int idx, struct sel *sel)
+select_all_connected(struct graph *graph, int idx, struct sel *sel)
 {
 	struct graphedge *edge;
 
@@ -27,7 +27,7 @@ select_connected(struct graph *graph, int idx, struct sel *sel)
 	sel_add(sel, idx);
 	edge = graph_get_edges(graph, idx);
 	while (edge) {
-		select_connected(graph, graph_edge_j(edge), sel);
+		select_all_connected(graph, graph_edge_j(edge), sel);
 		edge = graph_edge_next(edge);
 	}
 }
@@ -869,7 +869,7 @@ fn_select_molecule(struct tokq *args, struct state *state)
 	connected = sel_create(sys_get_atom_count(sys));
 	sel_iter_start(selected);
 	while (sel_iter_next(selected, &idx))
-		select_connected(graph, idx, connected);
+		select_all_connected(graph, idx, connected);
 	sel_iter_start(connected);
 	while (sel_iter_next(connected, &idx))
 		if (sel_selected(visible, idx))
