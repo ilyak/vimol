@@ -1,5 +1,5 @@
 CC= cc
-PREFIX= /usr/local
+PREFIX= /usr
 CFLAGS= -g -Wall -Wextra -I/usr/include -I/usr/local/include -I/usr/include/cairo -I/usr/local/include/cairo -I/usr/include/SDL2 -I/usr/local/include/SDL2
 LDFLAGS= -L/usr/lib -L/usr/local/lib -L/usr/X11R6/lib
 LIBS= -lcairo -lSDL2 -lm -lc
@@ -20,12 +20,12 @@ $(PROG): $(ALL_O)
 install:
 	mkdir -p $(PREFIX)/bin
 	install -m 0755 $(PROG) $(PREFIX)/bin
-	mkdir -p $(PREFIX)/man/man1
-	install -m 0644 $(PROG).1 $(PREFIX)/man/man1
+	mkdir -p $(PREFIX)/share/man/man1
+	install -m 0644 $(PROG).1 $(PREFIX)/share/man/man1
 
 uninstall:
 	rm -f $(PREFIX)/bin/$(PROG)
-	rm -f $(PREFIX)/man/man1/$(PROG).1
+	rm -f $(PREFIX)/share/man/man1/$(PROG).1
 
 clean:
 	rm -f $(PROG) $(PROG).core gmon.out $(ALL_O)
