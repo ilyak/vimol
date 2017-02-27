@@ -122,15 +122,17 @@ add_node(const char *name, enum node_type type, const char *default_value)
 static void
 add_data_path(void)
 {
-	char path[1024], *prefix;
+	char *path, *prefix;
 
 	prefix = getenv("HOME");
 
 	if (prefix) {
-		snprintf(path, sizeof path, "%s/.vimolrc", prefix);
+		xasprintf(&path, "%s/.vimolrc", prefix);
 		add_node("vimolrc-path", NODE_TYPE_STRING, path);
-		snprintf(path, sizeof path, "%s/.vimolhistory", prefix);
+		free(path);
+		xasprintf(&path, "%s/.vimolhistory", prefix);
 		add_node("vimolhistory-path", NODE_TYPE_STRING, path);
+		free(path);
 	} else {
 		add_node("vimolrc-path", NODE_TYPE_STRING, "");
 		add_node("vimolhistory-path", NODE_TYPE_STRING, "");
