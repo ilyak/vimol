@@ -52,13 +52,10 @@
 /* OS is defined in SDL */
 #if defined(__WIN32__)
 #define VIMOL_DEFAULT_FONT "consolas"
-#define VIMOL_DATA_PREFIX  "APPDATA"
 #elif defined(__MACOSX__)
 #define VIMOL_DEFAULT_FONT "andalemono"
-#define VIMOL_DATA_PREFIX  "HOME"
 #else
 #define VIMOL_DEFAULT_FONT "liberationmono"
-#define VIMOL_DATA_PREFIX  "HOME"
 #endif
 
 #include "vec.h"
