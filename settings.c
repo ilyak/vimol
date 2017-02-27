@@ -122,17 +122,19 @@ add_node(const char *name, enum node_type type, const char *default_value)
 static void
 add_data_path(void)
 {
-	char path[256], *prefix;
+	char path[1024], *prefix;
 
-	prefix = SDL_GetPrefPath("", "vimol");
+	prefix = getenv("HOME");
 
-	snprintf(path, sizeof path, "%svimolrc", prefix);
-	add_node("vimolrc-path", NODE_TYPE_STRING, path);
-
-	snprintf(path, sizeof path, "%shistory", prefix);
-	add_node("history-path", NODE_TYPE_STRING, path);
-
-	SDL_free(prefix);
+	if (prefix) {
+		snprintf(path, sizeof path, "%s/.vimolrc", prefix);
+		add_node("vimolrc-path", NODE_TYPE_STRING, path);
+		snprintf(path, sizeof path, "%s/.vimolhistory", prefix);
+		add_node("vimolhistory-path", NODE_TYPE_STRING, path);
+	} else {
+		add_node("vimolrc-path", NODE_TYPE_STRING, "");
+		add_node("vimolhistory-path", NODE_TYPE_STRING, "");
+	}
 }
 
 static const struct {

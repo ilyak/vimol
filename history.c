@@ -52,6 +52,8 @@ history_load(struct history *history, const char *path)
 	FILE *fp;
 	char *buffer;
 
+	if (strlen(path) == 0)
+		return;
 	if ((fp = fopen(path, "r")) == NULL)
 		return;
 
@@ -70,6 +72,8 @@ history_save(struct history *history, const char *path)
 	FILE *fp;
 	int save;
 
+	if (strlen(path) == 0)
+		return;
 	if ((fp = fopen(path, "w")) == NULL)
 		return;
 

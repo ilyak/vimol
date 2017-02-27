@@ -430,7 +430,7 @@ state_create(void)
 
 	set_default_bindings(state);
 
-	path = settings_get_string("history-path");
+	path = settings_get_string("vimolhistory-path");
 	history_load(state->history, path);
 
 	return (state);
@@ -495,6 +495,8 @@ state_source(struct state *state, const char *path)
 	FILE *fp;
 	char *buffer;
 
+	if (strlen(path) == 0)
+		return (1);
 	if ((fp = fopen(path, "r")) == NULL) {
 		error_set("unable to open file %s", path);
 		return (0);
@@ -586,6 +588,6 @@ state_save(struct state *state)
 {
 	const char *path;
 
-	path = settings_get_string("history-path");
+	path = settings_get_string("vimolhistory-path");
 	history_save(state->history, path);
 }
