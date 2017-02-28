@@ -257,7 +257,6 @@ sys_add_hydrogens(struct sys *sys, struct sel *sel)
 	int i, j, k;
 
 	sel_iter_start(sel);
-
 	while (sel_iter_next(sel, &i)) {
 		if (sys_get_atom_type(sys, i) == 6) { /* C */
 			n_neig = graph_get_edge_count(sys->graph, i);
