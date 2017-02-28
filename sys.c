@@ -84,10 +84,11 @@ get_bond_count(struct graph *graph, int idx)
 	struct graphedge *edge;
 	int count = 0;
 
-	for (edge = graph_get_edges(graph, idx); edge;
-	    edge = graph_edge_next(edge))
+	edge = graph_get_edges(graph, idx);
+	while (edge) {
 		count += graph_edge_get_type(edge);
-
+		edge = graph_edge_next(edge);
+	}
 	return (count);
 }
 
