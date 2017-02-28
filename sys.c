@@ -252,9 +252,7 @@ sys_set_atom_xyz(struct sys *sys, int idx, vec_t xyz)
 void
 sys_add_hydrogens(struct sys *sys, struct sel *sel)
 {
-	vec_t r1, r2, r3;
-	int n_bond, n_neig;
-	int i, j, k;
+	int i, j, k, l, n_bond, n_neig;
 
 	sel_iter_start(sel);
 	while (sel_iter_next(sel, &i)) {
@@ -295,22 +293,16 @@ sys_add_hydrogens(struct sys *sys, struct sel *sel)
 					/* add 1 sp2 */
 					add_hydrogens(sys, i, j, k, 5, 1);
 				} else if (n_neig == 3) {
+					vec_t pl, ph1, ph2;
 					k = graph_edge_j(graph_edge_next(graph_get_edges(sys->graph, i)));
-					/* add 1 sp3 */
-					add_hydrogens(sys, i, j, k, 2, 1);
-
-					/* check if it's the correct one */
-					r1 = sys_get_atom_xyz(sys, graph_edge_j(graph_edge_next(graph_edge_next(graph_get_edges(sys->graph, i)))));
-					r2 = sys_get_atom_xyz(sys, sys_get_atom_count(sys) - 1);
-					r3 = sys_get_atom_xyz(sys, i);
-
-					r1 = vec_sub(&r1, &r3);
-					r2 = vec_sub(&r2, &r3);
-
-					if (vec_dot(&r1, &r2) > 0.0) {
-						sys_remove_atom(sys, sys_get_atom_count(sys) - 1);
-						add_hydrogens(sys, i, j, k, 3, 1);
-					}
+					l = graph_edge_j(graph_edge_next(graph_edge_next(graph_get_edges(sys->graph, i))));
+					/* add 2 sp3 and remove the wrong one */
+					add_hydrogens(sys, i, j, k, 2, 2);
+					pl = sys_get_atom_xyz(sys, l);
+					ph1 = sys_get_atom_xyz(sys, sys_get_atom_count(sys) - 2);
+					ph2 = sys_get_atom_xyz(sys, sys_get_atom_count(sys) - 1);
+					k = vec_dist(&pl, &ph1) < vec_dist(&pl, &ph2) ? 2 : 1;
+					sys_remove_atom(sys, sys_get_atom_count(sys) - k);
 				}
 			}
 		} else if (sys_get_atom_type(sys, i) == 7) { /* N */
