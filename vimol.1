@@ -42,8 +42,9 @@ Ctrl key.
 .Pp
 Arrow keys are equivalent to [hjkl] keys.
 Most commands operate on an atom selection, (sel).
-An explicit atom index can be specified with number
-keys [0-9] for such commands.
+For these, an explicit atom index can be specified with number keys [0-9].
+Atom indices can be displayed by pressing
+.Ql i .
 See the
 .Sx SELECTIONS
 section for more details.
@@ -166,10 +167,11 @@ First, an explicit atom index can be provided using number keys [0-9].
 This is useful with key combinations.
 For example, 123d deletes an atom with index 123.
 .Pp
-Atom indices can be explicitly listed on the command line (see the
+In the command-line mode atom indices can be explicitly listed as
+arguments to a command (see the
 .Sx COMMANDS
 section).
-The indices are separated by a space character.
+The indices should be separated by a space character.
 Index ranges can be specified using colon
 .Ql \&: .
 For example, 6:8 specifies atoms with indices 6, 7, 8.
