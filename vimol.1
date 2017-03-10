@@ -113,9 +113,7 @@ with count can be used to repeat many times after that.
 Unselect an atom with index 123.
 Unselect last selected atom if no index is specified.
 .It (sel)v
-Hide selected atoms.
-Atoms can be made visible again by pressing
-.Ql z .
+Hide/show atoms.
 .It (sel)w
 Select whole molecules containing selected atoms.
 123w selects the molecule to which atom 123 belongs.
@@ -125,8 +123,6 @@ Select all water molecules.
 Cut (copy and delete) selected atoms.
 .It (sel)y or (sel)C-c
 Copy selected atoms.
-.It z
-Show all hidden atoms.
 .It C-a
 Select all atoms.
 .It C-[hjklfg]
@@ -241,9 +237,6 @@ Count from the end if
 is negative, i.e., -1 is the last frame.
 .It Ic fullscreen
 Toggle full screen mode.
-.It Ic hide-selection Op Ar sel
-Hide atoms specified by
-.Ar sel .
 .It Ic invert-selection
 Invert current selection.
 .It Ic last-tab
@@ -367,8 +360,6 @@ Current value is displayed if the second argument is omitted.
 See the
 .Sx SETTINGS
 section for the list of available options.
-.It Ic show-all
-Show all hidden atoms.
 .It Ic source Ar path
 Execute commands from a file.
 .It Ic toggle Ar setting
@@ -376,6 +367,10 @@ Toggle a boolean setting.
 See the
 .Sx SETTINGS
 section for the list of available options.
+.It Ic toggle-atoms Op Ar sel
+Hide atoms specified by
+.Ar sel .
+If no atoms are specified, makes all hidden atoms visible again.
 .It Ic undo
 Undo last change.
 .It Ic unselect Op Ar sel
