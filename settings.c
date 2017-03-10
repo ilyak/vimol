@@ -151,7 +151,7 @@ static const struct {
 	{ "bond-visible", NODE_TYPE_BOOL, "true" },
 	{ "id-color", NODE_TYPE_COLOR, "255 255 255" },
 	{ "id-font", NODE_TYPE_STRING, VIMOL_DEFAULT_FONT },
-	{ "id-font-size", NODE_TYPE_DOUBLE, "10.0" },
+	{ "id-font-size", NODE_TYPE_DOUBLE, "12.0" },
 	{ "id-visible", NODE_TYPE_BOOL, "false" },
 	{ "name-color", NODE_TYPE_COLOR, "0 255 0" },
 	{ "name-font", NODE_TYPE_STRING, VIMOL_DEFAULT_FONT },
