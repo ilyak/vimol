@@ -349,17 +349,27 @@ fn_fullscreen(struct tokq *args __unused, struct state *state)
 }
 
 static int
-fn_hide_selection(struct tokq *args, struct state *state)
+fn_toggle_atoms(struct tokq *args, struct state *state)
 {
 	struct view *view = state_get_view(state);
+	struct sys *sys = view_get_sys(view);
 	struct sel *sel;
 	int idx;
 
 	sel = make_sel(args, 0, tokq_count(args), state);
-	sel_iter_start(sel);
-	while (sel_iter_next(sel, &idx)) {
-		sel_remove(view_get_visible(view), idx);
-		sel_remove(view_get_sel(view), idx);
+	if (sel_get_count(sel) == 0) {
+		for (idx = 0; idx < sys_get_atom_count(sys); idx++) {
+			if (!sel_selected(view_get_visible(view), idx)) {
+				sel_add(view_get_visible(view), idx);
+				sel_add(view_get_sel(view), idx);
+			}
+		}
+	} else {
+		sel_iter_start(sel);
+		while (sel_iter_next(sel, &idx)) {
+			sel_remove(view_get_visible(view), idx);
+			sel_remove(view_get_sel(view), idx);
+		}
 	}
 	sel_free(sel);
 	return (1);
@@ -1159,7 +1169,6 @@ static const struct node {
 	{ "first-tab", fn_first_tab },
 	{ "frame", fn_frame },
 	{ "fullscreen", fn_fullscreen },
-	{ "hide-selection", fn_hide_selection },
 	{ "invert-selection", fn_invert_selection },
 	{ "last", fn_last_tab },
 	{ "last-tab", fn_last_tab },
@@ -1197,6 +1206,7 @@ static const struct node {
 	{ "show-all", fn_show_all },
 	{ "source", fn_source },
 	{ "toggle", fn_toggle },
+	{ "toggle-atoms", fn_toggle_atoms },
 	{ "u", fn_unselect },
 	{ "undo", fn_undo },
 	{ "unselect", fn_unselect },

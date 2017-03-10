@@ -37,7 +37,7 @@ static const struct {
 	{ "S-s", "select-connected" },
 	{ "t", "replay" },
 	{ "u", "unselect" },
-	{ "v", "hide-selection" },
+	{ "v", "toggle-atoms" },
 	{ "w", "select-molecule" },
 	{ "S-w", "select-water" },
 	{ "x", "copy; delete" },
