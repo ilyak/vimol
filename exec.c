@@ -1043,16 +1043,6 @@ fn_set(struct tokq *args, struct state *state __unused)
 }
 
 static int
-fn_show_all(struct tokq *args __unused, struct state *state)
-{
-	struct view *view = state_get_view(state);
-
-	sel_all(view_get_visible(view));
-
-	return (1);
-}
-
-static int
 fn_source(struct tokq *args, struct state *state)
 {
 	if (tokq_count(args) < 1) {
@@ -1203,7 +1193,6 @@ static const struct node {
 	{ "select-y", fn_select_y },
 	{ "select-z", fn_select_z },
 	{ "set", fn_set },
-	{ "show-all", fn_show_all },
 	{ "source", fn_source },
 	{ "toggle", fn_toggle },
 	{ "toggle-atoms", fn_toggle_atoms },
