@@ -20,8 +20,10 @@ To compile vimol from source you will need an ANSI C complaint compiler and a
 make utility. The following dependencies should also be installed along
 with their corresponding development packages:
 
- * Cairo graphics library (https://cairographics.org). Version 1.12.0 or
-   newer is recommended.
+###### Cairo
+
+Cairo graphics library (https://cairographics.org). Version 1.12.0 or newer
+is recommended.
 
   - Fedora Linux: `yum install cairo-devel`
   - Ubuntu Linux: `apt-get install libcairo-dev`
@@ -29,9 +31,11 @@ with their corresponding development packages:
   - OpenBSD: `pkg_add cairo`
   - Mac OS X: see [this](https://cairographics.org/download/) page
 
- * Simple direct-media layer (https://libsdl.org). Version 2.0.1 or newer is
-   recommended. Make sure that the video support is turned on if building SDL
-   from source.
+###### SDL2
+
+Simple direct-media layer (https://libsdl.org). Version 2.0.1 or newer is
+recommended. Make sure that the video support is turned on if building SDL from
+source.
 
   - Fedora Linux: `yum install SDL2-devel`
   - Ubuntu Linux: `apt-get install libsdl2-dev`
