@@ -518,21 +518,22 @@ fn_measure(struct tokq *args, struct state *state)
 	struct sys *sys;
 	struct sel *sel;
 	vec_t p[4];
-	int a[4], i;
+	int a[4], cnt, i;
 
 	sys = view_get_sys(view);
 	sel = make_sel(args, 0, tokq_count(args), state);
-	if (sel_get_count(sel) < 1 || sel_get_count(sel) > 4) {
+	cnt = sel_get_count(sel);
+	if (cnt < 1 || cnt > 4) {
 		sel_free(sel);
 		error_set("select 1, 2, 3, or 4 atoms");
 		return (0);
 	}
 	sel_iter_start(sel);
-	for (i = 0; i < sel_get_count(sel); i++) {
+	for (i = 0; i < cnt; i++) {
 		sel_iter_next(sel, &a[i]);
 		p[i] = sys_get_atom_xyz(sys, a[i]);
 	}
-	switch (sel_get_count(sel)) {
+	switch (cnt) {
 	case 1:
 		error_set("%d position: %.3lf %.3lf %.3lf", a[0]+1,
 		    p[0].x, p[0].y, p[0].z);
