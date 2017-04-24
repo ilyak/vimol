@@ -1,4 +1,4 @@
-# Vimol 2.0 (beta)
+# Vimol 2.0
 
 Vimol is a powerful molecular viewer and editor. Vimol features
 vi-like key bindings, fast and lightweight design, editing in multiple tabs,
