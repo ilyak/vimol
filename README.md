@@ -7,8 +7,9 @@ and much more! Vimol does not require the mouse, and most things
 can be accomplished in less than 5 keystrokes. Use **h**/**j**/**k**/**l**
 keys to rotate the molecule and **q** to exit the program.
 Multi-frame **pdb** and **xyz** file formats are supported for viewing
-and editing. For the detailed documentation consult
-the [vimol(1)](https://vimol.github.io/vimol.1.html) manual page.
+and editing. For the detailed documentation consult the vimol(1) manual
+page ([html](https://vimol.github.io/vimol.1.html),
+[pdf](https://vimol.github.io/vimol.1.pdf)).
 
 ### Compilation from sources
 
