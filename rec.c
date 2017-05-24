@@ -91,7 +91,7 @@ rec_play(struct rec *rec, struct state *state)
 {
 	assert(!rec->is_playing && !rec->is_recording);
 
-	if (!cmd_validate(rec->data))
+	if (!cmd_is_valid(rec->data))
 		return (0);
 
 	rec->is_playing = 1;

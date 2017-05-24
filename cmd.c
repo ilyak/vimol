@@ -50,7 +50,7 @@ parse_tokq(struct cmdq *cmdq, struct tokq *tokq)
 		if (strcmp(tok, ";") == 0)
 			continue;
 
-		if (!exec_valid(tok)) {
+		if (!exec_is_valid(tok)) {
 			error_set("invalid command \"%s\"", tok);
 			return (0);
 		}
@@ -126,7 +126,7 @@ cmdq_exec(struct cmdq *cmdq, struct state *state)
 }
 
 int
-cmd_validate(const char *str)
+cmd_is_valid(const char *str)
 {
 	struct cmdq *cmdq;
 

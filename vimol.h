@@ -130,7 +130,7 @@ double camera_get_zoom(struct camera *, int, int);
 point_t camera_transform(struct camera *, vec_t);
 
 /* cmd.c */
-int cmd_validate(const char *);
+int cmd_is_valid(const char *);
 int cmd_exec(const char *, struct state *);
 
 /* edit.c */
@@ -154,7 +154,7 @@ const char *error_get(void);
 void error_clear(void);
 
 /* exec.c */
-int exec_valid(const char *);
+int exec_is_valid(const char *);
 int exec_run(const char *, struct tokq *, struct state *);
 
 /* formats.c */

@@ -146,7 +146,7 @@ fn_bind(struct tokq *args, struct state *state)
 			error_set("\"%s\" is not bound", name);
 	} else {
 		cmd = tokq_strcat(args, 1, tokq_count(args) - 1);
-		if (!cmd_validate(cmd)) {
+		if (!cmd_is_valid(cmd)) {
 			error_set("\"%s\": invalid command", cmd);
 			free(cmd);
 			return (0);
@@ -1232,7 +1232,7 @@ exec_find(const char *name)
 }
 
 int
-exec_valid(const char *name)
+exec_is_valid(const char *name)
 {
 	return (exec_find(name) != NULL);
 }

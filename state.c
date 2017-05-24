@@ -135,7 +135,7 @@ set_default_bindings(struct state *state)
 #include "keybind.h"
 
 	for (i = 0; i < sizeof keys / sizeof *keys; i++) {
-		if (!cmd_validate(keys[i].command))
+		if (!cmd_is_valid(keys[i].command))
 			fatal("invalid binding for key %s", keys[i].key);
 		bind_set(state->bind, keys[i].key, keys[i].command);
 	}
@@ -186,7 +186,7 @@ run_cmd(struct state *state, const char *command)
 {
 	error_clear();
 
-	if (!cmd_validate(command)) {
+	if (!cmd_is_valid(command)) {
 		statusbar_set_error(state->statusbar, error_get());
 		return;
 	}
