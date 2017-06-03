@@ -44,7 +44,6 @@ static const struct {
 	{ "C-x", "copy; delete" },
 	{ "y", "copy" },
 	{ "C-c", "copy" },
-	{ "z", "" },
 	{ "C-a", "select *" },
 	{ "C-f", "rotate-selection 0 0 -10" },
 	{ "C-g", "rotate-selection 0 0 10" },
