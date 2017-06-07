@@ -24,7 +24,7 @@ load_from_pdb(struct atoms *atoms, FILE *fp)
 {
 	vec_t xyz;
 	int i, j, k = 0, natoms = 0;
-	char *buf = NULL, name[128];
+	char *buf = NULL, name[8];
 
 	while ((buf = util_next_line(buf, fp)) != NULL) {
 		if (strncasecmp(buf, "ATOM  ", 6) == 0 ||
@@ -107,7 +107,7 @@ load_from_xyz(struct atoms *atoms, FILE *fp)
 {
 	vec_t xyz;
 	int i, natoms;
-	char *buf = NULL, name[128];
+	char *buf = NULL, name[32];
 
 	if ((buf = util_next_line(buf, fp)) == NULL)
 		return (0);
@@ -122,7 +122,7 @@ load_from_xyz(struct atoms *atoms, FILE *fp)
 			return (0);
 		memset(name, 0, sizeof name);
 		xyz.x = 0, xyz.y = 0, xyz.z = 0;
-		if (sscanf(buf, "%32s%lf%lf%lf", name,
+		if (sscanf(buf, "%31s%lf%lf%lf", name,
 		    &xyz.x, &xyz.y, &xyz.z) != 4) {
 			free(buf);
 			return (0);
@@ -140,7 +140,7 @@ load_from_xyz(struct atoms *atoms, FILE *fp)
 				return (0);
 			memset(name, 0, sizeof name);
 			xyz.x = 0, xyz.y = 0, xyz.z = 0;
-			if (sscanf(buf, "%32s%lf%lf%lf", name,
+			if (sscanf(buf, "%31s%lf%lf%lf", name,
 			    &xyz.x, &xyz.y, &xyz.z) != 4) {
 				free(buf);
 				return (0);
