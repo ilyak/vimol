@@ -15,7 +15,9 @@ page ([html](https://vimol.github.io/vimol.1.html),
 
 ### Compilation from sources
 
-Get vimol source code by cloning the [git](https://git-scm.com) repository:
+To obtain vimol source code, download the latest
+[tarball archive](https://github.com/ilyak/vimol/archive/master.tar.gz) or
+use [git](https://git-scm.com) to clone the repository:
 
 	git clone https://github.com/ilyak/vimol
 
