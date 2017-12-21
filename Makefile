@@ -27,4 +27,4 @@ uninstall:
 clean:
 	rm -f $(PROG) $(PROG).core gmon.out $(ALL_O)
 
-.PHONY: install uninstall clean
+.PHONY: all install uninstall clean
