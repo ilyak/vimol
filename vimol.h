@@ -58,6 +58,9 @@
 #define VIMOL_DEFAULT_FONT "liberationmono"
 #endif
 
+/* Largest allowed coordinate value. */
+#define VIMOL_MAX_XYZ 1000000.0
+
 #include "vec.h"
 
 typedef struct {

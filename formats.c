@@ -57,6 +57,12 @@ load_from_pdb(struct atoms *atoms, FILE *fp)
 				free(buf);
 				return (0);
 			}
+			if (fabs(xyz.x) > VIMOL_MAX_XYZ ||
+			    fabs(xyz.y) > VIMOL_MAX_XYZ ||
+			    fabs(xyz.z) > VIMOL_MAX_XYZ) {
+				free(buf);
+				return (0);
+			}
 			if (natoms == 0)
 				atoms_add(atoms, name, xyz);
 			else {
@@ -127,6 +133,12 @@ load_from_xyz(struct atoms *atoms, FILE *fp)
 			free(buf);
 			return (0);
 		}
+		if (fabs(xyz.x) > VIMOL_MAX_XYZ ||
+		    fabs(xyz.y) > VIMOL_MAX_XYZ ||
+		    fabs(xyz.z) > VIMOL_MAX_XYZ) {
+			free(buf);
+			return (0);
+		}
 		atoms_add(atoms, name, xyz);
 	}
 	while ((buf = util_next_line(buf, fp)) != NULL) {
@@ -142,6 +154,12 @@ load_from_xyz(struct atoms *atoms, FILE *fp)
 			xyz.x = 0, xyz.y = 0, xyz.z = 0;
 			if (sscanf(buf, "%31s%lf%lf%lf", name,
 			    &xyz.x, &xyz.y, &xyz.z) != 4) {
+				free(buf);
+				return (0);
+			}
+			if (fabs(xyz.x) > VIMOL_MAX_XYZ ||
+			    fabs(xyz.y) > VIMOL_MAX_XYZ ||
+			    fabs(xyz.z) > VIMOL_MAX_XYZ) {
 				free(buf);
 				return (0);
 			}
