@@ -9,6 +9,8 @@ ALL_O= atoms.o bind.o camera.o cmd.o edit.o error.o exec.o formats.o graph.o \
        statusbar.o sys.o tabs.o tok.o undo.o util.o vec.o view.o xmalloc.o \
        yank.o
 
+all: $(PROG)
+
 $(PROG): $(ALL_O)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $(PROG) $(ALL_O) $(LIBS)
 
