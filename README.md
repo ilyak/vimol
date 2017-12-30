@@ -10,7 +10,7 @@ can be accomplished in less than 5 keystrokes. Use **h**/**j**/**k**/**l**
 keys to rotate the molecule and **q** to exit the program.
 Multi-frame **pdb** and **xyz** file formats are supported for viewing
 and editing. For the detailed documentation consult the
-[manual page](vimol.html).
+[manual page](https://ilyak.github.io/vimol/vimol.html).
 
 ### Compilation from sources
 
