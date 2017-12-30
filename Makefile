@@ -24,7 +24,10 @@ uninstall:
 	rm -f $(PREFIX)/bin/$(PROG)
 	rm -f $(PREFIX)/share/man/man1/$(PROG).1
 
+html:
+	mandoc -T html -O style=style.css vimol.1 > vimol.html
+
 clean:
 	rm -f $(PROG) $(PROG).core gmon.out $(ALL_O)
 
-.PHONY: all install uninstall clean
+.PHONY: all install uninstall html clean
