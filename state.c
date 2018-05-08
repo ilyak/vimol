@@ -358,7 +358,7 @@ key_down_view(struct state *state, SDL_Keysym keysym)
 	case SDLK_7:
 	case SDLK_8:
 	case SDLK_9:
-		if (keysym.mod == KMOD_NONE) {
+		if ((keysym.mod & KMOD_SHIFT) == 0) {
 			index = state->index * 10 + (keysym.sym - SDLK_0);
 			if (index <= 999999)
 				state->index = index;
